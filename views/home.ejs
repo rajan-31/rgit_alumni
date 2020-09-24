@@ -1,0 +1,20 @@
+<%- include('partials/header'); -%>
+<h1>Home page!!!</h1>
+<a href="/news">View News!</a>
+<a href="/events">View Events!</a>
+
+<h3>Showcase images</h3>
+<a href="/showcase/new">Add new image to Showcase</a>
+
+<% showcases.forEach(function(item){ %>
+    <div>
+        <h4><%= item.title %></h4>
+        <img src="<%= item.image %>" alt="" style="width:200px;height:100px;">
+    </div>
+<% }); %>
+
+<h3>Recruiters</h3>
+
+<h3>Testimonials</h3>
+
+<%- include('partials/footer'); -%>
