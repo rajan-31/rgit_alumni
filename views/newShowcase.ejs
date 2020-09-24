@@ -1,0 +1,14 @@
+<%- include('partials/header'); -%>
+
+
+<h1>Add new item in showcase</h1>
+
+<form action="/showcase" method="POST">
+    <input type="text" name="title" placeholder="title">
+    <input type="text" name="image" placeholder="image URL">
+    <button>Submit</button>
+</form>
+
+<a href="/">Cancel</a>
+
+<%- include('partials/footer'); -%>

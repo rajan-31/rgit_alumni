@@ -1,0 +1,17 @@
+<%- include('partials/header'); -%>
+
+<h1>NEWS PAGE!</h1>
+<a href="/news/new">Add new News</a>
+
+<div><a href="/">go to Home!</a></div>
+
+<% news.forEach(function(item){ %>
+    <div>
+        <h4><%= item.title %></h4>
+        <a href="/news/<%= item._id %> ">MORE INFO!</a>
+        <img src="<%= item.image %>" alt="" style="width:200px;height:100px;">
+        <p><%= item.description %></p>
+    </div>
+<% }); %>
+
+<%- include('partials/footer'); -%>
