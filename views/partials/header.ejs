@@ -5,4 +5,14 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     </head>
     <body>
-        
+        <div class="container d-flex justify-content-end">
+            <% if(!loggedInUser){ %>
+                <a href="/signup" class="p-2">Sign UP</a>
+                <a href="/login" class="p-2">Login</a>
+            <% } else { %>
+                <p class="p-2" >Signed in as 
+                    <a href=""><%= loggedInUser.username %></a>
+                </p>
+                <a href="/logout" class="p-2">Logout</a>
+            <% } %>
+        </div>
