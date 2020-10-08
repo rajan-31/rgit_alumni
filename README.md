@@ -1,11 +1,19 @@
 # Alumni Website
 
-- mongo URL
-```mongodb+srv://admin:mongo001@cluster0.sv0df.mongodb.net/alumniData?retryWrites=true&w=majority```
+- mongo connection URL
+
+```mongodb+srv://admin:mongo001@firstcluster.rxwyk.mongodb.net/alumni_website?retryWrites=true&w=majority```
 
 ---
 
-- connect from commandline
-```mongo "mongodb+srv://cluster0.sv0df.mongodb.net/alumniData" --username admin```
+- command connect from command line
 
-when prompted enter password: mongo001
+``` mongo "mongodb+srv://firstcluster.rxwyk.mongodb.net/alumni_website" --username admin```
+
+Password: mongo001
+
+---
+
+## **NOTES**
+- check that after expiration of session records gets removed or not
+- check that is it requied to add "maxAge" to cookies
