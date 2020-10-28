@@ -24,12 +24,10 @@ mongoose.connect("mongodb+srv://admin:mongo001@firstcluster.rxwyk.mongodb.net/al
 });
 
 app.use(bodyParser.urlencoded({extended: true}));
-// required so to use ejs
-app.set("view engine", "ejs");
+app.set("view engine", "ejs");      // required to use ejs
 
 // passport configuration
-// session storage
-const MongoStore = connectMongo(expressSession);
+const MongoStore = connectMongo(expressSession);    // for session storage
 app.use(expressSession({
     secret: "secrettttttttttt",
     resave: false,
@@ -51,12 +49,12 @@ app.use(function(req, res, next){
 });
 
 
-app.get("/", function(req, res){
+app.get("/", function(req, res){    // may be change in future to set '/' as home
     res.redirect("/home");
 });
 
 app.get("/home", function(req, res){
-    // retrive showcases from mongo
+    // retrive showcases from mongoDB
     Showcase.find({}, function(err, allShowcases){
         if(err){
             console.log(err);
@@ -71,7 +69,7 @@ app.post("/showcase", function(req, res){
     const title = req.body.title;
     const image = req.body.image;
     const newShowcase = {title: title, image: image};
-    // crete & save to mongo
+    // create & save to mongo
     Showcase.create(newShowcase, function(err, newlyCreated){
         if(err){
             console.log(err);
@@ -81,6 +79,7 @@ app.post("/showcase", function(req, res){
     });
 });
 
+// form for new showcase
 app.get("/showcase/new", function(req, res){
     res.render("newShowcase");
 });
@@ -95,13 +94,11 @@ app.get("/news", isLoggedIn, function(req, res){
     });
 });
 
-// to insert new news in db
 app.post("/news", function(req, res){
     const title = req.body.title;
     const image = req.body.image;
     const desc = req.body.desc;
     const newNews = {title: title, image: image, description: desc};
-    // crete & save to mongo
     News.create(newNews, function(err, newlyCreated){
         if(err){
             console.log(err);
@@ -115,7 +112,7 @@ app.get("/news/new", function(req, res){
     res.render("newNews");
 });
 
-// this route is after /news/new because it will accept anything after "/news/" that means "new" also which will make /news/new useless
+// this route is after "/news/new" because it will accept anything after "/news/" that means "new" also which will make "/news/new" useless
 app.get("/news/:id", isLoggedIn, function(req, res){
     //to get item by id
     News.findById(req.params.id, function(err, foundNews){
@@ -169,13 +166,15 @@ app.get('/logout', function(req, res){
     res.redirect("/");
 });
 
-// middleware
+// middleware - to check whether user is logged in or not
 function isLoggedIn(req, res, next){
     if(req.isAuthenticated()){
         return next();
     }
     res.redirect("/login");
 }
+
+///////////////////////////////////
 
 var port = 8080 // process.env.PORT;
 var ip = "localhost" // process.env.IP;
