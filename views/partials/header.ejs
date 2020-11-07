@@ -3,15 +3,19 @@
     <head>
         <title>APSIT Alumni</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+        <!-- it is served by express.static -->
+        <link rel="stylesheet" href="stylesheets/main.css">
     </head>
     <body>
         <div class="container d-flex justify-content-end">
+            <a href="/" class="p-2">Home</a>
             <% if(!loggedInUser){ %>
                 <a href="/signup" class="p-2">Sign UP</a>
                 <a href="/login" class="p-2">Login</a>
             <% } else { %>
                 <p class="p-2" >Signed in as 
-                    <a href=""><%= loggedInUser.username %></a>
+                    <a href="#"><%= loggedInUser.username %></a>
                 </p>
                 <a href="/logout" class="p-2">Logout</a>
             <% } %>
