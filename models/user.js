@@ -3,6 +3,7 @@ passportLocalMongoose = require("passport-local-mongoose");
 
 const userSchema = new mogoose.Schema({
     username: String,
+    googleId: String,
     password: String
 });
 

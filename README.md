@@ -12,6 +12,10 @@
 
 Password: mongo001
 
+- google api
+
+```https://console.developers.google.com/apis/dashboard```
+
 ---
 
 ## **NOTES**
@@ -27,3 +31,6 @@ Password: mongo001
 - comapre the project with some advanced projects (like https://github.com/sahat/hackathon-starter)
 - [advanced goals-1](https://expressjs.com/en/advanced/best-practice-performance.html)
 - [advanced goals-2](https://www.sitepoint.com/10-tips-make-node-js-web-app-faster/)
+
+## IMP
+- environment variables: port, ip, google client id & secret, database secret
