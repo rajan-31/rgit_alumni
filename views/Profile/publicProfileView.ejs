@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Info</title>
+    <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../vendor/chosen/chosen.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-2 d-flex justify-content-between">
+                <a href="/">Home</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
+
+        <h1>Profile</h1>
+
+        <!-- profile Image -->
+        <div>
+            <% if( profileImage.data ) { %>
+            <img style="border-radius: 20px"
+                src="data:image/<%=profileImage.contentType%>;base64, <%=profileImage.data.toString('base64')%>" width="300"
+                height="200">
+            <% } else { %>
+            <img style="border-radius: 20px; margin: 0px 50px 0px;" src="../images/icons/profile-image-placeholder.png" width="200"
+                height="200">
+            <% } %>
+        </div>
+
+        <!-- other data -->
+        <h4><%= firstName  %> <%= lastName  %></h4>
+
+        <p>User Type: <%= userType  %></p>
+        
+        <p>Gender: <%= profile.gender  %></p>
+        
+        <p>Year Of Admission: <%= profile.yearOfAdmission  %></p>
+        <p>Year Of Graduation: <%= profile.yearOfGraduation  %></p>
+        
+        <p>Branch: <%= profile.branch  %></p>
+        
+        <p>Bio: <%= profile.bio  %></p>
+        
+        <p>Skills</p>
+        <ul>
+            <% profile.skills.forEach(skill => { %>
+            <li><%= skill  %></li>
+            <% }) %>
+        </ul>
+        
+        <p>DOB: <% if(profile.dob && profile.dob!="") { %><%= profile.dob.toLocaleDateString()  %><% } %></p>
+        
+        <h5>Contact Details</h5>
+        <p>Contact Number: <%= profile.contact.mobile  %></p>
+        <p>Email: <%= profile.contact.email  %></p>
+        
+        <h5>Social Media</h5>
+        <p>Linkedin Profile: 
+            <% if(profile.social_media.linkedin){ %>
+                <a href="https://www.linkedin.com/in/<%= profile.social_media.linkedin  %>" target="_blank">https://www.linkedin.com/in/<%= profile.social_media.linkedin  %>
+                </a>
+            <%}%>
+        </p>
+        <p>Instagram Profile: 
+            <% if(profile.social_media.instagram){ %>
+            <a href="https://www.instagram.com/<%= profile.social_media.instagram %>" target="_blank">https://www.instagram.com/<%= profile.social_media.instagram %></a>
+            <%}%>
+        </p>
+        <p>Website: 
+            <a href="<%= profile.social_media.website  %>" target="_blank"><%= profile.social_media.website  %></a>
+        </p>
+
+        
+    </div>
+
+    <script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+    
+    <!-- to select multiple options from dropdown -->
+    <script src="../vendor/chosen/chosen.jquery.js"></script>
+    <script src="../javascripts/main.js"></script>
+    <script src="../vendor/bootstrap/js/popper.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

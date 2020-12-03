@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../vendor/chosen/chosen.min.css">
+    <link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-2 d-flex justify-content-between">
+                <a href="/">Home</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
+        <h1>Profile</h1>
+
+        <!-- profile photo -->
+        <!-- many changes requird here -->
+        <div class="my-5">
+            <% if( profileImage.data ) { %>
+                <img style="border-radius: 20px"
+                    src="data:image/<%=profileImage.contentType%>;base64, <%=profileImage.data.toString('base64')%>"
+                    width="300" height="300">
+            <% } else { %>
+                <img style="border-radius: 20px"
+                    src="../images/icons/profile-image-placeholder.png" width="300"
+                    height="300">
+            <% } %>
+        </div>
+        
+        <div class="my-5">
+        <form id="profileImageForm" action="/profile/image" enctype="multipart/form-data" method="post">
+            <div class="form-group">
+                <label for="profileImage">Upload Profile Image</label>
+                <input type="file" name="profileImage" class="form-control-file" required="required">
+            </div>
+            <div class="form-text-sm text-secondary"><i class="icofont-exclamation-circle"></i> Maximum file size is 1MB</div>
+        </form>
+        <button type="submit" form="profileImageForm" class="btn btn-primary">Update Image</button>
+        <% if( profileImage.data ) { %>
+            <form action="/profile/image?_method=DELETE" method="POST">
+                <button type="submit" class="btn btn-danger">Delete Image</button>
+            </form>
+            
+        <% }%>
+        </div>
+
+        <div class="my-5">
+        <form action="/profile" method="post">
+            <!-- first & last name -->
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" name="firstName" class="form-control" value="<%= firstName  %>">
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" name="lastName" class="form-control" value="<%= lastName  %>">
+            </div>
+            <div class="form-group">
+                <label for="userType">User Type</label>
+                <select name="userType" class="form-control" required="required">
+                    <option value="" >Select User Type</option>
+                    <option value="alumni" <% if(userType=="alumni") {%>selected="selected "<%}%> >Alumni</option>
+                    <option value="student" <% if(userType=="student") {%>selected="selected "<%}%> >Student</option>
+                </select>
+            </div>
+
+            <div class="alert alert-warning" role="alert">
+                <i class="icofont-exclamation-circle"></i> You will be logged out, if you change the First Name.
+            </div>
+            <button type="submit" class="btn btn-warning">Update Above Data</button>
+        </form>
+        </div>
+
+        <!-- other data -->
+        <div class="my-5">
+        <form action="/profile" method="post">
+
+            <!-- gender -->
+            <div class="form-group">
+                <label for="profile[gender]">Select Gender</label>
+                <br>
+                <input type="radio" id="male" name="profile[gender]" value="male" <% if(profile.gender=="male") {%>checked="checked "<%}%>  >
+                <label for="male">Male</label>
+
+                <input type="radio" id="female" name="profile[gender]" value="female" <% if (profile.gender=="female") {%>checked="checked "<%}%>>
+                <label for="female">Female</label>
+
+                <input type="radio" id="other" name="profile[gender]" value="other" <% if(profile.gender=="other") {%>checked="checked "<%}%>>
+                <label for="other">Other</label>
+            </div>
+
+            <!-- Year Of Adminssion -->
+            <div class="form-group">
+                <label for="profile[yearOfAdmission]">Year Of Adminssion</label>
+                <select name="profile[yearOfAdmission]" id="yearOfAdmission" class="form-control" >
+                    <option value=""></option>
+                    <% for( let i = 2010; i <= (new Date).getFullYear(); i++ ) { %>
+                        <% if(i==profile.yearOfAdmission) { %>
+                            <option value="<%= i %>" selected="selected"><%= i %></option>
+                        <% } else { %>
+                            <option value="<%= i %>"><%= i %></option>
+                        <% } %>
+                    <% } %>
+                </select>
+            </div>
+
+            <!-- Year Of Graduation -->
+            <div class="form-group">
+                <label for="profile[yearOfGraduation]">Year Of Graduation</label>
+                <select name="profile[yearOfGraduation]" id="yearOfGraduation" class="form-control">
+                    <option value=""></option>
+                    <% for( let i = 2010; i <= (new Date).getFullYear()+4; i++ ) { %>
+                        <% if(i==profile.yearOfGraduation) { %>
+                            <option value="<%= i %>" selected="selected"><%= i %></option>
+                        <% } else { %>
+                            <option value="<%= i %>"><%= i %></option>
+                        <% } %>
+                    <% } %>
+                </select>
+            </div>
+
+            <!-- branch -->
+            <div class="form-group">
+                <label for="profile[branch]">Branch</label>
+                <select name="profile[branch]" id="branch" class="form-control">
+                    <option value=""></option>
+                    <% ["IT", "Mech", "CS"].forEach(branch => { %>
+                        <% if(branch==profile.branch) { %>
+                            <option value="<%= branch %>" selected="selected"><%= branch %></option>
+                        <% } else { %>
+                            <option value="<%= branch %>"><%= branch %></option>
+                        <% } %>
+                    <% }) %>
+                </select>
+            </div>
+
+            <!-- bio -->
+            <div class="form-group">
+                <label for="profile[bio]">Bio</label>
+                <textarea name="profile[bio]" id="" cols="" rows="5" class="form-control" placeholder="Enter something about you..."><%= profile.bio %></textarea>
+            </div>
+
+            <!-- skills -->
+            <div class="form-group">
+                <label for="profile[skills]">Skills</label>
+                <select name="profile[skills]" id="skills" data-placeholder="type to search.." multiple class="form-control chosen-select">
+                    <option value=""></option>
+                    <% ["Web Dev", "DevOps", "Pen Test"].forEach(skill => { %>
+                        <% if( profile.skills.includes(skill) ) { %>
+                            <option selected value="<%= skill %>"><%= skill %></option>
+                    <% } else { %>
+                            <option value="<%= skill %>"><%= skill %></option>
+                        <% } %>
+                    <% }) %>
+                </select>
+            </div>
+
+            <!-- dob -->
+            <div class="form-group">
+                <label>Date Of Birth: </label>
+                <!-- safari & internet explorer doesn't support this date picker-->
+                <input type="date" name="profile[dob]"  min="1950-12-31" max="2100-12-31" <% if(profile.dob && profile.dob!="") { %>value="<%= profile.dob.toISOString().slice(0,10)  %>"<% } %>>
+            </div>
+
+            <!-- mobile -->
+            <div class="form-group">
+                <label for="profile[contact][mobile]">Mobile Number</label>
+                <input type="tel" name="profile[contact][mobile]" value= "<%= profile.contact.mobile %>" class="form-control" >
+            </div>
+
+            <!-- email -->
+            <div class="form-group">
+                <label for="profile[contact][email]">Email</label>
+                <input type="email" name="profile[contact][email]" value= "<%= profile.contact.email %>" class="form-control">
+            </div>
+
+            <!-- linkedin -->
+            <div class="form-group">
+                <label for="profile[social_media][linkedin]">LinkedIn Username</label>
+                <input type="text" name="profile[social_media][linkedin]" class="form-control" value= "<%= profile.social_media.linkedin %>" >
+            </div>
+
+            <!-- instagram -->
+            <div class="form-group">
+                <label for="profile[social_media][instagram]">Instagram Username</label>
+                <input type="text" name="profile[social_media][instagram]" class="form-control" value= <%= profile.social_media.instagram %> >
+            </div>
+
+            <!-- website -->
+            <div class="form-group">
+                <label for="profile[social_media][website]">Website</label>
+                <input type="text" name="profile[social_media][website]" id="website" class="form-control" value= <%= profile.social_media.website %> >
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Data</button>
+        </form>
+        </div>
+        
+    </div>
+    <script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+    
+    <!-- to select multiple options from dropdown -->
+    <script src="../vendor/chosen/chosen.jquery.js"></script>
+    <script src="../javascripts/main.js"></script>
+    <script src="../vendor/bootstrap/js/popper.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

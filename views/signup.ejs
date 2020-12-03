@@ -1,7 +1,71 @@
-<h1>Sign Up</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
 
-<form action="/signup" method="POST">
-    <input type="text" name="username" placeholder="username">
-    <input type="password" name="password" placeholder="password">
-    <button>Submit</button>
-</form>
+    <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.min.css">
+    <script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+    
+    <!-- to select multiple options from dropdown -->
+    <script src="../vendor/chosen/chosen.jquery.js"></script>
+</head>
+<body>
+    <div class="container ">
+        <div class="row">
+            <div class="col-2 d-flex justify-content-between">
+                <a href="/">Home</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
+
+    <h1>Sign Up</h1>
+    
+    <form action="" method="POST">
+    <div class="form-group">
+        <label for="firstName">FirstName</label>
+        <input type="text" name="firstName" placeholder="First Name" class="form-control" required="required">
+
+        <label for="lastName">LastName</label>
+        <input type="text" name="lastName" placeholder="Last Name" class="form-control" required="required">
+    </div>
+    <div class="form-group">
+        <label for="username">Email/ Username</label>
+        <input type="email" name="username" placeholder="abc@def.com" class="form-control" required="required">
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" placeholder="Password" class="form-control" required="required">
+
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" class="form-control" required="required">
+        <div id="passwordInfo" class="form-text text-muted"></div>
+        
+    </div>
+    <div class="form-group">
+        <label for="userType">Who are you?</label>
+        <select name="userType"  class="form-control" required="required" >
+            <option value="">Select User Type</option>
+            <option value="alumni">Alumni</option>
+            <option value="student">Student</option>
+        </select>
+    </div>
+        <button class="btn btn-primary">Sign Up</button>
+    </form>
+    
+    <br>
+    
+    <a href="/google">Signup Using Google</a>
+    </div>
+    
+
+
+
+
+    <script src="../javascripts/main.js"></script>
+    <script src="../vendor/bootstrap/js/popper.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
