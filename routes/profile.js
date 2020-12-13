@@ -4,10 +4,14 @@ mongoose = require("mongoose");
 
 const User = require("../models/user");
 
+const middlewares = require('../middleware/index.js');
+
 /* Multer config */
 const fs = require('fs'),
     path = require('path'),
     multer = require('multer');
+const e = require("express");
+const { connect } = require("http2");
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads')
@@ -29,7 +33,7 @@ const fileFilter = function (req, file, cb) {
     } else {
         // throw error for invalid files
         // cb(null, false);
-        return cb(new Error('Invalid file type. Only jpeg, jpg and png image files are allowed.'));
+        return cb(new multer.MulterError('INVALID_FILETYPE' ,'Invalid file type. Only jpeg, jpg and png image files are allowed.'));
     }
 };
 const upload = multer({ 
@@ -37,74 +41,125 @@ const upload = multer({
     limits: limits,
     fileFilter: fileFilter
  });
+
+let profileImageUpload = upload.single('profileImage')
 /* end multer config */
 
 /* profile route */
-router.get('/profile', isLoggedIn, function(req, res){
+router.get('/profile', middlewares.isLoggedIn, function(req, res){
     User.findById( req.user._id, {_id: 0, username: 0, __v: 0}, function(err, userData){
         if(err){
-            console.log(err);
+            req.flash("errorMessage","Something went wrong, please try again.");
+            res.render("/")
         } else {
             res.render("Profile/profile", userData);
         }
     });
 });
 
-router.post('/profile', isLoggedIn,upload.none(), function(req, res){
+router.post('/profile', middlewares.isLoggedIn, function(req, res){
     const receivedData = req.body;
-    /*
-     1. userType received & valid & firstName received & not blank
-     2. userType not recived
-    */
-    if ( (receivedData.userType && ["student", "alumni"].includes(receivedData.userType) && receivedData.firstName != "" ) || !receivedData.userType ) {
-        User.findByIdAndUpdate(req.user._id, receivedData, function(err, data){
-            if(err){
+    if(!receivedData.username && !receivedData.firstName && !receivedData.salt)
+    User.findByIdAndUpdate(req.user._id, receivedData, function(err, data){
+        if(err){
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.")
+            res.redirect("/profile");
+        } else {
+            req.flash("successMessage", "Data updated successfully.");
+            res.redirect("/profile");
+        }
+    });
+    // res.redirect('/profile');
+});
+
+router.post('/profile/accountData', middlewares.isLoggedIn, function (req, res) {
+    const receivedData = req.body;
+    if (!receivedData.receiveMsg) receivedData.receiveMsg="false";
+
+    if (receivedData.userType && ["student", "alumni"].includes(receivedData.userType) && receivedData.firstName != "" && !receivedData.username && !receivedData.hash) {
+        User.findByIdAndUpdate(req.user._id, receivedData, function (err, data) {
+            if (err) {
                 console.log(err);
-            } else if (receivedData.firstName && receivedData.firstName != req.user.firstName){
+                req.flash("errorMessage", "Something went wrong, please try again.")
+                res.redirect("/profile");
+            } else if (receivedData.firstName && receivedData.firstName != req.user.firstName) {
+                req.flash("successMessage", "Updated data & logged you out successfully.");
                 res.redirect("/logout");
             } else {
+                req.flash("successMessage", "Data updated successfully.");
                 res.redirect("/profile");
             }
         });
-    }else {
+    } else {
+        req.flash("errorMessage", "Something went wrong, please try again.");
         res.redirect('/profile');
     }
 });
-router.post('/profile/image', isLoggedIn, upload.single('profileImage'), function(req, res){
-    if(req.file){
-        const image = {
-            data: fs.readFileSync(path.join(__dirname, '..' + '/uploads/' + req.file.filename)),
-            contentType: 'image/png'
-        };
-        if(image.data) {
-            User.findByIdAndUpdate(req.user._id, { profileImage: image }, function (err, data) {
+
+router.post('/profile/image', middlewares.isLoggedIn, function(req, res){
+    profileImageUpload(req, res, function(err){
+        if (err){
+            if (err instanceof multer.MulterError){
+
+                if (err.code =="LIMIT_FILE_SIZE"){
+                    req.flash("errorMessage","Please choose a image with size upto 1MB.");
+                    res.redirect('/profile');
+                } else if (err.code =="INVALID_FILETYPE"){
+                    req.flash("errorMessage","Please choose a file of type JPG or JPEG or PNG");
+                    res.redirect('/profile');
+                } else {
+                    req.flash("errorMessage","Something went wrong with file upload.");
+                    res.redirect('/profile');
+                }
+
+            } else {
+                req.flash("errorMessage", "Something went wrong, please try again.");
+                res.redirect('/profile');
+            }
+        } else if(req.file){
+            const image = {
+                data: fs.readFileSync(path.join(__dirname, '..' + '/uploads/' + req.file.filename)),
+                contentType: 'image/png'
+            };
+            if(image.data) {
+                User.findByIdAndUpdate(req.user._id, { profileImage: image }, function (err, data) {
+                    if (err) {
+                        console.log(err);
+                        req.flash("errorMessage", "Something went wrong, please try again.");
+                        res.redirect('/profile')
+                    } else {
+                        req.flash("successMessage", "Updated profile image successfully.");
+                        res.redirect('/profile')
+                    }
+                });
+            } else {
+                req.flash("errorMessage", "Please choose a image.");
+                res.redirect('/profile')
+            }
+            const pathToFile = path.join(__dirname, '..' + '/uploads/' + req.file.filename);
+            fs.unlink(pathToFile, function(err) {
                 if (err) {
                     console.log(err);
-                } else {
-                    res.redirect("/profile");
+                    return;
                 }
             });
         } else {
-            res.redirect("/profile");
+            req.flash("errorMessage","Something went wrong, please try again.");
+            res.redirect('/profile')
         }
-        const pathToFile = path.join(__dirname, '..' + '/uploads/' + req.file.filename);
-        fs.unlink(pathToFile, function(err) {
-            if (err) {
-                console.log(err);
-                return;
-            }
-        });
-    } else {
-        res.redirect('/profile')
-    }
+    });
 });
 
-router.delete('/profile/image', isLoggedIn, function(req, res){
+router.delete('/profile/image', middlewares.isLoggedIn, function(req, res){
     User.findByIdAndUpdate(req.user._id, { profileImage: {} }, function(err, userData){
         if(err){
             console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect('/profile')
         } else {
-            res.redirect('/profile');
+            req.flash("successMessage", "Removed profile image successfully.");
+            res.redirect('/profile')
         }
     });
 });
@@ -116,7 +171,7 @@ router.get('/profile/:id', function(req, res){
         } else if(userData){
             res.render('Profile/publicProfileView', userData );
         } else {
-            res.redirect('..');
+            res.redirect('back');
         }
     })
 });
@@ -125,44 +180,57 @@ router.get('/profile/:id', function(req, res){
 
 /* communicate routes */
 
-router.get('/communicate', isLoggedIn, function(req, res){
+router.get('/communicate', middlewares.isLoggedIn, function(req, res){
     User.aggregate([
-        { $group: {
-            _id: "$userType",
-            obj: {
-                $push: {
-                    _id: "$_id",
-                    firstName: "$firstName", 
-                    lastName: "$lastName",
-                    profileImage: "$profileImage",
-                    bio: "$profile.bio",
-                    dob: "$profile.dob"
+        {
+            $match: {
+                "userType": {
+                    "$exists": true,
+                    "$ne": null
+                },
+                "receiveMsg": {
+                    "$exists": true,
+                    "$eq": true
                 }
-                // $push: "$$ROOT"
-            }
-        } 
-    }
+            } 
+        },
+        { 
+            $group: {
+                _id: "$userType",
+                obj: {
+                    $push: {
+                        _id: "$_id",
+                        firstName: "$firstName", 
+                        lastName: "$lastName",
+                        profileImage: "$profileImage",
+                        bio: "$profile.bio",
+                        dob: "$profile.dob"
+                    }
+                    // $push: "$$ROOT"
+                }
+            } 
+        }
     ]).exec(function (err, data) {
         if (err) {
-            console.log(err)
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.")
+            res.redirect("/");
+        } else if (data.length>0) {
+            // console.log(JSON.stringify(data, null, 2));
+            // let students = data[0]._id == "student" ? data[0].obj : data[1].obj;
+            // let alumni = data[0]._id == "alumni" ? data[0].obj : data[1].obj;
+            // res.render('communicate', { students: students, alumni: alumni});
+            
+            let alumni = data[0].obj;
+            res.render('communicate', {alumni: alumni});
         } else {
-            // console.log(data);
-            // console.log(data[0].obj);
-            // console.log(data[1].obj);
-            res.render('communicate', { students: data[0].obj, alumni: data[1].obj});
+            req.flash("errorMessage", "Something went wrong, please try again.")
+            res.redirect("/");
         }
     });
 });
 
 /* end communicate routes */
-
-// middleware - to check whether user is logged in or not
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect("/login");
-}
 
 
 module.exports = router;

@@ -46,9 +46,10 @@ db.admins.insert({
 - environment variables: port, ip, google client id & secret, database secret
 - add npm scrpits
 - change titles and links of views
-- user specific isLoggedIn middleware
+- user specific middlewares.isLoggedIn middleware
 - mongoose operatins without geting updated data
 - sanitize / validate form data
+- ajax calls for forms
 
 
 ## PRODUCTION CAHNGES

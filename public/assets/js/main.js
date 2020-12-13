@@ -59,6 +59,7 @@
         }, 1500, 'easeInOutExpo');
       }
     }
+
   });
 
   // Mobile Navigation
@@ -219,7 +220,7 @@
       $('#alumniProgressBarFill').attr('aria-valuenow', dataFromFile.alumniProgress)
       $('#facultyProgressBarFill').attr('aria-valuenow', dataFromFile.facultyProgress)
       },
-    async: false
+    async: true
   });
 
 })(jQuery);

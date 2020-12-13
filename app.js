@@ -1,69 +1,68 @@
-const express         = require("express"),
-        app           = express(),
-        bodyParser    = require("body-parser"),
-        mongoose      = require("mongoose"),
-        passport      = require("passport"),
-        LocalStrategy = require("passport-local"),
-        passportLocalMongoose = require("passport-local-mongoose"),
-        expressSession        = require("express-session"),
-        connectMongo          = require("connect-mongo"),
-        GoogleStrategy        = require("passport-google-oauth20"),
-        User        = require("./models/user"),
-        Showcase    = require("./models/showcase"),
-        News        = require("./models/news"),
-        Event       = require("./models/events"),
-        Admin       = require("./models/admin"),
+const express       = require("express"),
+      app           = express(),
+      bodyParser    = require("body-parser"),
+      mongoose      = require("mongoose"),
+      passport      = require("passport"),
+      LocalStrategy = require("passport-local"),
+      passportLocalMongoose = require("passport-local-mongoose"),
+      expressSession        = require("express-session"),
+      connectMongo          = require("connect-mongo"),
+      GoogleStrategy        = require("passport-google-oauth20"),
+      fs = require('fs'),
+      path = require('path'),
+      multer = require('multer'),
+      methodOverride = require('method-override'), //to use delete, put requests
+      flash = require('connect-flash');
 
-        fs = require('fs'),
-        path = require('path'),
-        multer = require('multer'),
-        methodOverride = require('method-override'); //to use delete, put requests
+const User        = require("./models/user"),
+      News        = require("./models/news"),
+      Event       = require("./models/event"),
+      Admin       = require("./models/admin");
 
 
-const e = require("express");
-/*
- * body-parser :to get data of request in expected format....
- like if we want to use username=req.body.username when a form is submitted to post route !!! without body-parse that attribute will be empty
- google it
- * 
-*/
 
 /* Importing all routes */
 const indexRoutes = require("./routes/index"),
-        newsRoutes  = require("./routes/news"),
-        eventRoutes = require("./routes/events"),
-        adminRoutes = require("./routes/admin"),
-        profileRoutes = require("./routes/profile");
+      newsRoutes  = require("./routes/news"),
+      eventRoutes = require("./routes/events"),
+      adminRoutes = require("./routes/admin"),
+      profileRoutes = require("./routes/profile");
 
 require('dotenv').config()  // loading environment variables
 
-
-// temp setup
-let mongodbURL;
-if (process.env.MONGODB_SERVER == "local"){
-    console.log("Trying to connect to local mongoDB...");
-    mongodbURL = "mongodb://localhost:27017/alumni_website";
-}
-else{
-    console.log("Trying to connect to ATLAS mongoDB...");
-    mongodbURL = process.env.MONGODB_URL;
-}
+/* start mongodb connection */
+//for temp/ development purpose
+let mongodbURL = process.env.MONGODB_SERVER == "local" ? "mongodb://localhost:27017/alumni_website" : process.env.MONGODB_URL;
 
 mongoose.connect(mongodbURL , {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
     useCreateIndex: true
-},function(err){
-    if(!err) console.log("Database is connected...");
-    else console.log("Database connection error!")
 });
+
+mongoose.connection.on('connected', function () {
+    console.log('Mongoose default connection open to ' + mongodbURL);
+});
+
+// If the connection throws an error
+mongoose.connection.on('error', function (err) {
+    console.log('Mongoose default connection error: ' + err);
+});
+
+// When the connection is disconnected
+mongoose.connection.on('disconnected', function () {
+    console.log('Mongoose default connection disconnected!');
+});
+
+/* end mpngodb connection */
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json())
 app.set("view engine", "ejs");      // required to use ejs
 app.use(express.static(__dirname + "/public")); // public directory to serve
 app.use(methodOverride("_method"));
+app.use(flash());
 
 /* passport configuration */
 const MongoStore = connectMongo(expressSession);    // for session storage
@@ -114,7 +113,6 @@ function (accessToken, refreshToken, profile, done) {
                 lastName: profile._json.family_name,
                 username: profile._json.email,
                 googleId: profile.id,
-                userType: "alumni"
                 // more details can be taken
             });
             user.save(function (err) {
@@ -148,6 +146,10 @@ passport.deserializeUser(function (user, done) {
 /* middleware to pass logged in user to every route */
 app.use(function(req, res, next){
     res.locals.loggedInUser = req.user;
+
+    res.locals.successMessage = req.flash("successMessage");
+    res.locals.errorMessage = req.flash("errorMessage");
+
     next();
 });
 
@@ -167,7 +169,8 @@ app.get('/*', function(req, res){
 });
 
 const port = process.env.PORT,
-    ip = process.env.IP;
+      ip   = process.env.IP;
+    // ip = "0.0.0.0";
 
 app.listen(port, ip, function(){
     console.log("Environmet: ",process.env.Node_ENV);

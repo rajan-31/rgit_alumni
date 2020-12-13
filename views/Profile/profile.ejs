@@ -17,6 +17,21 @@
                 <a href="/logout">Logout</a>
             </div>
         </div>
+        <!-- start flash message -->
+        <div class="container">
+            <% if(successMessage && successMessage.length>0 ){ %>
+            <div class="alert alert-success" role="alert">
+                <%= successMessage %>
+            </div>
+            <%}%>
+        		<% if(errorMessage && errorMessage.length>0 ){ %>
+            <div class="alert alert-danger" role="alert">
+                <%= errorMessage %>
+            </div>
+            <% } %>
+        </div>
+      <!-- end flash message -->
+
         <h1>Profile</h1>
 
         <!-- profile photo -->
@@ -25,33 +40,34 @@
             <% if( profileImage.data ) { %>
                 <img style="border-radius: 20px"
                     src="data:image/<%=profileImage.contentType%>;base64, <%=profileImage.data.toString('base64')%>"
-                    width="300" height="300">
+                    width="300" height="200">
             <% } else { %>
                 <img style="border-radius: 20px"
-                    src="../images/icons/profile-image-placeholder.png" width="300"
-                    height="300">
+                    src="../images/icons/profile-image-placeholder.png" width="200"
+                    height="200">
             <% } %>
         </div>
         
         <div class="my-5">
-        <form id="profileImageForm" action="/profile/image" enctype="multipart/form-data" method="post">
-            <div class="form-group">
-                <label for="profileImage">Upload Profile Image</label>
-                <input type="file" name="profileImage" class="form-control-file" required="required">
-            </div>
-            <div class="form-text-sm text-secondary"><i class="icofont-exclamation-circle"></i> Maximum file size is 1MB</div>
-        </form>
-        <button type="submit" form="profileImageForm" class="btn btn-primary">Update Image</button>
-        <% if( profileImage.data ) { %>
-            <form action="/profile/image?_method=DELETE" method="POST">
-                <button type="submit" class="btn btn-danger">Delete Image</button>
+
+            <form id="profileImageForm" action="/profile/image" enctype="multipart/form-data" method="post">
+                <div class="form-group">
+                    <label for="profileImage">Upload Profile Image</label>
+                    <input type="file" accept=".jpg,.jpeg,.png" name="profileImage" class="form-control-file" required="required">
+                </div>
+                <div class="form-text-sm text-secondary"><i class="icofont-exclamation-circle"></i> Maximum file size is 1MB</div>
             </form>
-            
-        <% }%>
+            <button type="submit" form="profileImageForm" class="btn btn-primary">Update Image</button> <!-- this button is for form above -->
+
+            <% if( profileImage.data ) { %>
+                <button type="submit" form="deleteProfileImage" class="btn btn-danger">Remove Image</button> <!-- this button is for form below -->
+                <form id="deleteProfileImage" action="/profile/image?_method=DELETE" method="POST"></form>
+            <% }%>
+
         </div>
 
         <div class="my-5">
-        <form action="/profile" method="post">
+        <form action="/profile/accountData" method="post">
             <!-- first & last name -->
             <div class="form-group">
                 <label for="firstName">First Name</label>
@@ -69,6 +85,17 @@
                     <option value="student" <% if(userType=="student") {%>selected="selected "<%}%> >Student</option>
                 </select>
             </div>
+            <!-- ask permission for contact -->
+            <%if(userType && userType=="alumni"){%>
+            <div class="form-check">
+                <div class="form-group">
+                        <input type="checkbox" name="receiveMsg" id="receiveMsg" value="true" <% if(receiveMsg) {%>checked="checked "<%}%>>
+                        <label class="form-check-label" for="receiveMsg">
+                            Would you like to get contacted by students?
+                        </label>
+                </div>
+            </div>
+            <%}%>
 
             <div class="alert alert-warning" role="alert">
                 <i class="icofont-exclamation-circle"></i> You will be logged out, if you change the First Name.
@@ -95,70 +122,10 @@
                 <label for="other">Other</label>
             </div>
 
-            <!-- Year Of Adminssion -->
-            <div class="form-group">
-                <label for="profile[yearOfAdmission]">Year Of Adminssion</label>
-                <select name="profile[yearOfAdmission]" id="yearOfAdmission" class="form-control" >
-                    <option value=""></option>
-                    <% for( let i = 2010; i <= (new Date).getFullYear(); i++ ) { %>
-                        <% if(i==profile.yearOfAdmission) { %>
-                            <option value="<%= i %>" selected="selected"><%= i %></option>
-                        <% } else { %>
-                            <option value="<%= i %>"><%= i %></option>
-                        <% } %>
-                    <% } %>
-                </select>
-            </div>
-
-            <!-- Year Of Graduation -->
-            <div class="form-group">
-                <label for="profile[yearOfGraduation]">Year Of Graduation</label>
-                <select name="profile[yearOfGraduation]" id="yearOfGraduation" class="form-control">
-                    <option value=""></option>
-                    <% for( let i = 2010; i <= (new Date).getFullYear()+4; i++ ) { %>
-                        <% if(i==profile.yearOfGraduation) { %>
-                            <option value="<%= i %>" selected="selected"><%= i %></option>
-                        <% } else { %>
-                            <option value="<%= i %>"><%= i %></option>
-                        <% } %>
-                    <% } %>
-                </select>
-            </div>
-
-            <!-- branch -->
-            <div class="form-group">
-                <label for="profile[branch]">Branch</label>
-                <select name="profile[branch]" id="branch" class="form-control">
-                    <option value=""></option>
-                    <% ["IT", "Mech", "CS"].forEach(branch => { %>
-                        <% if(branch==profile.branch) { %>
-                            <option value="<%= branch %>" selected="selected"><%= branch %></option>
-                        <% } else { %>
-                            <option value="<%= branch %>"><%= branch %></option>
-                        <% } %>
-                    <% }) %>
-                </select>
-            </div>
-
             <!-- bio -->
             <div class="form-group">
                 <label for="profile[bio]">Bio</label>
                 <textarea name="profile[bio]" id="" cols="" rows="5" class="form-control" placeholder="Enter something about you..."><%= profile.bio %></textarea>
-            </div>
-
-            <!-- skills -->
-            <div class="form-group">
-                <label for="profile[skills]">Skills</label>
-                <select name="profile[skills]" id="skills" data-placeholder="type to search.." multiple class="form-control chosen-select">
-                    <option value=""></option>
-                    <% ["Web Dev", "DevOps", "Pen Test"].forEach(skill => { %>
-                        <% if( profile.skills.includes(skill) ) { %>
-                            <option selected value="<%= skill %>"><%= skill %></option>
-                    <% } else { %>
-                            <option value="<%= skill %>"><%= skill %></option>
-                        <% } %>
-                    <% }) %>
-                </select>
             </div>
 
             <!-- dob -->
@@ -167,7 +134,47 @@
                 <!-- safari & internet explorer doesn't support this date picker-->
                 <input type="date" name="profile[dob]"  min="1950-12-31" max="2100-12-31" <% if(profile.dob && profile.dob!="") { %>value="<%= profile.dob.toISOString().slice(0,10)  %>"<% } %>>
             </div>
+            <hr><br>
 
+            <h5>Address Information</h5>
+            <!-- home address -->
+            <div class="form-group">
+                <div><strong>Home Address:</strong> </div>
+                <label for="profile[address][homeAddress][addressLine1]">Adress Line 1: </label>
+                <input type="text" name="profile[address][homeAddress][addressLine1]" value= "<%= profile.address.homeAddress.addressLine1 %>" class="form-control" >
+                <div class="form-row">
+                    <div class="col-6">
+                        <label for="profile[address][homeAddress][country]">Country: </label>
+                        <input type="text" name="profile[address][homeAddress][country]" value= "<%= profile.address.homeAddress.country %>" class="form-control">
+                    </div>
+                    <div class="col-6">
+                        <label for="profile[address][homeAddress][zipcode]">Zipcode: </label>
+                        <input type="text" name="profile[address][homeAddress][zipcode]" value= "<%= profile.address.homeAddress.zipcode %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <%if(userType && userType=="alumni"){%>
+            <!-- business address -->
+            <div class="form-group">
+                <div><strong>Business Address:</strong> </div>
+                <label for="profile[address][businessAddress][addressLine1]">Adress Line 1: </label>
+                <input type="text" name="profile[address][businessAddress][addressLine1]" value= "<%= profile.address.businessAddress.addressLine1 %>" class="form-control" >
+                <div class="form-row">
+                    <div class="col-6">
+                        <label for="profile[address][businessAddress][country]">Country: </label>
+                        <input type="text" name="profile[address][businessAddress][country]" value= "<%= profile.address.businessAddress.country %>" class="form-control">
+                    </div>
+                    <div class="col-6">
+                        <label for="profile[address][businessAddress][zipcode]">Zipcode: </label>
+                        <input type="text" name="profile[address][businessAddress][zipcode]" value= "<%= profile.address.businessAddress.zipcode %>" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <%}%>
+            <hr><br>
+            
+            <h5>Contact Information</h5>
             <!-- mobile -->
             <div class="form-group">
                 <label for="profile[contact][mobile]">Mobile Number</label>
@@ -196,6 +203,171 @@
             <div class="form-group">
                 <label for="profile[social_media][website]">Website</label>
                 <input type="text" name="profile[social_media][website]" id="website" class="form-control" value= <%= profile.social_media.website %> >
+            </div>
+            <hr><br>
+
+            <h5>Professionl Information</h5>
+            <div class="form-group">
+                <div><strong>Education at our institute</strong> </div>
+
+                <!-- Year Of Adminssion -->
+                <label for="profile[yearOfAdmission]">Year Of Adminssion</label>
+                <select name="profile[yearOfAdmission]" id="yearOfAdmission" class="mr-3">
+                    <option value=""></option>
+                    <% for( let i = 2010; i <= (new Date).getFullYear(); i++ ) { %>
+                    <% if(i==profile.yearOfAdmission) { %>
+                    <option value="<%= i %>" selected="selected"><%= i %></option>
+                    <% } else { %>
+                    <option value="<%= i %>"><%= i %></option>
+                    <% } %>
+                    <% } %>
+                </select>
+            
+                <!-- Year Of Graduation -->
+                <label for="profile[yearOfGraduation]">Year Of Graduation</label>
+                <select name="profile[yearOfGraduation]" id="yearOfGraduation" class="mr-3">
+                    <option value=""></option>
+                    <% for( let i = 2010; i <= (new Date).getFullYear()+4; i++ ) { %>
+                    <% if(i==profile.yearOfGraduation) { %>
+                    <option value="<%= i %>" selected="selected"><%= i %></option>
+                    <% } else { %>
+                    <option value="<%= i %>"><%= i %></option>
+                    <% } %>
+                    <% } %>
+                </select>
+            
+                <!-- branch -->
+                <label for="profile[branch]">Branch</label>
+                <select name="profile[branch]" id="branch" class="mr-3">
+                    <option value=""></option>
+                    <% ["IT", "Mech", "CS"].forEach(branch => { %>
+                    <% if(branch==profile.branch) { %>
+                    <option value="<%= branch %>" selected="selected"><%= branch %></option>
+                    <% } else { %>
+                    <option value="<%= branch %>"><%= branch %></option>
+                    <% } %>
+                    <% }) %>
+                </select>
+            </div>
+
+            <%if(userType && userType=="alumni"){%>
+            <!-- Work Experience -->
+
+            <div class="form-group">
+                <div><strong>Work Experience</strong></div>
+                    <% if(Object.entries(profile.workExperience.employer).length>0) { %>
+                        <% for(let j=0; j< Object.entries(profile.workExperience.employer).length; j++){ %>
+                        <div class="bg-secondary my-3 px-2 py-2">
+                            <button type="button" class="removeWork">
+                                X
+                            </button>
+                            
+                            <div class="row">
+                                <div class="form-group col-6">
+                                    <label for="employer">Employer</label>
+                                    <input type="text" name="profile[workExperience][employer]" class="form-control" value="<%= profile.workExperience.employer[j] %>"
+                                        required="required">
+                                </div>
+                                <div class="form-group col-3">
+                                    <label for="jobTitle">Job Title</label>
+                                    <input type="text" name="profile[workExperience][jobTitle]" class="form-control" value="<%= profile.workExperience.jobTitle[j] %>"
+                                        required="required">
+                                </div>
+                        
+                                <div class="form-group col-3">
+                                    <label for="jobDomain">Job Domain</label>
+                                    <input type="text" name="profile[workExperience][jobDomain]" class="form-control" value="<%= profile.workExperience.jobDomain[j] %>"
+                                        required="required">
+                                </div>
+                        
+                                <div class="form-group col-6">
+                                    <label for="jobFrom">job From</label>
+                                    <input type="date" name="profile[workExperience][jobFrom]" class="form-control" value="<%= profile.workExperience.jobFrom[j] %>"
+                                        required="required">
+                                </div>
+                        
+                                <div class="form-group col-6">
+                                    <label for="jobTill">Job Till</label>
+                                    <input type="date" name="profile[workExperience][jobTill]" class="form-control" value="<%= profile.workExperience.jobTill[j] %>">
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                    <% } %>
+
+                <div id="addedWork">
+                </div>
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-outline-dark btn-block" data-toggle="modal" data-target="#addWorkModal">
+                <i class="icofont-ui-add"></i> Add more
+            </button>
+            
+            <!-- Modal -->
+            <div class="modal fade" id="addWorkModal" tabindex="-1" role="dialog" aria-labelledby="addWorkModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addWorkModalLabel">Add Education</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="workModalData">
+                                
+                                <div class="form-group">
+                                    <label for="employer">Employer</label>
+                                    <input type="text" id="workModalData-employer" class="form-control">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="jobTitle">Job Title</label>
+                                    <input type="text" id="workModalData-jobTitle" class="form-control">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="jobDomain">Job Domain</label>
+                                    <input type="text" id="workModalData-jobDomain"  class="form-control">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="jobFrom">job From</label>
+                                    <input type="date" id="workModalData-jobFrom"  class="form-control">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="jobTill">Job Till</label>
+                                    <input type="date" id="workModalData-jobTill"  class="form-control">
+                                </div>
+                                <div class="form-text-sm text-secondary"><i class="icofont-exclamation-circle"></i> Do not mention "Job Till" if it's your current job. </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="workModalButton" class="btn btn-primary">ADD</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <%}%>
+
+            <!-- skills -->
+            <div class="form-group">
+                <label for="profile[skills]">Skills</label>
+                <select name="profile[skills]" id="skills" data-placeholder="type to search.." multiple
+                    class="form-control chosen-select">
+                    <option value=""></option>
+                    <% ["Web Dev", "DevOps", "Pen Test"].forEach(skill => { %>
+                    <% if( profile.skills.includes(skill) ) { %>
+                    <option selected value="<%= skill %>"><%= skill %></option>
+                    <% } else { %>
+                    <option value="<%= skill %>"><%= skill %></option>
+                    <% } %>
+                    <% }) %>
+                </select>
             </div>
 
             <button type="submit" class="btn btn-primary">Update Data</button>

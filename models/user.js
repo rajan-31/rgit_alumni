@@ -6,9 +6,28 @@ const profileSchema = new mongoose.Schema({
     yearOfAdmission: String,
     yearOfGraduation: String,
     branch: String,
+    workExperience: {
+        employer: [String],
+        jobTitle: [String],
+        jobDomain: [String],
+        jobFrom: [String],
+        jobTill: [String]
+    },
     bio: String,
     skills: [String],
     dob: Date,
+    address: {
+        homeAddress: {
+            addressLine1: String,
+            country: String,
+            zipcode: String
+        },
+        businessAddress: {
+            addressLine1: String,
+            country: String,
+            zipcode: String
+        }
+    },
     contact: {
         mobile: String,
         email: String
@@ -17,7 +36,7 @@ const profileSchema = new mongoose.Schema({
         linkedin: String,
         instagram: String,
         website: String
-    }
+    },
 });
 
 const userSchema = new mongoose.Schema({
@@ -27,6 +46,7 @@ const userSchema = new mongoose.Schema({
     googleId: String,
     password: String,
     userType: String,
+    receiveMsg: Boolean,
     profileImage: {
         data: Buffer,
         contentType: String
@@ -40,6 +60,18 @@ const userSchema = new mongoose.Schema({
             branch: "",
             bio: "",
             dob: "",
+            address: {
+                homeAddress: {
+                    addressLine1: "",
+                    country: "",
+                    zipcode: ""
+                },
+                businessAddress: {
+                    addressLine1: "",
+                    country: "",
+                    zipcode: ""
+                }
+            },
             contact: {
                 mobile: "",
                 email: ""
