@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Edit News</title>
+    <title>Edit Event</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
@@ -14,7 +14,9 @@
     <link href="../../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -30,22 +32,24 @@
 
 
 </head>
+
 <body>
 
     <!-- ======= Header ======= -->
     <header id="header" class="fixed-top header-inner-pages">
         <div class="container d-flex align-items-center">
-    
-            <h1 class="align-items-center mr-auto"><a href="/"><img src="../../assets/img/logo.png" height="100"></a></h1>
+
+            <h1 class="align-items-center mr-auto"><a href="/"><img src="../../assets/img/logo.png" height="100"></a>
+            </h1>
             <h1 class="logo mr-auto"><a href="/"></a></h1>
             <!-- Uncomment below if you prefer to use an image logo -->
             <!-- <a href="index.html" class="logo mr-auto"><img src="../assets/img/logo.png" alt="" class="img-fluid"></a>-->
-    
+
             <nav class="nav-menu d-none d-lg-block">
                 <ul>
                     <li><a href="/">Home</a></li>
-                    <li class="active"><a href="/news">News</a></li>
-                    <li><a href="/events">Events</a></li>
+                    <li><a href="/news">News</a></li>
+                    <li class="active"><a href="/events">Events</a></li>
                     <li><a href="/contribute">Contribute</a></li>
                     <li><a href="/communicate">Communicate</a></li>
 
@@ -65,9 +69,9 @@
                     <% } %>
                 </ul>
             </nav><!-- .nav-menu -->
-    
-    
-    
+
+
+
         </div>
     </header><!-- End Header -->
 
@@ -79,15 +83,15 @@
 
                 <ol>
                     <li><a href="/">Home</a></li>
-                    <li><a href="/news">News</a></li>
-                    <li>News Edit</li>
+                    <li><a href="/events">Events</a></li>
+                    <li>Event Edit</li>
                 </ol>
-                <h2>News Details</h2>
+                <h2>Event Details</h2>
 
             </div>
         </section><!-- End Breadcrumbs -->
 
-        
+
         <!-- ======= Portfolio Details Section ======= -->
         <section id="portfolio-details" class="portfolio-details">
             <div class="container">
@@ -95,48 +99,52 @@
                 <div class="portfolio-details-container">
 
                     <div class="owl-carousel portfolio-details-carousel">
-                        <% news.images.forEach(function(item){ %>
-                                <img src="data:image/<%=item.contentType%>;base64, <%=item.data.toString('base64')%>">
+                        <% event.images.forEach(function(item){ %>
+                        <img src="data:image/<%=item.contentType%>;base64, <%=item.data.toString('base64')%>">
                         <%})%>
-                        
+
                     </div>
 
                     <div class="portfolio-info">
-                        <h3>News information</h3>
+                        <h3>Event information</h3>
                         <ul>
                             <!-- <li><strong>Branch</strong>: All</li> -->
-                            <li><strong>Date</strong>: <%= news.date.toGMTString().slice(0,16) %></li>
+                            <li><strong>Date</strong>: <%= event.date.toGMTString().slice(0,16) %></li>
                         </ul>
                     </div>
 
                 </div>
                 <div class="portfolio-description">
-                    <h4>Edit News</h4>
+                    <h4>Edit Event</h4>
                     <div class="form-group">
-                        <form action="/news/<%= news._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+                        <form action="/events/<%= event._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label>Title</label>
-                                <input type="text" name="title" placeholder="Title" class="form-control" value="<%= news.title %>">
-                            </div>
-                            <br>
-                            <div class="form-group">
-                                <label>Date: </label>
-                                <!-- safari & internet explorer doesn't support this date picker-->
-                                <input type="date" id="" name="date" value=<%= news.date.toISOString().slice(0,10) %> min="2010-01-01" max="2100-12-31">
-                            </div>
-                            <div class="form-group">
-                                <label>Description</label>
-                                <textarea name="desc" class="form-control" rows="5"><%= news.description %></textarea>
-                            </div>
-                            <div class="form-group" >
-                                <label for="images">Update Image</label>
-                                <input type="file" name="images" class="form-control-file" multiple>
-                            </div>
-                            <div class="alert alert-warning" role="alert">
-                                <i class="icofont-exclamation-circle"></i>
-                                To change data other than images don't choose any file.
-                            </div>
-                            <button type="submit" class="btn btn-primary">Update</button>
+                                <input type="text" name="title" placeholder="Title" class="form-control"
+                                    value="<%= event.title %>" >
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <label>Date: </label>
+                                    <!-- safari & internet explorer doesn't support this date picker-->
+                                    <input type="date" id="" name="date"
+                                        value=<%= event.date.toISOString().slice(0,10) %> min="2010-01-01"
+                                        max="2100-12-31">
+                                </div>
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea name="desc" class="form-control"
+                                        rows="5"><%= event.description %></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="images">Update Image</label>
+                                    <input type="file" name="images" class="form-control-file" multiple>
+                                </div>
+                                <div class="alert alert-warning" role="alert">
+                                    <i class="icofont-exclamation-circle"></i>
+                                    To change data other than images don't choose any file.
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update</button>
                         </form>
                     </div>
                 </div>

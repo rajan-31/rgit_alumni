@@ -91,10 +91,7 @@
     
             <div class="section-title">
               <h2>News</h2>
-             
-    
             </div>
-    
             <div class="row">
               <!-- 
               <div class="col-xl-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
@@ -112,12 +109,12 @@
     
               <% news.forEach(function(item){ %>
     
-                <div class="col-xl-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+                <div class="col-xl-4 col-md-6 d-flex align-items-stretch mb-3" data-aos="zoom-in" data-aos-delay="100">
                   <div class="icon-box">
                 
                     <div>
-                      <center><img style="border-radius: 20px" src="data:image/<%=item.image.contentType%>;base64, 
-                <%=item.image.data.toString('base64')%>" width="300" height="200"></center>
+                      <center><img style="border-radius: 20px" src="data:image/<%=item.images[0].contentType%>;base64, 
+                <%=item.images[0].data.toString('base64')%>" width="300" height="200"></center>
                     </div>
                     <hr>
                     <center>
@@ -137,9 +134,8 @@
                     <% } %>
     
                     <hr><br>
-                
-                    <center>
-                      <h4><a href="/news/<%= item._id %> ">More Info</a></h4>
+                    <center >
+                      <h4 ><a  href="/news/<%= item._id %> ">More Info</a></h4>
                     </center>
                 
                   </div>

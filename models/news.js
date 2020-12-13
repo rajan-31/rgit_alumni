@@ -4,10 +4,10 @@ const mongoose    = require("mongoose");
 const newsSchema = new mongoose.Schema({
     title: String,
     date: Date,
-    image: {
+    images: [{
         data: Buffer,
         contentType: String
-    },
+        }],
     description: String,
 });
 module.exports = mongoose.model("News", newsSchema);

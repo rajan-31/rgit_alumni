@@ -30,10 +30,25 @@
 </head>
 
 <body>
+    <!-- start flash message -->
+    <% if(successMessage && successMessage.length>0 ){ %>
+    <div class="alert alert-success mb-0" role="alert">
+        <div class="container text-center">
+            <%= successMessage %>
+        </div>
+    </div>
+    <% } else if(errorMessage && errorMessage.length>0 ){ %>
+    <div class="alert alert-danger mb-0" role="alert">
+        <div class="container text-center">
+            <%= errorMessage %>
+        </div>
+    </div>
+    <% } %>
+    <!-- end flash message -->
 
     <div class="limiter">
         <div class="container-login100">
-            <div class="wrap-login100 p-t-90 p-b-30">
+            <div class="wrap-login100 p-t-40 p-b-30">
 
                 <span class="login100-form-title p-b-40" style="color: #37517E;">
                     Welcome to APSIT <br>Alumini Portal
@@ -64,6 +79,12 @@
                     </div>
                     <br>
                 </form>
+
+                <div class="flex-col-c p-t-10">
+                    <a href="/login" class="txt3 bo1 hov1 p-t-40">
+                        User Login
+                    </a>
+                </div>
 
             </div>
         </div>

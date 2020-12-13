@@ -30,54 +30,85 @@
             <% } %>
         </div>
 
-        <!-- other data -->
-        <h4><%= firstName  %> <%= lastName  %></h4>
+            <!-- other data -->
+            <h4><%= firstName  %> <%= lastName  %></h4>
 
-        <p>User Type: <%= userType  %></p>
-        
-        <p>Gender: <%= profile.gender  %></p>
-        
-        <p>Year Of Admission: <%= profile.yearOfAdmission  %></p>
-        <p>Year Of Graduation: <%= profile.yearOfGraduation  %></p>
-        
-        <p>Branch: <%= profile.branch  %></p>
-        
-        <p>Bio: <%= profile.bio  %></p>
-        
-        <p>Skills</p>
-        <ul>
-            <% profile.skills.forEach(skill => { %>
-            <li><%= skill  %></li>
-            <% }) %>
-        </ul>
-        
-        <p>DOB: <% if(profile.dob && profile.dob!="") { %><%= profile.dob.toLocaleDateString()  %><% } %></p>
-        
-        <h5>Contact Details</h5>
-        <p>Contact Number: <%= profile.contact.mobile  %></p>
-        <p>Email: <%= profile.contact.email  %></p>
-        
-        <h5>Social Media</h5>
-        <p>Linkedin Profile: 
-            <% if(profile.social_media.linkedin){ %>
-                <a href="https://www.linkedin.com/in/<%= profile.social_media.linkedin  %>" target="_blank">https://www.linkedin.com/in/<%= profile.social_media.linkedin  %>
-                </a>
+            <p>User Type: <%= userType  %></p>
+            
+            <p>Gender: <%= profile.gender  %></p>
+                        
+            <p>Bio: <%= profile.bio  %></p>
+            
+            <p>DOB: <% if(profile.dob && profile.dob!="") { %><%= profile.dob.toLocaleDateString()  %><% } %></p>
+            
+            <h5>Contact Details</h5>
+            <p>Contact Number: <%= profile.contact.mobile  %></p>
+            <p>Email: <%= profile.contact.email  %></p>
+            
+            <h5>Address Information</h5>
+            <strong><p>Home Address</p></strong>
+            <p><%= profile.address.homeAddress.addressLine1 %></p>
+            <p><%= profile.address.homeAddress.country %></p>
+            <p><%= profile.address.homeAddress.zipcode %></p>
+
+            <%if(userType && userType=="alumni"){%>
+            <strong><p>Business Address</p></strong>
+            <p><%= profile.address.businessAddress.addressLine1 %></p>
+            <p><%= profile.address.businessAddress.country %></p>
+            <p><%= profile.address.businessAddress.zipcode %></p>
             <%}%>
-        </p>
-        <p>Instagram Profile: 
-            <% if(profile.social_media.instagram){ %>
-            <a href="https://www.instagram.com/<%= profile.social_media.instagram %>" target="_blank">https://www.instagram.com/<%= profile.social_media.instagram %></a>
-            <%}%>
-        </p>
-        <p>Website: 
-            <a href="<%= profile.social_media.website  %>" target="_blank"><%= profile.social_media.website  %></a>
-        </p>
 
-        
-    </div>
+            <h5>Social Media</h5>
+            <p>Linkedin Profile: 
+                <% if(profile.social_media.linkedin){ %>
+                    <a href="https://www.linkedin.com/in/<%= profile.social_media.linkedin  %>" target="_blank">https://www.linkedin.com/in/<%= profile.social_media.linkedin  %>
+                    </a>
+                    <%}%>
+                </p>
+                <p>Instagram Profile: 
+                    <% if(profile.social_media.instagram){ %>
+                        <a href="https://www.instagram.com/<%= profile.social_media.instagram %>" target="_blank">https://www.instagram.com/<%= profile.social_media.instagram %></a>
+                        <%}%>
+                    </p>
+                    <p>Website: 
+                        <a href="<%= profile.social_media.website  %>" target="_blank"><%= profile.social_media.website  %></a>
+                    </p>
+                
+            <h5>Professionl Information</h5>
+            <p>Year Of Admission: <%= profile.yearOfAdmission  %></p>
+            <p>Year Of Graduation: <%= profile.yearOfGraduation  %></p>
+            <p>Branch: <%= profile.branch  %></p>
+            
+            <%if(userType && userType=="alumni"){%>
+            <% if(Object.entries(profile.workExperience.employer).length>0) { %>
+            <p> <strong>Work Experience</strong></p>
+                <% for(let j=0; j< Object.entries(profile.workExperience.employer).length; j++){ %>
 
+                <div class="bg-secondary my-3 px-2 py-2">
+                <div class="row">
+                    <div class="form-group col-6"><p>Employer: <%= profile.workExperience.employer[j] %> </p></div>
+                    <div class="form-group col-3"><p>Job Title: <%= profile.workExperience.jobTitle[j] %> </p></div>
+                    <div class="form-group col-3"><p>Job Domain: <%= profile.workExperience.jobDomain[j] %> </p></div>
+                    <div class="form-group col-6"><p>Job From: <%= profile.workExperience.jobFrom[j] %> </p></div>
+                    <div class="form-group col-6"><p>Job Till: <%= profile.workExperience.jobTill[j] %> </p></div>
+                </div>
+                </div>
+
+                <% } %>
+            <% } %>
+            <% } %>
+
+            <p> <strong>Skills</strong></p>
+            <ul>
+                <% profile.skills.forEach(skill => { %>
+                <li><%= skill  %></li>
+                <% }) %>
+            </ul>
+                    
+        </div>
+                
     <script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
-    
+                
     <!-- to select multiple options from dropdown -->
     <script src="../vendor/chosen/chosen.jquery.js"></script>
     <script src="../javascripts/main.js"></script>

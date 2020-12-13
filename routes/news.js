@@ -4,6 +4,8 @@ mongoose = require("mongoose");
 
 const News = require("../models/news");
 
+const middlewares = require('../middleware/index.js');
+
 /* Multer config */
 const fs = require('fs'),
     path = require('path'),
@@ -17,8 +19,8 @@ const storage = multer.diskStorage({
     }
 });
 const limits = {
-    files: 1,
-    fileSize: 1024 * 1024 * 5, // 1 MB (max file size)
+    files: 5,
+    fileSize: 1024 * 1024 * 5, // 5 MB (max file size)
 }
 const fileFilter = function (req, file, cb) {
     var allowedMimes = ['image/jpeg', 'image/jpg', 'image/png'];     // supported image file mimetypes
@@ -29,7 +31,7 @@ const fileFilter = function (req, file, cb) {
     } else {
         // throw error for invalid files
         cb(null, false);
-        cb(new Error('Invalid file type. Only jpeg, jpg and png image files are allowed.'));
+        cb(new multer.MulterError('INVALID_FILETYPE', 'Invalid file type. Only jpeg, jpg and png image files are allowed.'));
     }
 };
 const upload = multer({
@@ -37,124 +39,187 @@ const upload = multer({
     limits: limits,
     fileFilter: fileFilter
 });
+let uploadNewsImages = upload.array('images', 5);
 /* end multer config */
 
 
-router.get("/news", isLoggedIn, function(req, res){
-    News.find({}, function(err, allNews){
-        if(err){
+router.get("/news", middlewares.isLoggedIn, function(req, res){
+    News.find({}, { images: { $slice: 1 } }, function(err, allNews){
+        if(err) {
             console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.")
+            res.redirect("/")
         } else {
             res.render("News/news", {news: allNews});
         }
     }).sort({ date: -1 });
 });
 
-router.post("/news", isAdmin, upload.single('image'), function(req, res){
-    const title = req.body.title;
-    const date = req.body.date;
-    const image = {
-        data: fs.readFileSync(path.join(__dirname , '..'+ '/uploads/' + req.file.filename)),
-        contentType: 'image/png'
-    };
-    const desc = req.body.desc;
-    const newNews = {title: title, date: new Date(date), image: image, description: desc};
-    News.create(newNews, function(err, newlyCreated){
-        if(err){
-            console.log(err);
-        } else{
-            res.redirect("/admin");
-        }
-    });
-    const pathToFile = path.join(__dirname, '..' + '/uploads/' + req.file.filename);
-    fs.unlink(pathToFile, function (err) {
+router.post("/news", middlewares.isAdmin, function(req, res){
+    uploadNewsImages(req, res, function(err){
         if (err) {
-            console.log(err);
-            return;
+            if (err instanceof multer.MulterError) {
+
+                if (err.code == "LIMIT_FILE_SIZE") {
+                    req.flash("errorMessage", "Please choose images with size upto 5MB.");
+                    res.redirect('/admin');
+                } else if (err.code == "INVALID_FILETYPE") {
+                    req.flash("errorMessage", "Please choose files of type JPG or JPEG or PNG");
+                    res.redirect('/admin');
+                } else if (err.code == "LIMIT_FILE_COUNT"){
+                    req.flash("errorMessage", "Please choose 5 or less images.");
+                    res.redirect('/admin');
+                } else {
+                    console.log(err);
+                    req.flash("errorMessage", "Something went wrong with file upload.");
+                    res.redirect('/admin');
+                }
+
+            } else {
+                req.flash("errorMessage", "Something went wrong, please try again.");
+                res.redirect('/admin');
+            }
+        } else if(req.files){
+            const title = req.body.title;
+            const date = req.body.date;
+            let images = [];
+        
+            const pathToFile = path.join(__dirname, '..' + '/uploads/');
+            req.files.forEach(function(item){
+                const image = {
+                    data: fs.readFileSync(pathToFile + item.filename),
+                    contentType: item.mimetype
+                };
+                images.push(image);
+            });
+            /* delete files */
+            req.files.forEach(function (item) {
+                fs.unlink(pathToFile + item.filename, function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    return;
+                });
+            });
+            const desc = req.body.desc;
+            const newNews = {title: title, date: new Date(date), images: images, description: desc};
+            News.create(newNews, function(err, newlyCreated){
+                if(err){
+                    console.log(err);
+                    req.flash("errorMessage", "Something went wrong, please try again.");
+                    res.redirect('/admin');
+                } else{
+                    req.flash("successMessage", "Added new news successfully.");
+                    res.redirect('/admin');
+                }
+            });
+            
         }
     });
 });
 
-// router.get("/news/new", function(req, res){
-//     res.render("News/newNews");
-// });
 
-// this route is after "/news/new" because it will accept anything after "/news/" that means "new" also which will make "/news/new" useless
-router.get("/news/:id", isLoggedIn, function(req, res){
+router.get("/news/:id", middlewares.isLoggedIn, function(req, res){
     //to get item by id
     News.findById(mongoose.Types.ObjectId(req.params.id), function(err, foundNews){
         if(err){
             console.log(err);
-        } else{
+            res.redirect('/news')
+        } else if (foundNews) {
             res.render("News/showNews", {news: foundNews});
+        } else {
+            res.redirect('/news');
         }
     });
 
 });
 
-router.delete("/news/:id", isAdmin, function(req, res){
+router.delete("/news/:id", middlewares.isAdmin, function(req, res){
     News.findByIdAndRemove(mongoose.Types.ObjectId(req.params.id), function (err) {
         if (err) {
-            res.redirect("/admin")
+            req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect('/admin');
         } else {
-            res.redirect("/admin");
+            req.flash("successMessage", "Deleted news successfully.");
+            res.redirect('/admin');
         }
     });
 });
 
-router.put("/news/:id", isAdmin, upload.single('image'), function (req, res) {
-    // console.log(req.params.id)
-    // console.log(req.body.title)
-    // console.log(req.file)
-    const title = req.body.title;
-    const date = req.body.date;
-    const desc = req.body.desc;
+router.put("/news/:id", middlewares.isAdmin, function (req, res) {
+    uploadNewsImages(req, res, function (err) {
+        if(err){
+            if (err instanceof multer.MulterError) {
 
-    let newsData;
-    if(req.file){
-        const image = {
-            data: fs.readFileSync(path.join(__dirname, '..' + '/uploads/' + req.file.filename)),
-            contentType: 'image/png'
-        };
-        newsData = { title: title, date: new Date(date), image: image, description: desc };
-    } else{
-        newsData = { title: title, date: new Date(date), description: desc };
-    }
+                if (err.code == "LIMIT_FILE_SIZE") {
+                    req.flash("errorMessage", "Please choose images with size upto 5MB.");
+                    res.redirect('/admin');
+                } else if (err.code == "INVALID_FILETYPE") {
+                    req.flash("errorMessage", "Please choose files of type JPG or JPEG or PNG");
+                    res.redirect('/admin');
+                } else {
+                    req.flash("errorMessage", "Something went wrong with file upload.");
+                    res.redirect('/admin');
+                }
 
-    News.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), newsData, function (err) {
-        if (err) {
-            res.redirect("/admin");
+            } else {
+                req.flash("errorMessage", "Something went wrong, please try again.");
+                res.redirect('/admin');
+            }
         } else {
-            res.redirect("/admin");
+            const title = req.body.title;
+            const date = req.body.date;
+            const desc = req.body.desc;
+        
+            let newsData;
+            if (req.files && req.files.length > 0){
+                let images = [];
+                const pathToFile = path.join(__dirname, '..' + '/uploads/');
+                req.files.forEach(function (item) {
+                    const image = {
+                        data: fs.readFileSync(pathToFile + item.filename),
+                        contentType: item.mimetype
+                    };
+                    images.push(image)
+                });
+                newsData = { title: title, date: new Date(date), images: images, description: desc };
+                req.files.forEach(function (item) {
+                    fs.unlink(pathToFile + item.filename, function (err) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        return;
+                    });
+                });
+            } else{
+                newsData = { title: title, date: new Date(date), description: desc };
+            }
+        
+            News.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), newsData, function (err) {
+                if (err) {
+                    console.log(err);
+                    req.flash("errorMessage", "Something went wrong, please try again.");
+                    res.redirect("/admin");
+                } else {
+                    req.flash("successMessage", "News updated successfully.");
+                    res.redirect("/admin");
+                }
+            });
         }
     });
 });
 
-router.get("/news/:id/edit", isAdmin, function (req, res) {
+router.get("/news/:id/edit", middlewares.isAdmin, function (req, res) {
     News.findById(mongoose.Types.ObjectId(req.params.id), function (err, foundNews) {
         if (err) {
             console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.")
+            res.redirect('/admin')
         } else {
             res.render("News/editNews", { news: foundNews });
         }
     });
 });
-
-
-// middleware - to check whether user is logged in or not
-function isLoggedIn(req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    }
-    res.redirect("/login");
-}
-// middleware - to check whether admin is logged in or not
-function isAdmin(req, res, next) {
-    if (req.isAuthenticated() && req.user.role == "admin") {
-        return next();
-    }
-    res.redirect("/admin/login");
-}
 
 
 module.exports = router;

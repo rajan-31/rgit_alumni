@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "set Node_ENV=development& nodemon app.js",
+    "start": "set Node_ENV=development& node app.js",
     "local": "set Node_ENV=development& set MONGODB_SERVER=local& nodemon app.js",
     "test": ""
   },
@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "connect-flash": "^0.1.1",
     "connect-mongo": "^3.2.0",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",

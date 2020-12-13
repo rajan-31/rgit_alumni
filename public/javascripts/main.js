@@ -87,6 +87,61 @@
     $("#password, #confirmPassword").keyup(checkPasswordMatch);
     /* password match for signup page end  */
 
+    $('#workModalButton').click(function(){
+        let employer = $('#workModalData-employer').val(), 
+            jobTitle = $('#workModalData-jobTitle').val(), 
+            jobDomain = $('#workModalData-jobDomain').val(), 
+            jobFrom = $('#workModalData-jobFrom').val(), 
+            jobTill = $('#workModalData-jobTill').val();
+
+        if (employer && jobTitle && jobDomain && jobFrom){
+
+            $('#addedWork').append(
+                `
+                <div class="bg-secondary my-3 px-2 py-2">
+                    <button type="button" class="removeWork">
+                        X
+                    </button>
+                    <div class="row">
+                    <div class="form-group col-6">
+                        <label for="employer">Employer</label>
+                        <input type="text" name="profile[workExperience][employer]" class="form-control" value="${employer}" required="required">
+                    </div>
+                    <div class="form-group col-3">
+                        <label for="jobTitle">Job Title</label>
+                        <input type="text" name="profile[workExperience][jobTitle]" class="form-control" value="${jobTitle}" required="required">
+                    </div>
+                
+                    <div class="form-group col-3">
+                        <label for="jobDomain">Job Domain</label>
+                            <input type="text" name="profile[workExperience][jobDomain]" class="form-control" value="${jobDomain}" required="required">
+                    </div>
+                                    
+                    <div class="form-group col-6">
+                        <label for="jobFrom">job From</label>
+                        <input type="date" name="profile[workExperience][jobFrom]" class="form-control" value="${jobFrom}" required="required">
+                    </div>
+                
+                    <div class="form-group col-6">
+                        <label for="jobTill">Job Till</label>
+                        <input type="date" name="profile[workExperience][jobTill]" class="form-control" value="${jobTill}">
+                    </div>
+                    </div>
+                </div>
+                `);
+            
+            $(this).attr('data-dismiss', 'modal')
+        }
+        $('.removeWork').click(function () {
+            $(this).closest('div').remove();
+        });
+    });
+
+    $(document).ready(function () {
+        $('.removeWork').click(function () {
+            $(this).closest('div').remove();
+        });
+    });
 
 })(jQuery);
 

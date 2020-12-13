@@ -78,10 +78,8 @@
   
     </div>
   </header><!-- End Header -->
-
   <!-- ======= Hero Section ======= -->
   <section id="hero" class="d-flex align-items-center">
-
     <div class="container">
       <div class="row">
         <div class="col-lg-6 d-flex flex-column justify-content-center pt-4 pt-lg-0 order-2 order-lg-1" data-aos="fade-up" data-aos-delay="200">
@@ -97,9 +95,25 @@
         </div>
       </div>
     </div>
-
+    
   </section><!-- End Hero -->
 
+  <!-- start flash message -->
+  <% if(successMessage && successMessage.length>0 ){ %>
+    <div class="alert alert-success mb-0" role="alert">
+      <div class="container text-center">
+        <%= successMessage %>
+      </div>
+    </div>
+  <% } else if(errorMessage && errorMessage.length>0 ){ %>
+    <div class="alert alert-danger mb-0" role="alert">
+      <div class="container text-center">
+        <%= errorMessage %>
+      </div>
+    </div>
+  <% } %>
+  <!-- end flash message -->
+  
   <main id="main">
 
     <!-- ======= Cliens Section ======= -->
@@ -351,8 +365,8 @@
             <div class="icon-box">
           
               <div>
-                <center><img style="border-radius: 20px" src="data:image/<%=item.image.contentType%>;base64, 
-                      <%=item.image.data.toString('base64')%>" width="300" height="200"></center>
+                <center><img style="border-radius: 20px" src="data:image/<%=item.images[0].contentType%>;base64, 
+                      <%=item.images[0].data.toString('base64')%>" width="300" height="200"></center>
               </div>
               <hr>
               <center>
@@ -385,6 +399,56 @@
     </div>
     </section>
     <!-- ====== End News ====== -->
+    <!-- ======= EVENTS ========= -->
+
+    <section id="services" class="services section-bg">
+    <div class="container" data-aos="fade-up">
+    
+        <div class="section-title">
+        <h2>Latest Events</h2>
+        </div>
+        
+        <div class="row">
+          <% events.forEach(function(item){ %>
+          
+          <div class="col-xl-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+            <div class="icon-box">
+          
+              <div>
+                <center><img style="border-radius: 20px" src="data:image/<%=item.images[0].contentType%>;base64, 
+                      <%=item.images[0].data.toString('base64')%>" width="300" height="200"></center>
+              </div>
+              <hr>
+              <center>
+                <h4><a href="/events "><%= item.title %></a></h4>
+              </center>
+          
+              <center>
+                <ion-icon name="calendar-outline"></ion-icon>
+                <%= item.date.toGMTString().slice(0,16) %>
+              </center>
+              <br>
+          
+              <% if(item.description.length>200){%>
+              <p><%= item.description.slice(0,197)+"..." %></p>
+              <% }else{ %>
+              <p><%= item.description + " ".repeat(200-item.description.length) %></p>
+              <% } %>
+          
+              <hr><br>
+          
+              <center>
+                <h4><a href="/events ">View More</a></h4>
+              </center>
+          
+            </div>
+          </div>
+          <% }); %>
+        </div>
+
+    </div>
+    </section>
+    <!-- ====== End EVENTS ====== -->
 
     <!-- ======= Contact Section ======= -->
     <footer id="footer">

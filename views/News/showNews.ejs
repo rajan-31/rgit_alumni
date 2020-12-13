@@ -100,8 +100,13 @@
         <div class="portfolio-details-container">
 
           <div class="owl-carousel portfolio-details-carousel">
-            <img src="data:image/<%=news.image.contentType%>;base64, 
-                <%=news.image.data.toString('base64')%>">
+            <% news.images.forEach(function(item){ %>
+
+              <img src="data:image/<%=item.contentType%>;base64, 
+              <%=item.data.toString('base64')%>">
+              
+              <% }) %>
+
           </div>
 
           <div class="portfolio-info">
