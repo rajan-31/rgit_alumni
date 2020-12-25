@@ -1,0 +1,318 @@
+<%- include ('../partials/adminHeader'); -%>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-copy"></i>
+              <p>
+                News Section
+                <i class="fas fa-angle-left right"></i>
+               
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/news" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>News</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/addNews" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Add News</p>
+                </a>
+              </li>
+            
+            </ul>
+          </li>
+ 
+
+           <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-copy"></i>
+              <p>
+                Events Section
+                <i class="fas fa-angle-left right"></i>
+               
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/events" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Events</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/addEvent" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Add Events</p>
+                </a>
+              </li>
+            
+            </ul>
+          </li>
+
+          <li class="nav-item">
+            <a href="/admin/alumnilist" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Alumni
+              
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="/admin/studentlist" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+               Students
+              
+              </p>
+            </a>
+          </li>
+        
+         <!--  <li class="nav-header">MISCELLANEOUS</li>
+
+          <li class="nav-item">
+            <a href="https://adminlte.io/docs/3.0" class="nav-link">
+              <i class="nav-icon fas fa-file"></i>
+              <p>Documentation</p>
+            </a>
+          </li> -->
+         
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      
+      <!-- start flash message -->
+      <div id="flashAlert" class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12 col-12">
+            <% if(successMessage && successMessage.length>0 ){ %>
+              <div class="alert alert-success text-center" role="alert">
+                <%= successMessage %>
+              </div>
+            <%}%>
+            <% if(errorMessage && errorMessage.length>0 ){ %>
+              <div class="alert alert-danger text-center" role="alert">
+                <%= errorMessage %>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <!-- end flash message -->
+
+
+      <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+         
+          <!-- ./col -->
+          <div class="col-lg-6 col-9">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>
+                  <%= alumniCount %>
+                </h3>
+          
+                <h3>Alumni Registrations</h3>
+              </div>
+              <div class="icon">
+                <i class="ion ion-person-add"></i>
+              </div>
+              <a href="/admin/alumnilist" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+
+          <!-- ./col -->
+          <div class="col-lg-6 col-9">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3> <%= studentCount %> </h3>
+
+                <h3>Student Registrations</h3>
+              </div>
+              <div class="icon">
+                <i class="ion ion-person-add"></i>
+              </div>
+              <a href="/admin/studentlist" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          
+    
+        </div>
+        <!-- /.row -->
+        <!-- Main row -->
+        <div class="row">
+          <!-- Left col -->
+          <section class="col-lg-12"><br>
+           
+
+        <div>
+          <center><h1 class="m-0 text-dark">Edit Home Page</h1></center><br>
+        </div>
+
+<div>
+  <form action="/admin/externalData" method="POST">
+               <div class="row">
+
+                  <div class="col">
+                    <div class="form-group">
+                      <label for="">Youtube Video URL</label>
+                      <input type="text" name="youtubeURL" value="<%= dataFromFile.youtubeURL %>" class="form-control" required="required">
+                    </div>
+                  </div>
+
+                </div>
+
+               <div class="row">
+
+                  <div class="col-lg-6 col-9">
+                    <div class="form-group">
+                      <label for="">Student Count</label>
+                      <input type="number" min="0" max="" name="students" value="<%= dataFromFile.students %>" class="form-control"
+                        required="required">
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-9">
+                    <div class="form-group">
+                        <label for="">Student Progress Percentage</label>
+                        <input type="number" min="0" max="100" name="studentsProgress" value="<%= dataFromFile.studentsProgress %>"
+                          class="form-control" required="required">
+                    </div>
+                  </div>
+
+                </div>
+
+               <div class="row">
+
+                  <div class="col-lg-6 col-9">
+                    <div class="form-group">
+                      <label for="">Alumni Count</label>
+                      <input type="number" min="0" max="" name="alumni" value="<%= dataFromFile.alumni %>" class="form-control"
+                        required="required">
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-9">
+                    <div class="form-group">
+                        <label for="">Alumni Progress Percentage</label>
+                        <input type="number" min="0" max="100" name="alumniProgress" value="<%= dataFromFile.alumniProgress %>"
+                          class="form-control" required="required">
+                    </div>
+                  </div>
+
+                </div>
+
+               <div class="row">
+
+                  <div class="col-lg-6 col-9">
+                    <div class="form-group">
+                      <label for="">Faculty Count</label>
+                      <input type="number" min="0" max="" name="faculty" value="<%= dataFromFile.faculty %>" class="form-control"
+                        required="required">
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6 col-9">
+                    <div class="form-group">
+                        <label for="">Faculty Progress Percentage</label>
+                        <input type="number" min="0" max="100" name="facultyProgress" value="<%= dataFromFile.facultyProgress %>"
+                          class="form-control" required="required">
+                    </div>
+                  </div>
+
+                </div>
+
+                
+                <!-- /.card-body -->
+
+                <div>
+                 <button type="submit" class="btn btn-block btn-primary btn-lg">Update data</button><br>
+                </div>
+  </form>
+
+</div><hr>
+          </section>
+
+          <section class="col-lg-12"><br>
+          
+        <div>
+          <center><h1 class="m-0 text-dark">Add New Admin</h1></center><br>
+        </div>
+
+        <div>
+          <form action="/admin/signUp" method="POST">
+            <div class="row">
+
+              <div class="col-lg-6 col-9">
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input type="text" name="username" class="form-control" required="required" placeholder="Username">
+                </div>
+              </div>
+
+              <div class="col-lg-6 col-9">
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  <input type="password" name="password" class="form-control" required="required" placeholder="Password">
+                </div>
+              </div>
+
+            </div>
+
+            <!-- /.card-body -->
+
+            <div>
+              <button type="submit" class="btn btn-block btn-primary btn-lg">Add Admin</button><br>
+            </div>
+          </form>
+
+        </div>
+
+          </section>
+          <!-- /.Left col -->
+          <!-- right col (We are only adding the ID to make the widgets sortable)-->
+          
+          <!-- right col -->
+        </div>
+        <!-- /.row (main row) -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <%- include ('../partials/adminFooter'); -%>
+</body>
+</html>

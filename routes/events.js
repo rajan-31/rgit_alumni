@@ -62,22 +62,22 @@ router.post("/events", middlewares.isAdmin, function (req, res) {
 
                 if (err.code == "LIMIT_FILE_SIZE") {
                     req.flash("errorMessage", "Please choose images with size upto 5MB.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/events');
                 } else if (err.code == "INVALID_FILETYPE") {
                     req.flash("errorMessage", "Please choose files of type JPG or JPEG or PNG");
-                    res.redirect('/admin');
+                    res.redirect('/admin/events');
                 } else if (err.code == "LIMIT_FILE_COUNT") {
                     req.flash("errorMessage", "Please choose 5 or less images.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/events');
                 } else {
                     console.log(err);
                     req.flash("errorMessage", "Something went wrong with file upload.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/events');
                 }
 
             } else {
                 req.flash("errorMessage", "Something went wrong, please try again.");
-                res.redirect('/admin');
+                res.redirect('/admin/events');
             }
         } else if (req.files) {
             const title = req.body.title;
@@ -107,10 +107,10 @@ router.post("/events", middlewares.isAdmin, function (req, res) {
                 if (err) {
                     console.log(err);
                     req.flash("errorMessage", "Something went wrong, please try again.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/events');
                 } else {
                     req.flash("successMessage", "Added new event successfully.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/events');
                 }
             });
 
@@ -138,10 +138,10 @@ router.delete("/events/:id", middlewares.isAdmin, function (req, res) {
     Event.findByIdAndRemove(mongoose.Types.ObjectId(req.params.id), function (err) {
         if (err) {
             req.flash("errorMessage", "Something went wrong, please try again.");
-            res.redirect('/admin');
+            res.redirect('/admin/events');
         } else {
             req.flash("successMessage", "Deleted event successfully.");
-            res.redirect('/admin');
+            res.redirect('/admin/events');
         }
     });
 });
@@ -153,20 +153,20 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
 
                 if (err.code == "LIMIT_FILE_SIZE") {
                     req.flash("errorMessage", "Please choose images with size upto 5MB.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/events');
                 } else if (err.code == "INVALID_FILETYPE") {
                     req.flash("errorMessage", "Please choose files of type JPG or JPEG or PNG");
-                    res.redirect('/admin');
+                    res.redirect('/admin/events');
                 } else {
                     req.flash("errorMessage", "Something went wrong with file upload.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/events');
                 }
 
             } else {
                 req.flash("errorMessage", "Something went wrong, please try again.");
-                res.redirect('/admin');
+                res.redirect('/admin/events');
             }
-            res.redirect('/admin');
+            res.redirect('/admin/events');
         } else {
             const title = req.body.title;
             const date = req.body.date;

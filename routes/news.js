@@ -56,28 +56,32 @@ router.get("/news", middlewares.isLoggedIn, function(req, res){
 });
 
 router.post("/news", middlewares.isAdmin, function(req, res){
+    // console.log(req.body);
+    // console.log(req.files);
+    // res.redirect('/admin/addNews')
+
     uploadNewsImages(req, res, function(err){
         if (err) {
             if (err instanceof multer.MulterError) {
 
                 if (err.code == "LIMIT_FILE_SIZE") {
                     req.flash("errorMessage", "Please choose images with size upto 5MB.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/news');
                 } else if (err.code == "INVALID_FILETYPE") {
                     req.flash("errorMessage", "Please choose files of type JPG or JPEG or PNG");
-                    res.redirect('/admin');
+                    res.redirect('/admin/news');
                 } else if (err.code == "LIMIT_FILE_COUNT"){
                     req.flash("errorMessage", "Please choose 5 or less images.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/news');
                 } else {
                     console.log(err);
                     req.flash("errorMessage", "Something went wrong with file upload.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/news');
                 }
 
             } else {
                 req.flash("errorMessage", "Something went wrong, please try again.");
-                res.redirect('/admin');
+                res.redirect('/admin/news');
             }
         } else if(req.files){
             const title = req.body.title;
@@ -107,10 +111,10 @@ router.post("/news", middlewares.isAdmin, function(req, res){
                 if(err){
                     console.log(err);
                     req.flash("errorMessage", "Something went wrong, please try again.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/news');
                 } else{
                     req.flash("successMessage", "Added new news successfully.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/news');
                 }
             });
             
@@ -138,10 +142,10 @@ router.delete("/news/:id", middlewares.isAdmin, function(req, res){
     News.findByIdAndRemove(mongoose.Types.ObjectId(req.params.id), function (err) {
         if (err) {
             req.flash("errorMessage", "Something went wrong, please try again.");
-            res.redirect('/admin');
+            res.redirect('/admin/news');
         } else {
             req.flash("successMessage", "Deleted news successfully.");
-            res.redirect('/admin');
+            res.redirect('/admin/news');
         }
     });
 });
@@ -153,18 +157,18 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
 
                 if (err.code == "LIMIT_FILE_SIZE") {
                     req.flash("errorMessage", "Please choose images with size upto 5MB.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/news');
                 } else if (err.code == "INVALID_FILETYPE") {
                     req.flash("errorMessage", "Please choose files of type JPG or JPEG or PNG");
-                    res.redirect('/admin');
+                    res.redirect('/admin/news');
                 } else {
                     req.flash("errorMessage", "Something went wrong with file upload.");
-                    res.redirect('/admin');
+                    res.redirect('/admin/news');
                 }
 
             } else {
                 req.flash("errorMessage", "Something went wrong, please try again.");
-                res.redirect('/admin');
+                res.redirect('/admin/news');
             }
         } else {
             const title = req.body.title;
@@ -199,10 +203,10 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
                 if (err) {
                     console.log(err);
                     req.flash("errorMessage", "Something went wrong, please try again.");
-                    res.redirect("/admin");
+                    res.redirect("/admin/news");
                 } else {
                     req.flash("successMessage", "News updated successfully.");
-                    res.redirect("/admin");
+                    res.redirect("/admin/news");
                 }
             });
         }

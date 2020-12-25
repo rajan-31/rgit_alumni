@@ -58,16 +58,16 @@
           <li><a href="/communicate">Communicate</a></li>
   
           <% if(!loggedInUser){ %>
-          <li><a href="/signup">Sign UP</a></li>
-          <li><a href="/login">Login</a></li>
+          <li><a href="/signup"><i class="icofont-ui-user pr-1"></i>Sign UP</a></li>
+          <li><a href="/login"><i class="icofont-sign-in pr-1"></i>Login</a></li>
           <% } else if(loggedInUser.role=="admin"){ %>
             <li><a href="/admin">Admin Panel</a></li>
-            <li><a href="/logout">Logout</a></li>
+            <li><a href="/admin/logout">Logout</a></li>
           <% } else { %>
           <li class="drop-down"><a href="#"><%= loggedInUser.firstName || loggedInUser.username %></a>
             <ul>
-              <li><a href="/profile">Profile</a></li>
-              <li><a href="/logout">Logout</a></li>
+              <li><a href="/profile"><i class="icofont-ui-user pr-1"></i>Profile</a></li>
+              <li><a href="/logout"><i class="icofont-sign-out pr-1"></i>Logout</a></li>
             </ul>
           </li>
           <% } %>
