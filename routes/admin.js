@@ -11,72 +11,8 @@ const Admin = require("../models/admin"),
 
 const middlewares = require('../middleware/index.js');
 const { json } = require("body-parser");
+const { render } = require("ejs");
 
-router.get("/admin", middlewares.isAdmin, function (req, res) {
-    // let [month, date, year] = new Date().toLocaleDateString().split("/");
-    // let todaysDate = year+"-"+month+"-"+date;
-    const rawdata = fs.readFileSync(path.join(__dirname, '..' + '/public/data/data.json'));
-    const dataFromFile = JSON.parse(rawdata);
-
-    News.find({}, { images: { $slice: 1 }}, function (err, allNews) {
-        if (err) {
-            console.log(err);
-            req.flash("errorMessage", "Something went wrong, please try again.");
-            res.redirect('/');
-        } else {
-            Event.find({}, { images: { $slice: 1 } }, function (err, allEvents) {
-                if(err){
-                    console.log(err);
-                    req.flash("errorMessage", "Something went wrong, please try again.");
-                    res.redirect('/');
-                } else {
-
-                    User.aggregate([
-                        {
-                            $match: {
-                                "userType": {
-                                    "$exists": true,
-                                    "$ne": null
-                                }
-                            }
-                        },
-                        {
-                            $group: {
-                                _id: "$userType",
-                                obj: {
-                                    $push: {
-                                        _id: "$_id",
-                                        firstName: "$firstName",
-                                        lastName: "$lastName",
-                                        // profileImage: "$profileImage",
-                                        // userType: "$userType",
-                                        yearOfAdmission: "$profile.yearOfAdmission",
-                                        yearOfGraduation: "$profile.yearOfGraduation",
-                                        branch: "$profile.branch",
-                                        dob: "$profile.dob"
-                                    }
-                                    // $push: "$$ROOT"
-                                }
-                            }
-                        }
-                    ]).exec(function (err, data) {
-                        if (err) {
-                            console.log(err);
-                            req.flash("errorMessage", "Something went wrong, please try again.");
-                            res.redirect('/');             
-                        } else {
-                            // console.log(JSON.stringify(data, null, 2));
-                            let students = data[0]._id == "student"? data[0].obj: data[1].obj;
-                            let alumni = data[0]._id == "alumni" ? data[0].obj : data[1].obj;
-                            res.render("Admin/adminPanel", { news: allNews, events: allEvents, students: students, alumni: alumni, dataFromFile: dataFromFile });
-                        }
-                    });
-                }
-
-            }).sort({ date: -1 });
-        }
-    }).sort({ date: -1 });
-});
 
 router.get("/admin/login", function (req, res) {
     // req.logout()
@@ -118,6 +54,105 @@ router.post('/admin/externalData', middlewares.isAdmin, function(req, res){
         res.redirect('/');
     });
 });
+
+/* new routes */
+
+// admin index
+router.get("/admin", middlewares.isAdmin, function (req, res) {
+    const rawdata = fs.readFileSync(path.join(__dirname, '..' + '/public/data/data.json'));
+    const dataFromFile = JSON.parse(rawdata);
+
+    User.countDocuments({ userType: "alumni" }, function(err, alumniCount){
+        if(err){
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect('/');
+        } else {
+            User.countDocuments({ userType: "student" }, function (err, studentCount) {
+                if (err) {
+                    console.log(err);
+                    req.flash("errorMessage", "Something went wrong, please try again.");
+                    res.redirect('/');
+                } else {
+                    // res.render('Admin/index', { dataFromFile: dataFromFile });
+                    res.render('Admin/index', { alumniCount: alumniCount, studentCount: studentCount, dataFromFile: dataFromFile });
+                }
+            });
+        }
+    });
+});
+
+/* news routes */
+// admin all news
+router.get('/admin/news', middlewares.isAdmin, function(req, res){
+    News.find({}, 'title date', function (err, allNews) {
+        if (err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect('/admin');
+        } else {
+            res.render('Admin/news', {allNews: allNews , countNews: allNews.length});
+        }
+    }).sort({ date: -1 });
+});
+
+//  admin add news
+router.get('/admin/addNews', middlewares.isAdmin, function(req, res){
+    res.render('Admin/addnews');
+});
+
+/* end news routes */
+
+/* event routes */
+
+// admin all event
+router.get('/admin/events', middlewares.isAdmin, function(req, res){
+    Event.find({}, 'title date', function (err, allEvents) {
+        if (err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect('/admin');
+        } else {
+            res.render('Admin/events', {allEvents: allEvents , countEvents: allEvents.length});
+        }
+    }).sort({ date: -1 });
+});
+
+//  admin add event
+router.get('/admin/addEvent', middlewares.isAdmin, function(req, res){
+    res.render('Admin/addevent');
+});
+
+/* end event routes */
+
+// alumni list
+router.get("/admin/alumnilist", middlewares.isAdmin, function (req, res) {
+    User.find({}, function (err, allAlumni) {
+        if (err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect('/admin');
+        } else {
+            res.render('Admin/alumnilist', { countAlumni: allAlumni.length, allAlumni: allAlumni });
+        }
+    });
+});
+
+// student list
+router.get("/admin/studentlist", middlewares.isAdmin, function (req, res) {
+    User.find({}, function (err, allStudents) {
+        if (err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect('/admin');
+        } else {
+            res.render('Admin/studentlist', { countStudents: allStudents.length, allStudents: allStudents });
+        }
+    });
+});
+
+
+/* end new routes */
 
 router.get('/admin/logout', function (req, res) {
     req.logout();

@@ -63,12 +63,18 @@
                 <form action="/signup" method="POST" id="signUpForm" class="login100-form validate-form">
                     <div class="row">
                         <div class="wrap-input100 m-b-10 col-lg-6">
-                            <input class="input100" type="text" name="firstName" placeholder="First Name" required="required">
+                            <input class="input100" type="text" name="firstName" placeholder="First Name" required="required" pattern="[a-zA-z]{1,}" maxlength="20" 
+                            oninvalid="this.setCustomValidity('Not Valid First Name')"
+                            onchange="try{setCustomValidity('')}catch(e){}"
+                            oninput="setCustomValidity(' ')" >
                             <span class="focus-input100"></span>
                         </div>
     
                         <div class="wrap-input100 m-b-10 col-lg-6">
-                            <input class="input100" type="text" name="lastName" placeholder="Last Name" required="required">
+                            <input class="input100" type="text" name="lastName" placeholder="Last Name" required="required" pattern="[a-zA-z]{1,}" maxlength="20"
+                            oninvalid="this.setCustomValidity('Not Valid Last Name')"
+                            onchange="try{setCustomValidity('')}catch(e){}"
+                            oninput="setCustomValidity(' ')">
                             <span class="focus-input100"></span>
                         </div>
 
@@ -80,19 +86,25 @@
                             <span class="focus-input100"></span>
                         </div>
 
-                        <div class="wrap-input100 validate-input m-b-16 col-12" data-validate="Please enter password">
+                        <div class="wrap-input100 validate-input m-b-0 col-12" data-validate="Please enter password">
                             <span class="btn-show-pass">
                                 <i class="fa fa fa-eye"></i>
                             </span>
-                            <input class="input100" type="password" name="password" placeholder="Password" id="password" minlength="6" required="required">
+                            <input class="input100" type="password" name="password" placeholder="Password" id="password" minlength="6" maxlength="20" required="required">
                             <span class="focus-input100"></span>
                         </div>
     
+                        <div id="passwordLengthInfo" class="form-text text-muted text-center m-b-10 col-12">
+                            <i class="fa fa-exclamation-circle" aria-hidden="true"></i> <small>Password length atleast 6
+                                characters.</small>
+                        </div>
+
+
                         <div class="wrap-input100 validate-input col-12" data-validate="Please enter password">
                             <span class="btn-show-pass">
                                 <i class="fa fa fa-eye"></i>
                             </span>
-                            <input class="input100" type="password" name="confirmPassword" placeholder="Confirm Password" id="confirmPassword" minlength="6" required="required">
+                            <input class="input100" type="password" name="confirmPassword" placeholder="Confirm Password" id="confirmPassword" minlength="6" maxlength="20" required="required">
                             <span class="focus-input100"></span>
                         </div>
                     </div>
@@ -100,16 +112,18 @@
                     
                     <div id="passwordInfo" class="form-text text-muted text-center m-b-20"></div>
 
-                    <div class="wrap-input100">
-                        <!-- <label for="userType">Who are you?</label> -->
-                        <select name="userType" class="input100 m-b-20" required="required">
-                            <option class="wrap-input100" value="">Select User Type</option>
-                            <option class="wrap-input100" value="alumni">Alumni</option>
-                            <option class="wrap-input100" value="student">Student</option>
-                        </select>
-                    </div>
-
+                    <div class="row">
+                        <div class="col-12 px-0 wrap-input100 m-b-20">
+                                <!-- <label for="userType">Who are you?</label> -->
+                                <select name="userType" class="input100" required="required" style="border: none;">
+                                    <option class="wrap-input100" value="" aria-placeholder="aaaaaaa">Select User Type</option>
+                                    <option class="wrap-input100" value="alumni">Alumni</option>
+                                    <option class="wrap-input100" value="student">Student</option>
+                                </select>
+                            </div>
+                        </div>
                     
+
                     <!-- <br> -->
                 </form>
                 <div class="row">

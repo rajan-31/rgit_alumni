@@ -50,6 +50,7 @@ db.admins.insert({
 - mongoose operatins without geting updated data
 - sanitize / validate form data
 - ajax calls for forms
+- email, first name, last name validation
 
 
 ## PRODUCTION CAHNGES

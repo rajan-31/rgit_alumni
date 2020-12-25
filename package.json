@@ -6,6 +6,7 @@
   "scripts": {
     "start": "set Node_ENV=development& node app.js",
     "local": "set Node_ENV=development& set MONGODB_SERVER=local& nodemon app.js",
+    "localWlog": "set Node_ENV=development& set MONGODB_SERVER=local& nodemon app.js >> app.log",
     "test": ""
   },
   "author": "Unknown",

@@ -7,6 +7,7 @@ const User  = require("../models/user"),
       Event = require("../models/event");
 
 const middlewares = require('../middleware/index.js');
+const allMiddlewares = require("../middleware/index.js");
 
 router.get("/", function(req, res){
     News.find({}, { images: { $slice: 1 } }, function (err, allNews) {
@@ -38,11 +39,10 @@ router.get('/signup', function(req, res){
 });
 
 router.post('/signup', function(req, res){
-    const mailformat = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const allUserTypes = ["alumni", "student"];
     const receivedData = req.body;
 
-    if (mailformat.test(receivedData.username.toLowerCase()) && receivedData.password.length>=6 && receivedData.password==receivedData.confirmPassword && allUserTypes.includes(receivedData.userType)) {
+    if (allMiddlewares.isValidEmail(receivedData.username) && receivedData.password.length>=6 && receivedData.password==receivedData.confirmPassword && allUserTypes.includes(receivedData.userType)) {
         User.register(new User({firstName:receivedData.firstName, lastName: receivedData.lastName, username: receivedData.username, userType :receivedData.userType}), receivedData.password, function(err, user){
             if(err){
                 if (err.name == "UserExistsError") {
@@ -59,8 +59,8 @@ router.post('/signup', function(req, res){
                 });
             }
         });
-    } else if (!mailformat.test(receivedData.username.toLowerCase())){
-        req.flash("errorMessage", "Invalid mail format!");
+    } else if (!allMiddlewares.isValidEmail(receivedData.username)){
+        req.flash("errorMessage", "Invalid email address format!");
         res.redirect("/signup")
     } else if (receivedData.password.length < 6){
         req.flash("errorMessage", "Password must be 6 characters long!");

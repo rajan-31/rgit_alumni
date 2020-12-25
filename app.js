@@ -70,7 +70,7 @@ app.use(expressSession({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 3600000 * 24 * 15 }, //15days // set "secure:true" only when using https
+    cookie: { maxAge: 3600000 * 24 * 7 }, //7days // set "secure:true" only when using https
     store: new MongoStore({ mongooseConnection: mongoose.connection }) // may be more configuration in future
 }));
 
@@ -170,10 +170,10 @@ app.get('/*', function(req, res){
 
 const port = process.env.PORT,
       ip   = process.env.IP;
-    // ip = "0.0.0.0";
+    // ip = "0.0.0.0";	// local network
 
 app.listen(port, ip, function(){
-    console.log("Environmet: ",process.env.Node_ENV);
+    console.log("Environment: ",process.env.Node_ENV);
     console.log("Server is running...");
     console.log("Go to " + ip + ":" + port);
 });

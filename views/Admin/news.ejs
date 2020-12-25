@@ -1,0 +1,237 @@
+<%- include ('../partials/adminHeader'); -%>
+          <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link active">
+              <i class="nav-icon fas fa-copy"></i>
+              <p>
+                News Section
+                <i class="fas fa-angle-left right"></i>
+          
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/news" class="nav-link active">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>News</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/addNews" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Add News</p>
+                </a>
+              </li>
+          
+            </ul>
+          </li>
+          
+          
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-copy"></i>
+              <p>
+                Events Section
+                <i class="fas fa-angle-left right"></i>
+          
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/events" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Events</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/addEvent" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Add Events</p>
+                </a>
+              </li>
+          
+            </ul>
+          </li>
+          
+          <li class="nav-item">
+            <a href="/admin/alumnilist" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Alumni
+          
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a href="/admin/studentlist" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Students
+          
+              </p>
+            </a>
+          </li>
+          
+         <!--  <li class="nav-header">MISCELLANEOUS</li>
+
+          <li class="nav-item">
+            <a href="https://adminlte.io/docs/3.0" class="nav-link">
+              <i class="nav-icon fas fa-file"></i>
+              <p>Documentation</p>
+            </a>
+          </li> -->
+         
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+              <li class="breadcrumb-item active">News</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    
+    <!-- Main content -->
+    <section class="content">
+
+      <!-- start flash message -->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12 col-12">
+            <% if(successMessage && successMessage.length>0 ){ %>
+              <div class="alert alert-success text-center" role="alert">
+                <%= successMessage %>
+              </div>
+            <%}%>
+            <% if(errorMessage && errorMessage.length>0 ){ %>
+              <div class="alert alert-danger text-center" role="alert">
+                <%= errorMessage %>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <!-- end flash message -->
+
+      <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+         
+          <!-- ./col -->
+          
+          <!-- ./col -->
+          <div class="col-lg-12 col-12">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3> <%= countNews %> </h3>
+
+                <h3>News Count</h3>
+              </div>
+              <div class="icon">
+                <i class="ion ion-person-add"></i>
+              </div>
+              
+            </div>
+          </div>
+          <!-- ./col -->
+          
+    
+          <!-- ./col -->
+        </div>
+        <!-- /.row -->
+        <!-- Main row -->
+        <div class="row">
+          <!-- Left col -->
+          <section class="col-lg-12"><br>
+           
+
+          <div>
+            <center><h1 class="m-0 text-dark">News</h1></center><br>
+          </div>
+
+  <div class="card">
+ 
+
+        <div class="card-body table-responsive p-0">
+          <table class="table table-hover text-nowrap">
+            <thead>
+              <tr>
+                <!-- <th>ID</th> -->
+                <th>Index</th>
+                <th>Title</th>
+                <th>Date</th>
+                <th><center>View</center></th>
+                <th><center>Edit</center></th>
+                <th><center>Delete</center></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% for(let i=0; i<countNews; i++) { %>
+                <tr>
+                  <td> <%# allNews[i]._id %> <%= i+1 %> </td>
+                  <td> <%= allNews[i].title %> </td>
+                  <td> <%= allNews[i].date.toGMTString().slice(0,16) %> </td>
+                  <td>
+                    <a href="/news/<%= allNews[i]._id %>" class="btn btn-block btn-primary btn-sm">View</a><br>
+                  </td>
+                  <td>
+                    <a href="/news/<%= allNews[i]._id %>/edit" class="btn btn-block btn-warning btn-sm">Edit</a><br>
+                  </td>
+                  <td>
+
+                    <form action="/news/<%= allNews[i]._id %>?_method=DELETE" method="POST">
+                      <button type="submit" class="btn btn-block btn-danger btn-sm">Delete</button><br>
+                    </form>
+
+                  </td>
+                </tr>
+              <% } %>
+              <!-- <tr>
+                <td>1</td>
+                <td>Dummy Title for news</td>
+                <td>11-7-2014</td>
+                <td><button type="button" class="btn btn-block btn-primary btn-sm">View</button><br></td>
+                <td><button type="button" class="btn btn-block btn-warning btn-sm">Edit</button><br></td>
+                <td><button type="button" class="btn btn-block btn-danger btn-sm">Delete</button><br></td>
+              </tr> -->
+              
+            </tbody>
+          </table>
+        </div>
+               
+                <!-- /.card-body -->
+              
+  </div>
+
+          </section>
+          <!-- /.Left col -->
+          <!-- right col (We are only adding the ID to make the widgets sortable)-->
+          
+          <!-- right col -->
+        </div>
+        <!-- /.row (main row) -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <%- include ('../partials/adminFooter'); -%>
+</body>
+</html>
