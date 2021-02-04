@@ -1,4 +1,5 @@
 <%- include ('../partials/adminHeader'); -%>
+
             <li class="nav-item has-treeview">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-copy"></i>
@@ -71,15 +72,17 @@
                 </p>
               </a>
             </li>
+
+            <li class="nav-item">
+              <a href="/admin/adminlist" class="nav-link">
+                <i class="nav-icon fas fa-th"></i>
+                <p>
+                  Admins
     
-            <!--  <li class="nav-header">MISCELLANEOUS</li>
-    
-              <li class="nav-item">
-                <a href="https://adminlte.io/docs/3.0" class="nav-link">
-                  <i class="nav-icon fas fa-file"></i>
-                  <p>Documentation</p>
-                </a>
-              </li> -->
+                </p>
+              </a>
+            </li>
+   
     
         </nav>
         <!-- /.sidebar-menu -->
@@ -88,13 +91,13 @@
     </aside>
 
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
+    <div class="content-wrapper"  style="margin-top: 57px;">
       <!-- Content Header (Page header) -->
       <div class="content-header">
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0 text-dark">Dashboard</h1>
+              <h1 class="m-0 text-dark">Events</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -111,7 +114,7 @@
       <section class="content">
 
         <!-- start flash message -->
-        <div class="container-fluid">
+        <div id="flashAlert" class="container-fluid">
           <div class="row">
             <div class="col-lg-12 col-12">
               <% if(successMessage && successMessage.length>0 ){ %>
@@ -170,37 +173,36 @@
 
               <div class="card">
 
-
-                <div class="card-body table-responsive p-0">
-                  <table class="table table-hover text-nowrap">
+                
+                <div class="card-body table-responsive p-0 my-table-height">
+                  <table class="table table-head-fixed sortable-table indexed">
                     <thead>
-                      <tr>
+                      <tr class="sorter-header">
                         <!-- <th>ID</th> -->
-                        <th>Index</th>
-                        <th>Title</th>
-                        <th>Date</th>
-                        <th><center>View</center></th>
-                        <th><center>Edit</center></th>
-                        <th><center>Delete</center></th>
+                        <!-- <th>Index</th> -->
+                        <th><center>Title</center></th>
+                        <th id="simulate_click" class="is-date keep-whitespace">    Date</th>
+                        <th class="no-sort"><center>View</center></th>
+                        <th class="no-sort"><center>Edit</center></th>
+                        <th class="no-sort"><center>Delete</center></th>
                       </tr>
                       </tr>
                     </thead>
                     <tbody>
                       <% for(let i=0; i<countEvents; i++) { %>
                         <tr>
-                          <td> <%# allEvents[i]._id %> <%= i+1 %> </td>
+                          <!-- <td> <%# allEvents[i]._id %> <%# i+1 %> </td> -->
                           <td> <%= allEvents[i].title %> </td>
-                          <td> <%= allEvents[i].date.toGMTString().slice(0,16) %> </td>
+                          <td> <%= allEvents[i].date.toGMTString().slice(5, 16) %> </td>
                           <td>
-                            <a href="/events/<%= allEvents[i]._id %>" class="btn btn-block btn-primary btn-sm">View</a><br>
+                            <a href="/events/<%= allEvents[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size">View</a><br>
                           </td>
                           <td>
-                            <a href="/events/<%= allEvents[i]._id %>/edit" class="btn btn-block btn-warning btn-sm">Edit</a><br>
+                            <a href="/events/<%= allEvents[i]._id %>/edit" class="btn btn-block btn-warning btn-sm btn-fix-size">Edit</a><br>
                           </td>
                           <td>
-
                             <form action="/events/<%= allEvents[i]._id %>?_method=DELETE" method="POST">
-                              <button type="submit" class="btn btn-block btn-danger btn-sm">Delete</button><br>
+                              <button type="submit" class="btn btn-block btn-danger btn-sm btn-fix-size">Delete</button><br>
                             </form>
 
                           </td>
@@ -217,9 +219,7 @@
 
             </section>
             <!-- /.Left col -->
-            <!-- right col (We are only adding the ID to make the widgets sortable)-->
 
-            <!-- right col -->
           </div>
           <!-- /.row (main row) -->
         </div><!-- /.container-fluid -->
@@ -228,7 +228,13 @@
     </div>
     <!-- /.content-wrapper -->
     <%- include ('../partials/adminFooter'); -%>
-
+    <script>
+      $().ready(function(){
+        $('.sortable-table').tableSorter();
+        document.getElementById('simulate_click').click();
+        document.getElementById('simulate_click').click();
+      });
+    </script>
 </body>
 
 </html>

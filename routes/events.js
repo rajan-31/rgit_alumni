@@ -44,7 +44,9 @@ let uploadEventImages = upload.array('images', 5);
 
 
 router.get("/events", middlewares.isLoggedIn, function (req, res) {
+    let ass = new Date().getTime();
     Event.find({}, { images: { $slice: 1 } }, function (err, allEvents) {
+        console.log("event:",new Date().getTime()-ass);
         if (err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
@@ -52,7 +54,7 @@ router.get("/events", middlewares.isLoggedIn, function (req, res) {
         } else {
             res.render("Events/events", { events: allEvents });
         }
-    }).sort({ date: -1 });
+    }).sort({ date: -1 }).lean();
 });
 
 router.post("/events", middlewares.isAdmin, function (req, res) {
@@ -203,7 +205,7 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
                     res.redirect("/admin");
                 } else {
                     req.flash("successMessage", "Event updated successfully.");
-                    res.redirect("/admin");
+                    res.redirect("/admin/events");
                 }
             });
         }

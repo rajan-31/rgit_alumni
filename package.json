@@ -4,9 +4,11 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "set Node_ENV=development& node app.js",
-    "local": "set Node_ENV=development& set MONGODB_SERVER=local& nodemon app.js",
-    "localWlog": "set Node_ENV=development& set MONGODB_SERVER=local& nodemon app.js >> app.log",
+    "start": "node app.js",
+    "local": "set MONGODB_SERVER=local& start http://localhost:8080& nodemon app.js",
+    "localWithLog": "set MONGODB_SERVER=local& nodemon app.js >> app.log",
+    "mobile":"set PLATFORM=mobile& set MONGODB_SERVER=local& start http://192.168.0.102:8080& nodemon app.js",
+    "atlas": "nodemon app.js",
     "test": ""
   },
   "author": "Unknown",
@@ -22,6 +24,7 @@
     "method-override": "^3.0.0",
     "mongoose": "^5.10.16",
     "multer": "^1.4.2",
+    "nodemailer": "^6.4.17",
     "nodemon": "^2.0.6",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",

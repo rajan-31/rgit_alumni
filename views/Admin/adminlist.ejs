@@ -6,7 +6,7 @@
                 <p>
                   News Section
                   <i class="fas fa-angle-left right"></i>
-
+    
                 </p>
               </a>
               <ul class="nav nav-treeview">
@@ -22,18 +22,18 @@
                     <p>Add News</p>
                   </a>
                 </li>
-
+    
               </ul>
             </li>
-
-
+    
+    
             <li class="nav-item has-treeview">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-copy"></i>
                 <p>
                   Events Section
                   <i class="fas fa-angle-left right"></i>
-
+    
                 </p>
               </a>
               <ul class="nav nav-treeview">
@@ -49,40 +49,41 @@
                     <p>Add Events</p>
                   </a>
                 </li>
-
+    
               </ul>
             </li>
-
+    
             <li class="nav-item">
               <a href="/admin/alumnilist" class="nav-link">
                 <i class="nav-icon fas fa-th"></i>
                 <p>
                   Alumni
-
+    
                 </p>
               </a>
             </li>
-
+    
             <li class="nav-item">
-              <a href="/admin/studentlist" class="nav-link active">
+              <a href="/admin/studentlist" class="nav-link">
                 <i class="nav-icon fas fa-th"></i>
                 <p>
                   Students
-
-                </p>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="/admin/adminlist" class="nav-link">
-                <i class="nav-icon fas fa-th"></i>
-                <p>
-                  Admins
     
                 </p>
               </a>
             </li>
 
+            <li class="nav-item">
+              <a href="/admin/adminlist" class="nav-link active">
+                <i class="nav-icon fas fa-th"></i>
+                <p>
+                  Admins
+
+                </p>
+              </a>
+            </li>
+    
+    
         </nav>
         <!-- /.sidebar-menu -->
       </div>
@@ -101,13 +102,15 @@
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="/admin">Home</a></li>
-                <li class="breadcrumb-item active">Alumni</li>
+                <li class="breadcrumb-item active">Admins</li>
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
         </div><!-- /.container-fluid -->
       </div>
       <!-- /.content-header -->
+
+      
 
       <!-- Main content -->
       <section class="content">
@@ -120,12 +123,12 @@
                 <div class="alert alert-success text-center" role="alert">
                   <%= successMessage %>
                 </div>
-              <%}%>
-              <% if(errorMessage && errorMessage.length>0 ){ %>
-              <div class="alert alert-danger text-center" role="alert">
-                <%= errorMessage %>
-              </div>
-              <% } %>
+                <%}%>
+                <% if(errorMessage && errorMessage.length>0 ){ %>
+                <div class="alert alert-danger text-center" role="alert">
+                  <%= errorMessage %>
+                </div>
+                <% } %>
             </div>
           </div>
         </div>
@@ -142,11 +145,9 @@
               <!-- small box -->
               <div class="small-box bg-warning">
                 <div class="inner">
-                  <h3>
-                    <%= countStudents %>
-                  </h3>
+                  <h3> <%= countAdmins %> </h3>
 
-                  <h3>Students Count</h3>
+                  <h3>Admins Count</h3>
                 </div>
                 <div class="icon">
                   <i class="ion ion-person-add"></i>
@@ -159,6 +160,47 @@
 
             <!-- ./col -->
           </div>
+
+
+          <div class="col-lg-12"><br>
+
+            <div>
+            <center><h1 class="m-0 text-dark">Add New Admin</h1></center><br>
+            </div>
+        
+            <div>
+            <form action="/admin/signUp" method="POST">
+              <div class="row">
+        
+                <div class="col-lg-6 col-12">
+                  <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" class="form-control" required="required" placeholder="Username">
+                  </div>
+                </div>
+        
+                <div class="col-lg-6 col-12">
+                  <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" class="form-control" required="required" placeholder="Password">
+                  </div>
+                </div>
+        
+              </div>
+        
+              <!-- /.card-body -->
+        
+              <div>
+                <button type="submit" class="btn btn-block btn-primary btn-lg">Add Admin</button><br>
+              </div>
+            </form>
+        
+            </div>
+        
+          </div>
+
+          <hr>
+
           <!-- /.row -->
           <!-- Main row -->
           <div class="row">
@@ -167,7 +209,7 @@
 
               <div>
                 <center>
-                  <h1 class="m-0 text-dark">Students List</h1>
+                  <h1 class="m-0 text-dark">Admins List</h1>
                 </center><br>
               </div>
 
@@ -181,25 +223,23 @@
                         <!-- <th>ID</th> -->
                         <!-- <th>Index</th> -->
                         <th id="simulate_click" class="keep-whitespace">    Username</th>
-                        <th class="keep-whitespace">    First Name</th>
-                        <th class="keep-whitespace">    Last Name</th>
-                        <th class="no-sort"><center>View Profile</center> </th>
+                        <th class="keep-whitespace">    Account Created By</th>
+                        <th class="no-sort"><center>Delete Admin</center></th>
                       </tr>
                     </thead>
                     <tbody>
-                      <% for(let i=0; i<countStudents; i++) { %>
+                      <% for(let i=0; i<countAdmins; i++) { %>
                         <tr>
-                          <!-- <td><%# i+1 %></td> -->
-                          <td> <%= allStudents[i].username %> </td>
-                          <td> <%= allStudents[i].firstName %> </td>
-                          <td> <%= allStudents[i].lastName %> </td>
+                          <!-- <td> <%# i+1 %> </td> -->
+                          <td><%= allAdmins[i].username %></td>
+                          <td><%= allAdmins[i].createdBy %></td>
                           <td>
-                            <a href="/profile/<%= allStudents[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size">View
-                              Profile</a><br>
+                            <form action="/admin/delete/<%= allAdmins[i]._id %>?_method=DELETE" method="POST">
+                              <button type="submit" class="btn btn-block btn-danger btn-sm btn-fix-size">Delete</button><br>
+                            </form>
                           </td>
                         </tr>
-                        <% } %>
-
+                      <% } %>
 
                     </tbody>
                   </table>
@@ -219,16 +259,13 @@
       <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
-
     <%- include ('../partials/adminFooter'); -%>
-
     <script>
       $().ready(function(){
         $('.sortable-table').tableSorter();
         document.getElementById('simulate_click').click();
       });
     </script>
-    
 </body>
 
 </html>

@@ -1,8 +1,3 @@
-/**
-* PHP Email Form Validation - v2.1
-* URL: https://bootstrapmade.com/php-email-form/
-* Author: BootstrapMade.com
-*/
 !(function($) {
   "use strict";
 
@@ -130,6 +125,7 @@
       data: data,
       timeout: 40000
     }).done( function(msg){
+      console.log(msg)
       if (msg.trim() == 'OK') {
         this_form.find('.loading').slideUp();
         this_form.find('.sent-message').slideDown();

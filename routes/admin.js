@@ -1,6 +1,7 @@
 const express = require("express"),
     router = express.Router(),
     passport = require("passport"),
+    mongoose = require("mongoose"),
     fs = require("fs"),
     path = require("path");
 
@@ -12,7 +13,9 @@ const Admin = require("../models/admin"),
 const middlewares = require('../middleware/index.js');
 const { json } = require("body-parser");
 const { render } = require("ejs");
+const e = require("express");
 
+// let static_data;    // to store data from data/data.json file
 
 router.get("/admin/login", function (req, res) {
     // req.logout()
@@ -28,40 +31,40 @@ router.post('/admin/login', passport.authenticate("admin",
     }), function (req, res) {});
 
 router.post('/admin/signup', middlewares.isAdmin, function (req, res) {
-    Admin.register(new Admin({ username: req.body.username }), req.body.password, function (err, user) {
+    Admin.register(new Admin({ username: req.body.username, createdBy: req.user.username }), req.body.password, function (err, user) {
         if (err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
         }
         // use loacl strategy
         // passport.authenticate('admin')(req, res, function () {
-        //     res.redirect("/admin");      // change this in future
+        //     res.redirect("/adminlist");      // change this in future
         // });
         else {
             req.flash("successMessage", "New admin created successfully.");
         }
-        res.redirect("/admin");
+        res.redirect("/admin/adminlist");
     });
 });
 
 router.post('/admin/externalData', middlewares.isAdmin, function(req, res){
-    let data = JSON.stringify(req.body);
-    fs.writeFile(path.join(__dirname, '..' + '/public/data/data.json'), data, function(err){
+    const data = JSON.stringify(req.body);
+    fs.writeFile(path.join(__dirname, '..' + '/data/data.json'), data, function(err){
         if(err){
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect('/admin');
+        } else {
+            global.static_data = data;
+            res.redirect('/');
         }
-        res.redirect('/');
     });
 });
 
 /* new routes */
 
 // admin index
-router.get("/admin", middlewares.isAdmin, function (req, res) {
-    const rawdata = fs.readFileSync(path.join(__dirname, '..' + '/public/data/data.json'));
-    const dataFromFile = JSON.parse(rawdata);
-
+router.get("/admin", middlewares.isAdmin, function (req, res) {    
     User.countDocuments({ userType: "alumni" }, function(err, alumniCount){
         if(err){
             console.log(err);
@@ -74,8 +77,8 @@ router.get("/admin", middlewares.isAdmin, function (req, res) {
                     req.flash("errorMessage", "Something went wrong, please try again.");
                     res.redirect('/');
                 } else {
-                    // res.render('Admin/index', { dataFromFile: dataFromFile });
-                    res.render('Admin/index', { alumniCount: alumniCount, studentCount: studentCount, dataFromFile: dataFromFile });
+                    // global variable used: global.static_data
+                    res.render('Admin/index', { alumniCount: alumniCount, studentCount: studentCount, dataFromFile: global.static_data });
                 }
             });
         }
@@ -93,7 +96,7 @@ router.get('/admin/news', middlewares.isAdmin, function(req, res){
         } else {
             res.render('Admin/news', {allNews: allNews , countNews: allNews.length});
         }
-    }).sort({ date: -1 });
+    }) //.sort({ date: -1 });
 });
 
 //  admin add news
@@ -115,7 +118,7 @@ router.get('/admin/events', middlewares.isAdmin, function(req, res){
         } else {
             res.render('Admin/events', {allEvents: allEvents , countEvents: allEvents.length});
         }
-    }).sort({ date: -1 });
+    })//.sort({ date: -1 });
 });
 
 //  admin add event
@@ -127,7 +130,7 @@ router.get('/admin/addEvent', middlewares.isAdmin, function(req, res){
 
 // alumni list
 router.get("/admin/alumnilist", middlewares.isAdmin, function (req, res) {
-    User.find({}, function (err, allAlumni) {
+    User.find({ userType: "alumni" },'firstName lastName username', function (err, allAlumni) {
         if (err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
@@ -140,7 +143,7 @@ router.get("/admin/alumnilist", middlewares.isAdmin, function (req, res) {
 
 // student list
 router.get("/admin/studentlist", middlewares.isAdmin, function (req, res) {
-    User.find({}, function (err, allStudents) {
+    User.find({ userType: "student" },'firstName lastName username', function (err, allStudents) {
         if (err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
@@ -151,6 +154,41 @@ router.get("/admin/studentlist", middlewares.isAdmin, function (req, res) {
     });
 });
 
+// admin list
+router.get("/admin/adminlist", middlewares.isAdmin, function (req, res) {
+    Admin.find({},'username createdBy', function (err, allAdmins) {
+        if (err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect('/admin');
+        } else {
+            res.render('Admin/adminlist', { countAdmins: allAdmins.length, allAdmins: allAdmins });
+        }
+    });
+});
+
+router.delete("/admin/delete/:id", middlewares.isAdmin, function (req, res) {
+    Admin.find({}, function (err, allAdmins) {
+        if(err) {
+            req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect('/admin/adminlist');
+        } else if(allAdmins.length > 2) {
+            Admin.findByIdAndRemove(mongoose.Types.ObjectId(req.params.id), function (err) {
+                if (err) {
+                    req.flash("errorMessage", "Something went wrong, please try again.");
+                    res.redirect('/admin/adminlist');
+                } else {
+                    req.flash("successMessage", "Deleted Admin successfully.");
+                    res.redirect('/admin/adminlist');
+                }
+            });
+        } else {
+            req.flash("errorMessage", "You can only delete Admins, if there are more than 2.");
+            res.redirect('/admin/adminlist');
+        }
+    
+    });
+});
 
 /* end new routes */
 

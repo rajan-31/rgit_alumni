@@ -1,10 +1,3 @@
-/**
-* Template Name: Arsha - v2.2.0
-* Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
-
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
@@ -332,7 +325,7 @@ h1, h2, h3, h4, h5, h6 {
   content: "\ea99";
   font-family: IcoFont;
   padding-left: 10px;
-  position: absolute;
+  position: relative;
   right: 15px;
 }
 
@@ -850,7 +843,7 @@ section {
 --------------------------------------------------------------*/
 .services .icon-box {
   box-shadow: 0px 0 25px 0 rgba(0, 0, 0, 0.1);
-  padding: 50px 30px;
+  padding: 50px 10px;
   transition: all ease-in-out 0.4s;
   background: #fff;
 }
@@ -877,6 +870,7 @@ section {
 }
 
 .services .icon-box p {
+  padding: 0px 5px;
   line-height: 24px;
   font-size: 14px;
   margin-bottom: 0;

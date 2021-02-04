@@ -1,4 +1,5 @@
 <%- include ('../partials/adminHeader'); -%>
+
             <li class="nav-item has-treeview">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-copy"></i>
@@ -71,15 +72,17 @@
                 </p>
               </a>
             </li>
+
+            <li class="nav-item">
+              <a href="/admin/adminlist" class="nav-link">
+                <i class="nav-icon fas fa-th"></i>
+                <p>
+                  Admins
     
-            <!--  <li class="nav-header">MISCELLANEOUS</li>
+                </p>
+              </a>
+            </li>
     
-              <li class="nav-item">
-                <a href="https://adminlte.io/docs/3.0" class="nav-link">
-                  <i class="nav-icon fas fa-file"></i>
-                  <p>Documentation</p>
-                </a>
-              </li> -->
     
         </nav>
         <!-- /.sidebar-menu -->
@@ -88,7 +91,7 @@
     </aside>
 
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
+    <div class="content-wrapper"  style="margin-top: 57px;">
       <!-- Content Header (Page header) -->
       <div class="content-header">
         <div class="container-fluid">
@@ -111,7 +114,7 @@
       <section class="content">
 
         <!-- start flash message -->
-        <div class="container-fluid">
+        <div id="flashAlert" class="container-fluid">
           <div class="row">
             <div class="col-lg-12 col-12">
               <% if(successMessage && successMessage.length>0 ){ %>
@@ -170,38 +173,30 @@
               <div class="card">
 
 
-                <div class="card-body table-responsive p-0" style="height: 300px;">
-                  <table class="table table-head-fixed text-nowrap">
+                <div class="card-body table-responsive p-0 .my-table-height">
+                  <table class="table table-head-fixed text-nowrap sortable-table indexed">
                     <thead>
-                      <tr>
+                      <tr class="sorter-header">
                         <!-- <th>ID</th> -->
-                        <th>Index</th>
-                        <th>Username</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th><center>View Profile</center></th>
+                        <!-- <th>Index</th> -->
+                        <th id="simulate_click" class="keep-whitespace">    Username</th>
+                        <th class="keep-whitespace">    First Name</th>
+                        <th class="keep-whitespace">    Last Name</th>
+                        <th class="no-sort"><center>View Profile</center></th>
                       </tr>
                     </thead>
                     <tbody>
                       <% for(let i=0; i<countAlumni; i++) { %>
                         <tr>
-                          <td> <%= i+1 %> </td>
+                          <!-- <td> <%# i+1 %> </td> -->
                           <td><%= allAlumni[i].username %></td>
                           <td><%= allAlumni[i].firstName %></td>
                           <td><%= allAlumni[i].lastName %></td>
                           <td>
-                            <a href="/profile/<%= allAlumni[i]._id %>" class="btn btn-block btn-primary btn-sm">View Profile</a><br>
+                            <a href="/profile/<%= allAlumni[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size">View Profile</a><br>
                           </td>
                         </tr>
                       <% } %>
-
-                      <!-- <tr>
-                        <td>183</td>
-                        <td>John12</td>
-                        <td>11-7-2014</td>
-                        <td>John</td>
-                        <td>Watson</td>
-                      </tr> -->
 
                     </tbody>
                   </table>
@@ -213,9 +208,7 @@
 
             </section>
             <!-- /.Left col -->
-            <!-- right col (We are only adding the ID to make the widgets sortable)-->
 
-            <!-- right col -->
           </div>
           <!-- /.row (main row) -->
         </div><!-- /.container-fluid -->
@@ -224,6 +217,13 @@
     </div>
     <!-- /.content-wrapper -->
     <%- include ('../partials/adminFooter'); -%>
+
+    <script>
+      $().ready(function(){
+        $('.sortable-table').tableSorter();
+        document.getElementById('simulate_click').click();
+      });
+    </script>
 </body>
 
 </html>

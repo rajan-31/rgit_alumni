@@ -1,4 +1,5 @@
 <%- include ('../partials/adminHeader'); -%>
+
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-copy"></i>
@@ -71,15 +72,16 @@
               </p>
             </a>
           </li>
-          
-         <!--  <li class="nav-header">MISCELLANEOUS</li>
-
+        
           <li class="nav-item">
-            <a href="https://adminlte.io/docs/3.0" class="nav-link">
-              <i class="nav-icon fas fa-file"></i>
-              <p>Documentation</p>
+            <a href="/admin/adminlist" class="nav-link">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Admins
+  
+              </p>
             </a>
-          </li> -->
+          </li>
          
       </nav>
       <!-- /.sidebar-menu -->
@@ -88,7 +90,7 @@
   </aside>
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+  <div class="content-wrapper"  style="margin-top: 57px;">
     <!-- Content Header (Page header) -->
     <div class="content-header">
       <div class="container-fluid">
@@ -111,7 +113,7 @@
     <section class="content">
 
       <!-- start flash message -->
-      <div class="container-fluid">
+      <div id="flashAlert" class="container-fluid">
         <div class="row">
           <div class="col-lg-12 col-12">
             <% if(successMessage && successMessage.length>0 ){ %>
@@ -167,50 +169,41 @@
           </div>
 
   <div class="card">
- 
 
-        <div class="card-body table-responsive p-0">
-          <table class="table table-hover text-nowrap">
+        <div class="card-body table-responsive p-0 .my-table-height">
+          <table  class="table table-head-fixed sortable-table indexed">
             <thead>
-              <tr>
+              <tr class="sorter-header">
                 <!-- <th>ID</th> -->
-                <th>Index</th>
-                <th>Title</th>
-                <th>Date</th>
-                <th><center>View</center></th>
-                <th><center>Edit</center></th>
-                <th><center>Delete</center></th>
+                <!-- <th class="no-sort">Index</th> -->
+                <th><center>Title</center></th>
+                <th id="simulate_click" class="is-date keep-whitespace">    Date</th>
+                <th class="no-sort"><center>View</center></th>
+                <th class="no-sort"><center>Edit</center></th>
+                <th class="no-sort"><center>Delete</center></th>
               </tr>
             </thead>
             <tbody>
               <% for(let i=0; i<countNews; i++) { %>
                 <tr>
-                  <td> <%# allNews[i]._id %> <%= i+1 %> </td>
+                  <!-- <td> <%# allNews[i]._id %> <%# i+1 %> </td> -->
                   <td> <%= allNews[i].title %> </td>
-                  <td> <%= allNews[i].date.toGMTString().slice(0,16) %> </td>
+                  <td> <%= allNews[i].date.toGMTString().slice(5, 16) %> </td>
                   <td>
-                    <a href="/news/<%= allNews[i]._id %>" class="btn btn-block btn-primary btn-sm">View</a><br>
+                    <a href="/news/<%= allNews[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size">View</a><br>
                   </td>
                   <td>
-                    <a href="/news/<%= allNews[i]._id %>/edit" class="btn btn-block btn-warning btn-sm">Edit</a><br>
+                    <a href="/news/<%= allNews[i]._id %>/edit" class="btn btn-block btn-warning btn-sm btn-fix-size">Edit</a><br>
                   </td>
                   <td>
 
                     <form action="/news/<%= allNews[i]._id %>?_method=DELETE" method="POST">
-                      <button type="submit" class="btn btn-block btn-danger btn-sm">Delete</button><br>
+                      <button type="submit" class="btn btn-block btn-danger btn-sm btn-fix-size">Delete</button><br>
                     </form>
 
                   </td>
                 </tr>
               <% } %>
-              <!-- <tr>
-                <td>1</td>
-                <td>Dummy Title for news</td>
-                <td>11-7-2014</td>
-                <td><button type="button" class="btn btn-block btn-primary btn-sm">View</button><br></td>
-                <td><button type="button" class="btn btn-block btn-warning btn-sm">Edit</button><br></td>
-                <td><button type="button" class="btn btn-block btn-danger btn-sm">Delete</button><br></td>
-              </tr> -->
               
             </tbody>
           </table>
@@ -222,9 +215,7 @@
 
           </section>
           <!-- /.Left col -->
-          <!-- right col (We are only adding the ID to make the widgets sortable)-->
           
-          <!-- right col -->
         </div>
         <!-- /.row (main row) -->
       </div><!-- /.container-fluid -->
@@ -233,5 +224,12 @@
   </div>
   <!-- /.content-wrapper -->
   <%- include ('../partials/adminFooter'); -%>
+  <script>
+    $().ready(function(){
+      $('.sortable-table').tableSorter();
+      document.getElementById('simulate_click').click();
+      document.getElementById('simulate_click').click();
+    });
+  </script>
 </body>
 </html>

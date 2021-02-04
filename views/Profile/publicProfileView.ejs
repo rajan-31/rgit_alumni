@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Info</title>
-    <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../vendor/chosen/chosen.min.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/vendor/chosen/chosen.min.css">
 
     <style>
         #navbar {
@@ -68,7 +68,7 @@
                 src="data:image/<%=profileImage.contentType%>;base64, <%=profileImage.data.toString('base64')%>" width="300"
                 height="200">
             <% } else { %>
-            <img style="border-radius: 20px; margin: 0px 50px 0px;" src="../images/icons/profile-image-placeholder.png" width="200"
+            <img style="border-radius: 20px; margin: 0px 50px 0px;" src="../assets/icons/profile-image-placeholder.png" width="200"
                 height="200">
             <% } %>
         </div>
@@ -150,13 +150,18 @@
                     
         </div>
                 
-    <script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="../assets/vendor/jquery/jquery.min.js"></script>
                 
     <!-- to select multiple options from dropdown -->
-    <script src="../vendor/chosen/chosen.jquery.js"></script>
-    <script src="../javascripts/main.js"></script>
-    <script src="../vendor/bootstrap/js/popper.min.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/vendor/chosen/chosen.jquery.js"></script>
+    <script src="../assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+    <script src="../assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+    <script src="../assets/vendor/owl.carousel/owl.carousel.min.js"></script>
+    <script src="../assets/vendor/aos/aos.js"></script>
+    <script src="../assets/vendor/venobox/venobox.min.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/vendor/bootstrap/js/popper.min.js"></script>
+    <script src="../assets/vendor/bootstrap/js/bootstrap.min.js"></script>
 
     <script>
         var prevScrollpos = window.pageYOffset;

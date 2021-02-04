@@ -10,6 +10,7 @@ const middlewares = require('../middleware/index.js');
 const fs = require('fs'),
     path = require('path'),
     multer = require('multer');
+const { time } = require("console");
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads')
@@ -44,7 +45,9 @@ let uploadNewsImages = upload.array('images', 5);
 
 
 router.get("/news", middlewares.isLoggedIn, function(req, res){
+    let ass = new Date().getTime();
     News.find({}, { images: { $slice: 1 } }, function(err, allNews){
+        console.log("news:",new Date().getTime()-ass);
         if(err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
@@ -52,7 +55,7 @@ router.get("/news", middlewares.isLoggedIn, function(req, res){
         } else {
             res.render("News/news", {news: allNews});
         }
-    }).sort({ date: -1 });
+    }).sort({ date: -1 }).lean();
 });
 
 router.post("/news", middlewares.isAdmin, function(req, res){

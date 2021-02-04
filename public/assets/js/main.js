@@ -1,14 +1,14 @@
-/**
-* Template Name: Arsha - v2.2.0
-* Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
 !(function($) {
   "use strict";
 
+  var inn = window.innerWidth;
+  var out = window.outerWidth;
+  var hei = window.innerHeight;
+  var heo = window.outerHeight;
+
   // Preloader
   $(window).on('load', function() {
+    // $('#bodyContent').show();
     if ($('#preloader').length) {
       $('#preloader').delay(100).fadeOut('slow', function() {
         $(this).remove();
@@ -123,14 +123,20 @@
   // Toggle .header-scrolled class to #header when page is scrolled
   $(window).scroll(function() {
     if ($(this).scrollTop() > 100) {
-      $('#header').addClass('header-scrolled');
+      $('#header').addClass('header-scrolled py-0');
+      $('#main_logo').css({height:'60px'});
+      // $('#main_logo').animate({height:'60px'}, 100);
     } else {
-      $('#header').removeClass('header-scrolled');
+      $('#header').removeClass('header-scrolled py-0');
+      $('#main_logo').css({height:'100px'});
+      // $('#main_logo').animate({height:'100px'}, 100);
     }
   });
 
   if ($(window).scrollTop() > 100) {
-    $('#header').addClass('header-scrolled');
+    $('#header').addClass('header-scrolled py-0');
+    $('#main_logo').css({height:'60px'});
+    // $('#main_logo').animate({height:'60px'}, 100);
   }
 
   // Back to top button
@@ -160,19 +166,19 @@
 
   // Porfolio isotope and filter
   $(window).on('load', function() {
-    var portfolioIsotope = $('.portfolio-container').isotope({
-      itemSelector: '.portfolio-item'
-    });
+  //   var portfolioIsotope = $('.portfolio-container').isotope({
+  //     itemSelector: '.portfolio-item'
+  //   });
 
-    $('#portfolio-flters li').on('click', function() {
-      $("#portfolio-flters li").removeClass('filter-active');
-      $(this).addClass('filter-active');
+  //   $('#portfolio-flters li').on('click', function() {
+  //     $("#portfolio-flters li").removeClass('filter-active');
+  //     $(this).addClass('filter-active');
 
-      portfolioIsotope.isotope({
-        filter: $(this).data('filter')
-      });
-      aos_init();
-    });
+  //     portfolioIsotope.isotope({
+  //       filter: $(this).data('filter')
+  //     });
+  //     aos_init();
+  //   });
 
     // Initiate venobox (lightbox feature used in portofilo)
     $(document).ready(function() {
@@ -201,26 +207,83 @@
     aos_init();
   });
 
-  /* 
-  load data from json file
-  */
-  let dataFromFile = {}
-  $.ajax({
-    type: 'GET',
-    url: '/data/data.json',
-    dataType: 'json',
-    success: function (dataFromFile) {
-      $('#youtuneVideoURL').attr("href", dataFromFile.youtubeURL);
+  // message length
+  $(document).ready(function() {
+    $("#word_count").on('keyup', function() {      
+      if ( this.value.length > 1000){
+        var trimmed = $(this).val().slice(0, 1000);
+        $(this).val(trimmed + " ");
+      } else if ( this.value.match(/\S+/g).length > 100) {
+        // Split the string on first 200 words and rejoin on spaces
+        var trimmed = $(this).val().split(/\s+/, 100).join(" ");
+        // Add a space at the end to make sure more typing creates new words
+        $(this).val(trimmed + " ");
+      }
 
-      $('#studentProgressBarText').text(dataFromFile.students)
-      $('#alumniProgressBarText').text(dataFromFile.alumni)
-      $('#facultyProgressBarText').text(dataFromFile.faculty)
+    });
+  });
+  /*--------------------------------------------------------------------------------------- */
+  // profile
 
-      $('#studentProgressBarFill').attr('aria-valuenow', dataFromFile.studentsProgress)
-      $('#alumniProgressBarFill').attr('aria-valuenow', dataFromFile.alumniProgress)
-      $('#facultyProgressBarFill').attr('aria-valuenow', dataFromFile.facultyProgress)
-      },
-    async: true
+  /* ===================================================================
+    multiple choises */
+    $(".chosen-select").chosen({
+      no_results_text: "Oops, nothing found!"
+  });
+
+  $('#workModalButton').click(function(){
+    let employer = $('#workModalData-employer').val(), 
+        jobTitle = $('#workModalData-jobTitle').val(), 
+        jobDomain = $('#workModalData-jobDomain').val(), 
+        jobFrom = $('#workModalData-jobFrom').val(), 
+        jobTill = $('#workModalData-jobTill').val();
+
+    if (employer && jobTitle && jobDomain && jobFrom){
+
+        $('#addedWork').append(
+            `
+            <div class="bg-secondary my-3 px-2 py-2">
+                <button type="button" class="removeWork">
+                    X
+                </button>
+                <div class="row">
+                <div class="form-group col-6">
+                    <label for="employer">Employer</label>
+                    <input type="text" name="profile[workExperience][employer]" class="form-control" value="${employer}" required="required">
+                </div>
+                <div class="form-group col-3">
+                    <label for="jobTitle">Job Title</label>
+                    <input type="text" name="profile[workExperience][jobTitle]" class="form-control" value="${jobTitle}" required="required">
+                </div>
+            
+                <div class="form-group col-3">
+                    <label for="jobDomain">Job Domain</label>
+                        <input type="text" name="profile[workExperience][jobDomain]" class="form-control" value="${jobDomain}" required="required">
+                </div>
+                                
+                <div class="form-group col-6">
+                    <label for="jobFrom">job From</label>
+                    <input type="date" name="profile[workExperience][jobFrom]" class="form-control" value="${jobFrom}" required="required">
+                </div>
+            
+                <div class="form-group col-6">
+                    <label for="jobTill">Job Till</label>
+                    <input type="date" name="profile[workExperience][jobTill]" class="form-control" value="${jobTill}">
+                </div>
+                </div>
+            </div>
+            `);
+            $('#workModalData-employer').val('')
+            $('#workModalData-jobTitle').val('')
+            $('#workModalData-jobDomain').val('')
+            $('#workModalData-jobFrom').val('')
+            $('#workModalData-jobTill').val('')
+        $(this).attr('data-dismiss', 'modal')
+      }
+  });
+
+  $('.removeWork').click(function () {
+        $(this).closest('div').remove();
   });
 
 })(jQuery);

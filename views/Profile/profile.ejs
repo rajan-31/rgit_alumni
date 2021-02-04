@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
-    <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../vendor/chosen/chosen.min.css">
-    <link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/vendor/chosen/chosen.min.css">
+    <link href="../assets/vendor/icofont/icofont.min.css" rel="stylesheet">
 
     <style>
         #navbar {
@@ -16,8 +16,12 @@
         transition: top 0.5s; /* Transition effect when sliding down (and up) */
         }
 
+        .chosen-drop, .chosen-results {
+            max-height: 150px;
+        }
+
         .chosen-container-multi .chosen-choices {
-            height: 2.5rem;
+            min-height: 2.5rem;
             border-color: #343a40;
             border-radius: 0.3rem;
         }
@@ -108,7 +112,7 @@
                     width="300" height="200">
             <% } else { %>
                 <img style="border-radius: 20px"
-                    src="../images/icons/profile-image-placeholder.png" width="200"
+                    src="assets/icons/profile-image-placeholder.png" width="200"
                     height="200">
             <% } %>
         </div>
@@ -451,6 +455,17 @@
                     <option value="<%= skill %>"><%= skill %></option>
                     <% } %>
                     <% }) %>
+                    <option selected value="">ASS</option>
+                    <option selected value="">ASS</option>
+                    <option value="">ASS</option>
+                    <option value="">ASS</option>
+                    <option selected value="">ASS</option>
+                    <option selected value="">ASS</option>
+                    <option selected value="">ASS</option>
+                    <option selected value="">ASS</option>
+                    <option selected value="">ASS</option>
+                    <option selected value="">ASS</option>
+                    <option selected value="">ASS</option>
                 </select>
             </div>
 
@@ -459,25 +474,41 @@
         </div>
         
     </div>
-    <script src="../vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="../assets/vendor/jquery/jquery.min.js"></script>
     
     <!-- to select multiple options from dropdown -->
-    <script src="../vendor/chosen/chosen.jquery.js"></script>
-    <script src="../javascripts/main.js"></script>
-    <script src="../vendor/bootstrap/js/popper.min.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/vendor/chosen/chosen.jquery.js"></script>
+    <script src="../assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+    <script src="../assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+    <script src="../assets/vendor/owl.carousel/owl.carousel.min.js"></script>
+    <script src="../assets/vendor/aos/aos.js"></script>
+    <script src="../assets/vendor/venobox/venobox.min.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/vendor/bootstrap/js/popper.min.js"></script>
+    <script src="../assets/vendor/bootstrap/js/bootstrap.min.js"></script>
 
     <script>
         var prevScrollpos = window.pageYOffset;
-            window.onscroll = function () {
-                var currentScrollPos = window.pageYOffset;
-                if (prevScrollpos > currentScrollPos) {
-                    document.getElementById("navbar").style.top = "0";
-                } else {
-                    document.getElementById("navbar").style.top = "-90px";
-                }
-                prevScrollpos = currentScrollPos;
+        window.onscroll = function () {
+            var currentScrollPos = window.pageYOffset;
+            if (prevScrollpos > currentScrollPos) {
+                document.getElementById("navbar").style.top = "0";
+            } else {
+                document.getElementById("navbar").style.top = "-90px";
             }
+            prevScrollpos = currentScrollPos;
+        }
+
+        function customTouch() {
+            console.log(this);
+            this.click();
+        }
+        x=document.getElementsByClassName("search-choice-close")
+        for(let i=0; i<x.length; i++) {
+            x[i].addEventListener("touchstart", customTouch, false);
+        }
+        document.getElementById('skills_chosen').addEventListener("touchstart", customTouch, false)
+        document.getElementById('skills_chosen').firstChild.addEventListener("touchstart", customTouch, false)
     </script>
 </body>
 </html>

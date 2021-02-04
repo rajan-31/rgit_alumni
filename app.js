@@ -14,10 +14,10 @@ const express       = require("express"),
       methodOverride = require('method-override'), //to use delete, put requests
       flash = require('connect-flash');
 
-const User        = require("./models/user"),
-      News        = require("./models/news"),
-      Event       = require("./models/event"),
-      Admin       = require("./models/admin");
+const User  = require("./models/user"),
+      News  = require("./models/news"),
+      Event = require("./models/event"),
+      Admin = require("./models/admin");
 
 
 
@@ -52,7 +52,7 @@ mongoose.connection.on('error', function (err) {
 
 // When the connection is disconnected
 mongoose.connection.on('disconnected', function () {
-    console.log('Mongoose default connection disconnected!');
+    console.log('Mongoose default connection lost!');
 });
 
 /* end mpngodb connection */
@@ -70,7 +70,9 @@ app.use(expressSession({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 3600000 * 24 * 7 }, //7days // set "secure:true" only when using https
+    cookie: { 
+        maxAge: 3600000 * 24 * 7,
+    }, //7days // set "secure:true" only when using https
     store: new MongoStore({ mongooseConnection: mongoose.connection }) // may be more configuration in future
 }));
 
@@ -116,7 +118,7 @@ function (accessToken, refreshToken, profile, done) {
                 // more details can be taken
             });
             user.save(function (err) {
-                if (err) console.log(err);
+            if (err) console.log(err);
                 return done(err, user);
             });
         } else {
@@ -153,12 +155,18 @@ app.use(function(req, res, next){
     next();
 });
 
+/* using data from data/data.json */
+const rawdata = fs.readFileSync('./data/data.json');
+global.static_data = JSON.parse(rawdata);
+
 /* using all routes */
 app.use(indexRoutes);
 app.use(newsRoutes);
 app.use(eventRoutes);
 app.use(adminRoutes);
 app.use(profileRoutes);
+
+
 
 app.get('/*', function(req, res){
     res.send(`
@@ -168,12 +176,16 @@ app.get('/*', function(req, res){
     `)
 });
 
-const port = process.env.PORT,
-      ip   = process.env.IP;
-    // ip = "0.0.0.0";	// local network
+const port = process.env.PORT
+let ip;
+if(process.env.PLATFORM=="mobile") {
+    ip = "0.0.0.0";
+} else {
+    ip = process.env.IP;
+}
 
 app.listen(port, ip, function(){
-    console.log("Environment: ",process.env.Node_ENV);
+    // console.log("Environment: ",process.env.Node_ENV);
     console.log("Server is running...");
     console.log("Go to " + ip + ":" + port);
 });

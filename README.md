@@ -35,6 +35,7 @@ db.admins.insert({
 - may be use webpack
 - check browser support for things likr "forEach" loop
 - make cookies http only
+- custom error handler
 
 
 
@@ -51,6 +52,8 @@ db.admins.insert({
 - sanitize / validate form data
 - ajax calls for forms
 - email, first name, last name validation
+<!-- - "Sort operation used more than the maximum 33554432 bytes of RAM. Add an index, or specify a smaller limit." (create indexes for collection is a option) -->
+- compatibility on all browsers
 
 
 ## PRODUCTION CAHNGES

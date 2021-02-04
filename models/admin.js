@@ -4,6 +4,7 @@ const mogoose = require("mongoose"),
 const adminSchema = new mogoose.Schema({
     username: String,
     password: String,
+    createdBy: String,
     role: {
         type: String,
         default: "admin"
