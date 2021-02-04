@@ -29,8 +29,8 @@ db.admins.insert({
 })
 
 ## **NOTES**
-- check that after expiration of session records gets removed or not
-- check that is it requied to add "maxAge" to cookies
+- ~~check that after expiration of session records gets removed or not~~
+- ~~check that is it requied to add "maxAge" to cookies~~
 - may be use babel
 - may be use webpack
 - check browser support for things likr "forEach" loop
