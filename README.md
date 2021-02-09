@@ -36,6 +36,7 @@ db.admins.insert({
 - check browser support for things likr "forEach" loop
 - make cookies http only
 - custom error handler
+- Cookie pop up
 
 
 

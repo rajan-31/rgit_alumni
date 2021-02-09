@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Login | Alumini</title>
+	<title>Login | APSIT Alumini</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">	
 	<!-- Favicons -->
 	<link href="assets/img/favicon.png" rel="icon">
-	<link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+	<link href="assets/img/logo.png" rel="apple-touch-icon">
 
-	<link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="assets/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
 	<link rel="stylesheet" type="text/css" href="assets/css/util.css">
 	<link rel="stylesheet" type="text/css" href="assets/css/main.css">
+
+	<!-- Jquery with fallback -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+	<script>
+	   window.jQuery || document.write('<script src="assets/vendor/jquery.min.js"><\/script>');
+	</script>
 </head>
 <body>
 	<!-- start flash message -->
@@ -39,7 +46,7 @@
 				</span>
 				
 				<span class="login100-form-title p-b-40">
-					Login
+					User Login
 				</span>
 
 				<form action="/login" method="POST" id="loginForm" class="login100-form validate-form">
@@ -50,7 +57,7 @@
 					
 					<div class="wrap-input100 validate-input m-b-20" data-validate = "Please enter password">
 						<span class="btn-show-pass">
-							<i class="fa fa fa-eye"></i>
+							<i class="fas fa-eye"></i>
 						</span>
 						<input class="input100" type="password" name="password" placeholder="Password">
 						<span class="focus-input100"></span>
@@ -60,6 +67,7 @@
 					
 					<div class="container-login100-form-btn col-6">
 						<button class="login100-form-btn" form="loginForm">
+							<i class="fas fa-sign-in-alt p-r-5"></i>
 							Login
 						</button>
 					</div>
@@ -67,7 +75,7 @@
 						<form action="/oauth/google">
 							<button class="login100-form-btn google">
 								<div>
-									<i class="fa fa-google p-r-5"></i>
+									<i class="fab fa-google p-r-5"></i>
 								</div> 
 								Google Login
 							</button>
@@ -93,8 +101,7 @@
 		</div>
 	</div>
 
-	<script src="assets/vendor/jquery/jquery.min.js"></script>
-	<script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="assets/vendor/bootstrap.bundle.min.js"></script>
 	<script src="assets/vendor/chosen/chosen.jquery.js"></script>
 	<script src="assets/js/mainAuth.js"></script>
 

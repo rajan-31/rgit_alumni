@@ -125,7 +125,6 @@
         });
     };
     function sortTable(table, rows, column, direction, type) {
-        console.log(table);
         rows.sort(function (a, b) {
 
             var A = getVal(a, column, type);

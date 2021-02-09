@@ -11,22 +11,26 @@
 
   <!-- Favicons -->
   <link href="../assets/img/favicon.png" rel="icon">
-  <link href="../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="../assets/img/logo.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../assets/vendor/icofont/icofont.min.css" rel="stylesheet">
-  <link href="../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="../assets/vendor/venobox/venobox.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
   <link href="../assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
   <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
 
   <!-- Template Main CSS File -->
   <link href="../assets/css/style.css" rel="stylesheet">
+
+  <!-- Jquery with fallback -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script>
+     window.jQuery || document.write('<script src="../assets/vendor/jquery.min.js"><\/script>');
+  </script>
 
 </head>
 
@@ -55,10 +59,10 @@
           <li><a href="/admin">Admin Panel</a></li>
           <li><a href="/logout">Logout</a></li>
           <% } else { %>
-          <li class="drop-down"><a href="#"><%= loggedInUser.firstName || loggedInUser.username %>&nbsp;</a>
+          <li class="drop-down"><a href="#"><%= loggedInUser.firstName || loggedInUser.username %> <i class="fas fa-angle-down"></i></a>
             <ul>
-              <li><a href="/profile"><i class="icofont-ui-user pr-1"></i>Profile</a></li>
-              <li><a href="/logout"><i class="icofont-sign-out pr-1"></i>Logout</a></li>
+              <li><a href="/profile"><i class="fas fa-user pr-1"></i>Profile</a></li>
+              <li><a href="/logout"><i class="fas fa-sign-out-alt pr-1"></i>Logout</a></li>
             </ul>
           </li>
           <% } %>
