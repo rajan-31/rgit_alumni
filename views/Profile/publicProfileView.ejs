@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Info</title>
-    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/vendor/chosen/chosen.min.css">
 
     <style>
@@ -19,6 +19,13 @@
             /* Transition effect when sliding down (and up) */
         }
     </style>
+
+    <!-- Jquery with fallback -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script>
+     window.jQuery || document.write('<script src="../assets/vendor/jquery.min.js"><\/script>');
+  </script>
 </head>
 <body>
     <nav id="navbar" class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -68,8 +75,7 @@
                 src="data:image/<%=profileImage.contentType%>;base64, <%=profileImage.data.toString('base64')%>" width="300"
                 height="200">
             <% } else { %>
-            <img style="border-radius: 20px; margin: 0px 50px 0px;" src="../assets/icons/profile-image-placeholder.png" width="200"
-                height="200">
+                <i class="fas fa-user" style="font-size: 200px;"></i>
             <% } %>
         </div>
 
@@ -150,20 +156,23 @@
                     
         </div>
                 
-    <script src="../assets/vendor/jquery/jquery.min.js"></script>
                 
     <!-- to select multiple options from dropdown -->
     <script src="../assets/vendor/chosen/chosen.jquery.js"></script>
-    <script src="../assets/vendor/waypoints/jquery.waypoints.min.js"></script>
-    <script src="../assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+    <script src="../assets/vendor/jquery.waypoints.min.js"></script>
     <script src="../assets/vendor/owl.carousel/owl.carousel.min.js"></script>
     <script src="../assets/vendor/aos/aos.js"></script>
-    <script src="../assets/vendor/venobox/venobox.min.js"></script>
+    <script src="../assets/vendor/venobox.min.js"></script>
     <script src="../assets/js/main.js"></script>
-    <script src="../assets/vendor/bootstrap/js/popper.min.js"></script>
-    <script src="../assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/vendor/bootstrap.bundle.min.js"></script>
 
     <script>
+                /* ===================================================================
+            multiple choises */
+            $(".chosen-select").chosen({
+            no_results_text: "Oops, nothing found!"
+        });
+
         var prevScrollpos = window.pageYOffset;
         window.onscroll = function () {
             var currentScrollPos = window.pageYOffset;

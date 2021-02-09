@@ -120,13 +120,19 @@ router.get('/oauth/google/callback',
 /////////////////////////////////
 // logout
 router.get('/logout', function(req, res){
-    req.logout();
-    req.flash("successMessage", "Logged you out successfully.");
-    res.redirect('/');
-    // req.session.destroy((err) => {
-    //     req.flash("successMessage", "Logged you out successfully.");
-    //     res.redirect('/') // will always fire after session is destroyed
-    //   })
+    // req.logout();
+    // req.flash("successMessage", "Logged you out successfully.");
+    // res.redirect('/');
+
+    req.session.destroy(function(err) {
+        if(err) {
+            req.flash("errorMessage", "Something went wrong please try again.");
+            res.redirect('/'); // will always fire after session is destroyed
+        } else {
+            // req.flash("successMessage", "Logged you out successfully.");
+            res.redirect('/'); // will always fire after session is destroyed
+        }
+      });
 });
 
 ////////////////////////////////

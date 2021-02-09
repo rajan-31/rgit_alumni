@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
-    <link rel="stylesheet" href="../assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/vendor/chosen/chosen.min.css">
-    <link href="../assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
 
     <style>
         #navbar {
@@ -42,6 +42,13 @@
             margin: 0.5rem 0.3rem;
         }
     </style>
+
+    <!-- Jquery with fallback -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script>
+     window.jQuery || document.write('<script src="../assets/vendor/jquery.min.js"><\/script>');
+  </script>
 
 </head>
 <body>
@@ -111,9 +118,7 @@
                     src="data:image/<%=profileImage.contentType%>;base64, <%=profileImage.data.toString('base64')%>"
                     width="300" height="200">
             <% } else { %>
-                <img style="border-radius: 20px"
-                    src="assets/icons/profile-image-placeholder.png" width="200"
-                    height="200">
+                <i class="fas fa-user" style="font-size: 200px;"></i>
             <% } %>
         </div>
         
@@ -124,7 +129,7 @@
                     <label for="profileImage">Upload Profile Image</label>
                     <input type="file" accept=".jpg,.jpeg,.png" name="profileImage" class="form-control-file" required="required">
                 </div>
-                <div class="form-text-sm text-secondary"><i class="icofont-exclamation-circle"></i> Maximum file size is 1MB</div>
+                <div class="form-text-sm text-secondary"><i class="fas fa-exclamation-circle"></i> Maximum file size is 1MB</div>
             </form>
             <button type="submit" form="profileImageForm" class="btn btn-primary">Update Image</button> <!-- this button is for form above -->
 
@@ -169,7 +174,7 @@
             <%}%>
 
             <div class="alert alert-warning" role="alert">
-                <i class="icofont-exclamation-circle"></i> You will be logged out, if you change the First Name.
+                <i class="fas fa-exclamation-circle"></i> You will be logged out, if you change the First Name.
             </div>
             <button type="submit" class="btn btn-warning">Update Above Data</button>
         </form>
@@ -388,7 +393,7 @@
 
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-outline-dark btn-block" data-toggle="modal" data-target="#addWorkModal">
-                <i class="icofont-ui-add"></i> Add more
+                <i class="fas fa-plus"></i> Add more
             </button>
             
             <!-- Modal -->
@@ -429,7 +434,7 @@
                                     <label for="jobTill">Job Till</label>
                                     <input type="date" id="workModalData-jobTill"  class="form-control">
                                 </div>
-                                <div class="form-text-sm text-secondary"><i class="icofont-exclamation-circle"></i> Do not mention "Job Till" if it's your current job. </div>
+                                <div class="form-text-sm text-secondary"><i class="fas fa-exclamation-circle"></i> Do not mention "Job Till" if it's your current job. </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -474,20 +479,23 @@
         </div>
         
     </div>
-    <script src="../assets/vendor/jquery/jquery.min.js"></script>
     
     <!-- to select multiple options from dropdown -->
     <script src="../assets/vendor/chosen/chosen.jquery.js"></script>
-    <script src="../assets/vendor/waypoints/jquery.waypoints.min.js"></script>
-    <script src="../assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+    <script src="../assets/vendor/jquery.waypoints.min.js"></script>
     <script src="../assets/vendor/owl.carousel/owl.carousel.min.js"></script>
     <script src="../assets/vendor/aos/aos.js"></script>
-    <script src="../assets/vendor/venobox/venobox.min.js"></script>
+    <script src="../assets/vendor/venobox.min.js"></script>
     <script src="../assets/js/main.js"></script>
-    <script src="../assets/vendor/bootstrap/js/popper.min.js"></script>
-    <script src="../assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/vendor/bootstrap.bundle.min.js"></script>
 
     <script>
+        /* ===================================================================
+            multiple choises */
+            $(".chosen-select").chosen({
+            no_results_text: "Oops, nothing found!"
+        });
+
         var prevScrollpos = window.pageYOffset;
         window.onscroll = function () {
             var currentScrollPos = window.pageYOffset;

@@ -11,23 +11,26 @@
 
     <!-- Favicons -->
     <link href="../../assets/img/favicon.png" rel="icon">
-    <link href="../../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="../../assets/img/logo.png" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
     <!-- Vendor CSS Files -->
-    <link href="../../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../assets/vendor/icofont/icofont.min.css" rel="stylesheet">
-    <link href="../../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-    <link href="../../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-    <link href="../../assets/vendor/venobox/venobox.css" rel="stylesheet">
+    <link href="../../assets/vendor/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
     <link href="../../assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
     <link href="../../assets/vendor/aos/aos.css" rel="stylesheet">
 
     <!-- Template Main CSS File -->
     <link href="../../assets/css/style.css" rel="stylesheet">
 
+    <!-- Jquery with fallback -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script>
+     window.jQuery || document.write('<script src="../../assets/vendor/jquery.min.js"><\/script>');
+  </script>
 
 </head>
 <body>
@@ -55,10 +58,10 @@
                     <li><a href="/admin">Admin Panel</a></li>
                     <li><a href="/logout">Logout</a></li>
                     <% } else { %>
-                    <li class="drop-down"><a href="#"><%= loggedInUser.firstName || loggedInUser.username %>&nbsp;</a>
+                    <li class="drop-down"><a href="#"><%= loggedInUser.firstName || loggedInUser.username %> <i class="fas fa-angle-down"></i></a>
                         <ul>
-                            <li><a href="/profile"><i class="icofont-ui-user pr-1"></i>Profile</a></li>
-                            <li><a href="/logout"><i class="icofont-sign-out pr-1"></i>Logout</a></li>
+                            <li><a href="/profile"><i class="fas fa-user pr-1"></i>Profile</a></li>
+                            <li><a href="/logout"><i class="fas fa-sign-out-alt pr-1"></i>Logout</a></li>
                         </ul>
                     </li>
                     <% } %>
@@ -136,7 +139,7 @@
                                   </div>
                             </div>
                             <div class="small mt-0 mb-2">
-                                <i class="icofont-exclamation-circle"></i>
+                                <i class="fas fa-exclamation-circle"></i>
                                 To keep previous images don't add any files, otherwise they will be replaced.
                             </div>
                             <ul id="selectedImages">
@@ -158,7 +161,7 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-6">
-                        <h4>Join Our Newsletter</h4>
+                        <h4>Join Our Newsletter <i class="fas fa-newspaper"></i></h4>
                         <p>To get the latest updates</p>
                         <form action="" method="post">
                             <input type="email" name="email" placeholder="Enter your email...">
@@ -188,24 +191,25 @@
                     <div class="col-lg-3 col-md-6 footer-links">
                         <h4>Useful Links</h4>
                         <ul>
-                            <li><i class="bx bx-chevron-right"></i> <a href="/">Home</a></li>
-                            <li><i class="bx bx-chevron-right"></i> <a href="/#about">About us</a></li>
-                            <li><i class="bx bx-chevron-right"></i> <a >Terms of service</a></li>
-                            <li><i class="bx bx-chevron-right"></i> <a >Privacy policy</a></li>
-                          </ul>
-                    </div>
-    
-                    <div class="col-lg-3 col-md-6 footer-links">
+                          <li><i class="fas fa-angle-right" style="font-size: small; padding: 3px 6px;"></i> <a href="/">Home</a></li>
+                          <li><i class="fas fa-angle-right" style="font-size: small; padding: 3px 6px;"></i> <a href="/#about">About us</a></li>
+                          <li><i class="fas fa-angle-right" style="font-size: small; padding: 3px 6px;"></i> <a >Terms of service</a></li>
+                          <li><i class="fas fa-angle-right" style="font-size: small; padding: 3px 6px;"></i> <a >Privacy policy</a></li>
+                        </ul>
+                      </div>
+              
+                      <div class="col-lg-3 col-md-6 footer-links">
                         <h4>Our Social Networks</h4>
-                        <p class="text-center">Stay connected to get latest updates from us.</p>
+                        <p>Stay connected to get latest updates.</p>
                         <div class="social-links mt-3">
-                            <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
-                            <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
-                            <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
-                            <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
-                            <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+                          <a href="#" ><i class="fab fa-linkedin-in"></i></a>
+                          <a href="#" ><i class="fab fa-instagram"></i></a>
+                          <a href="#" ><i class="fab fa-facebook-f"></i></a>
+                          <a href="#" ><i class="fab fa-twitter"></i></a>
+                          <a href="#" ><i class="fab fa-youtube"></i></a>
+                          
                         </div>
-                    </div>
+                      </div>
     
                 </div>
             </div>
@@ -225,17 +229,17 @@
     </footer>
     <!-- End Footer -->
 
-    <a href="#" class="back-to-top"><i class="icofont-arrow-up"></i></a>
+    <a href="#" class="back-to-top"><i class="fas fa-arrow-up"></i></a>
     <div id="preloader"></div>
 
     <!-- Vendor JS Files -->
-    <script src="../../assets/vendor/jquery/jquery.min.js"></script>
-  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../../assets/vendor/jquery.easing/jquery.easing.min.js"></script>
-  <script src="../../assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+
+  <script src="../../assets/vendor/bootstrap.bundle.min.js"></script>
+  <script src="../../assets/vendor/jquery.waypoints.min.js"></script>
+  <script src="../../assets/vendor/jquery.easing.min.js"></script>
   <script src="../../assets/vendor/owl.carousel/owl.carousel.min.js"></script>
   <script src="../../assets/vendor/aos/aos.js"></script>
-  <script src="assets/vendor/venobox/venobox.min.js"></script>
+  <script src="../../assets/vendor/venobox.min.js"></script>
 
     <!-- Template Main JS File -->
     <script src="../../assets/js/main.js"></script>

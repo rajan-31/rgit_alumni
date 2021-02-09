@@ -7,19 +7,29 @@
     <title>APSIT Alumni Portal | Students</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="../assets/fonts/fontawesome-free/css/all.min.css">
+
+  <!-- Favicons -->
+  <link href="../assets/img/favicon.png" rel="icon">
+  <link href="../assets/img/logo.png" rel="apple-touch-icon">
+
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     
     <!-- overlayScrollbars -->   
     
-    <link href="../assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
     
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
     <!-- Theme style -->
     <link rel="stylesheet" href="../assets/css/adminlte.min.css">
+
+    <!-- Jquery with fallback -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <script>
+     window.jQuery || document.write('<script src="../assets/vendor/jquery.min.js"><\/script>');
+  </script>
   </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -50,7 +60,7 @@
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo main-->
             <a href="/" class="brand-link">
-                <img src="assets/img/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+                <img src="assets/img/logo.png" alt="APSIT" class="brand-image img-circle elevation-3"
                     style="opacity: .8">
                 <span class="brand-text font-weight-light">APSIT Alumni Portal</span>
             </a>
@@ -59,10 +69,10 @@
             <div class="sidebar">
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <img src="assets/icons/profile-image-placeholder-small.png" class="img-circle elevation-2" alt="User Image">
+                    <div class="image my-1">
+                      <i class="fas fa-user-circle fa-2x text-light"></i>
                     </div>
-                    <div class="info">
+                    <div class="info my-1">
                         <a href="#" class="d-block"> <%= loggedInUser.username %> </a>
                     </div>
                 </div>
@@ -316,7 +326,7 @@
           <!-- /.card-body -->
 
         <div>
-          <button type="submit" class="btn btn-block btn-primary btn-lg">Update data</button><br>
+          <button type="submit" class="btn btn-block btn-primary btn-lg"><i class="fas fa-upload"></i> Update data</button><br>
         </div>
     </form>
 
