@@ -224,7 +224,7 @@ router.post('/mail',function(req, res, next) {
                         </tr>
                         <tr class="active-row">
                         <td>Email ID</td>
-                        <td><a href="mailto:${email}">${email}</a><br><small>Click email address to reply.</small>)</td>
+                        <td><a href="mailto:${email}">${email}</a><br><small>(Click email address to reply.)</small></td>
                         </tr>
                         <tr>
                         <td>Subject</td>
