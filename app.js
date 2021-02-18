@@ -20,7 +20,6 @@ const User  = require("./models/user"),
       Admin = require("./models/admin");
 
 
-
 /* Importing all routes */
 const indexRoutes = require("./routes/index"),
       newsRoutes  = require("./routes/news"),
@@ -43,26 +42,20 @@ mongoose.connect(mongodbURL , {
 
 mongoose.connection.on('connected', function () {
     console.log('Mongoose default connection open to ' + mongodbURL);
-});
-
-// If the connection throws an error
-mongoose.connection.on('error', function (err) {
+}).on('error', function (err) {
     console.log('Mongoose default connection error: ' + err);
-});
-
-// When the connection is disconnected
-mongoose.connection.on('disconnected', function () {
+}).on('disconnected', function () {
     console.log('Mongoose default connection lost!');
 });
 
-/* end mpngodb connection */
 
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 app.set("view engine", "ejs");      // required to use ejs
-app.use(express.static(__dirname + "/public")); // public directory to serve
+app.use(express.static(__dirname + "/public"));     // public directory to serve
 app.use(methodOverride("_method"));
 app.use(flash());
+
 
 /* passport configuration */
 const MongoStore = connectMongo(expressSession);    // for session storage
@@ -76,7 +69,8 @@ app.use(expressSession({
     store: new MongoStore({ mongooseConnection: mongoose.connection }) // may be more configuration in future
 }));
 
-/* Multer config */
+
+/* Multer configuration */
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads')
@@ -87,13 +81,12 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-/* Local login User*/
-passport.use('user', new LocalStrategy(User.authenticate()));
-/* Local login Admin*/
-passport.use('admin', new LocalStrategy(Admin.authenticate()));
+passport.use('user', new LocalStrategy(User.authenticate()));   // Local login User
+passport.use('admin', new LocalStrategy(Admin.authenticate()));     // Local login Admin
 
 
 /* for google login */
@@ -128,6 +121,7 @@ function (accessToken, refreshToken, profile, done) {
 }
 ));
 
+
 // passport.serializeUser(User.serializeUser());
 // passport.deserializeUser(User.deserializeUser());
 passport.serializeUser(function (user, done) {
@@ -155,9 +149,11 @@ app.use(function(req, res, next){
     next();
 });
 
+
 /* using data from data/data.json */
 const rawdata = fs.readFileSync('./data/data.json');
 global.static_data = JSON.parse(rawdata);
+
 
 /* using all routes */
 app.use(indexRoutes);
@@ -177,15 +173,27 @@ app.get('/*', function(req, res){
 });
 
 const port = process.env.PORT
-let ip;
-if(process.env.PLATFORM=="mobile") {
-    ip = "0.0.0.0";
-} else {
-    ip = process.env.IP;
-}
+
+// for dev purposes
+let ip = process.env.PLATFORM == "mobile" ? "0.0.0.0" : process.env.IP
 
 app.listen(port, ip, function(){
     // console.log("Environment: ",process.env.Node_ENV);
     console.log("Server is running...");
     console.log("Go to " + ip + ":" + port);
 });
+
+/* create test admin */
+if(process.env.CREATE_TEST_ADMIN == "true") {
+    const adminUsername = "admin", adminPassword = "admin";
+
+    Admin.register(new Admin({ username: adminUsername, createdBy: "1st Admin" }), adminPassword, function (err, user) {
+        if (err) {
+            if(err.name == "UserExistsError")
+                console.log("Test Admin with that USERNAME is already present!");
+            else
+                console.log(err);
+        } else
+            console.log(`1st ADMIN created with- USERNAME: ${adminUsername} and PASSWORD: ${adminPassword}`);
+    });
+}
