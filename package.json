@@ -9,7 +9,9 @@
     "localWithLog": "set MONGODB_SERVER=local& nodemon app.js >> app.log",
     "mobile": "set PLATFORM=mobile& set MONGODB_SERVER=local& start http://192.168.0.102:8080& nodemon app.js",
     "atlas": "nodemon app.js",
-    "test": ""
+    "createTestAdmin": "set CREATE_TEST_ADMIN=true& nodemon app.js",
+    "startMongo": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ../startMongo.ps1",
+    "para": "start npm run local && start npm run startMongo"
   },
   "author": "Unknown",
   "license": "ISC",
@@ -25,7 +27,6 @@
     "mongoose": "^5.10.16",
     "multer": "^1.4.2",
     "nodemailer": "^6.4.17",
-    "nodemon": "^2.0.6",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",

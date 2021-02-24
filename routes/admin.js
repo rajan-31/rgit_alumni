@@ -15,7 +15,6 @@ const { json } = require("body-parser");
 const { render } = require("ejs");
 const e = require("express");
 
-// let static_data;    // to store data from data/data.json file
 
 router.get("/admin/login", function (req, res) {
     // req.logout()
@@ -36,7 +35,7 @@ router.post('/admin/signup', middlewares.isAdmin, function (req, res) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
         }
-        // use loacl strategy
+        // use loacal strategy
         // passport.authenticate('admin')(req, res, function () {
         //     res.redirect("/adminlist");      // change this in future
         // });
@@ -202,7 +201,6 @@ router.get('/admin/logout', function (req, res) {
         }
       });
 });
-
 
 
 module.exports = router;

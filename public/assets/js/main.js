@@ -230,10 +230,12 @@
 
         $('#addedWork').append(
             `
-            <div class="bg-secondary my-3 px-2 py-2">
-                <button type="button" class="removeWork">
-                    X
-                </button>
+            <div class="section-bg my-3 px-2 py-2 rounded border border-dark">
+            <p>&nbsp;
+              <button type="button" class="removeWork close" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+            </p>
                 <div class="row">
                 <div class="form-group col-6">
                     <label for="employer">Employer</label>
