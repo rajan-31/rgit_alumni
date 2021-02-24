@@ -3,20 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Info | APSIT Alumni</title>
-    <link rel="stylesheet" href="../assets/vendor/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/vendor/chosen/chosen.min.css">
+
+    <title>View Profile | APSIT Alumni</title>
+
+    <!-- Favicons -->
+    <link href="../../assets/img/favicon.png" rel="icon">
+    <link href="../../assets/img/logo.png" rel="apple-touch-icon">
+
+    
+    <!-- Google Fonts -->
+    <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+    
+    <link rel="stylesheet" href="../../assets/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/vendor/chosen/chosen.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
+
+    <!-- Template Main CSS File -->
+    <link href="../../assets/css/style.css" rel="stylesheet">
 
     <style>
-        #navbar {
-            position: fixed;
-            /* Make it stick/fixed */
-            top: 0;
-            /* Stay on top */
-            width: 100%;
-            /* Full width */
-            transition: top 0.5s;
-            /* Transition effect when sliding down (and up) */
+        .chosen-drop, .chosen-results {
+            max-height: 150px;
+        }
+
+        .chosen-container-multi .chosen-choices {
+            min-height: 2.5rem;
+            border-color: #343a40;
+            border-radius: 0.3rem;
+        }
+
+        .chosen-container-multi .chosen-choices li.search-choice {
+            margin: 0.3rem 0.3rem;
+            font-size: 1rem;
+            padding: 0.45rem 2rem 0.45rem 0.5rem;
+        }
+
+        .chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
+            top: 0.5rem;
+            right: 0.5rem;
+        }
+
+        .chosen-container-multi .chosen-choices li.search-field input[type=text]{
+            font-size: 1rem;
+            margin: 0.5rem 0.3rem;
+        }
+
+        #profile-img {
+            object-fit: cover;
+            width:200px;
+            height:200px;
+        }
+
+        input[type=checkbox] {
+            transform: scale(1.3);
         }
     </style>
 
@@ -24,165 +65,353 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
   <script>
-     window.jQuery || document.write('<script src="../assets/vendor/jquery.min.js"><\/script>');
+     window.jQuery || document.write('<script src="../../assets/vendor/jquery.min.js"><\/script>');
   </script>
+
 </head>
 <body>
-    <nav id="navbar" class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="/"><img src="../assets/img/logo.png" height="50"></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/">Home</a>
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top header-inner-pages">
+        <div class="container d-flex align-items-center">
+
+            <h1 class="align-items-center mr-auto"><a href="#"><img id="main_logo" src="../assets/img/logo.png" alt="APSIT" height="100px"></a></h1>
+            <!-- Uncomment below if you prefer to use an image logo -->
+            <!-- <a href="index.html" class="logo mr-auto"><img src="../../assets/img/logo.png" alt="" class="img-fluid"></a>-->
+
+            <nav class="nav-menu d-none d-lg-block">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li ><a href="/news">News</a></li>
+                    <li ><a href="/events">Events</a></li>
+                    <li><a href="/contribute">Contribute</a></li>
+                    <li class="active"><a href="/communicate">Communicate</a></li>
+
+                    <% if(!loggedInUser){ %>
+                    <li><a href="/signup">Sign UP</a></li>
+                    <li><a href="/login">Login</a></li>
+                    <% } else if(loggedInUser.role=="admin"){ %>
+                    <li><a href="/admin">Admin Panel</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                    <% } else { %>
+                    <li class="drop-down"><a href="#"><%= loggedInUser.firstName || loggedInUser.username %> <i class="fas fa-angle-down"></i></a>
+                        <ul>
+                            <li><a href="/profile"><i class="fas fa-user pr-1"></i>Profile</a></li>
+                            <li><a href="/logout"><i class="fas fa-sign-out-alt pr-1"></i>Logout</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/news">News</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/events">Events</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contribute">Contribute</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/communicate">Communicate</a>
-                    </li>
-    
+                    <% } %>
                 </ul>
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Logout</a>
-                    </li>
-    
-                </ul>
-            </div>
+            </nav><!-- .nav-menu -->
         </div>
-    </nav>
+    </header><!-- End Header -->
 
-    <div class="container mb-5" style="margin-top: 5rem;">
+    <main id="main">
+        <!-- ======= Breadcrumbs ======= -->
+        <section id="breadcrumbs" class="breadcrumbs"><br><br><br>
 
-        <h1>Profile</h1>
-
-        <!-- profile Image -->
-        <div>
-            <% if( profileImage.data ) { %>
-            <img style="border-radius: 20px"
-                src="data:image/<%=profileImage.contentType%>;base64, <%=profileImage.data.toString('base64')%>" width="300"
-                height="200">
-            <% } else { %>
-                <i class="fas fa-user" style="font-size: 200px;"></i>
-            <% } %>
-        </div>
-
-            <!-- other data -->
-            <h4><%= firstName  %> <%= lastName  %></h4>
-
-            <p>User Type: <%= userType  %></p>
-            
-            <p>Gender: <%= profile.gender  %></p>
-                        
-            <p>Bio: <%= profile.bio  %></p>
-            
-            <p>DOB: <% if(profile.dob && profile.dob!="") { %><%= profile.dob.toLocaleDateString()  %><% } %></p>
-            
-            <h5>Contact Details</h5>
-            <p>Contact Number: <%= profile.contact.mobile  %></p>
-            <p>Email: <%= profile.contact.email  %></p>
-            
-            <h5>Address Information</h5>
-            <strong><p>Home Address</p></strong>
-            <p><%= profile.address.homeAddress.addressLine1 %></p>
-            <p><%= profile.address.homeAddress.country %></p>
-            <p><%= profile.address.homeAddress.zipcode %></p>
-
-            <%if(userType && userType=="alumni"){%>
-            <strong><p>Business Address</p></strong>
-            <p><%= profile.address.businessAddress.addressLine1 %></p>
-            <p><%= profile.address.businessAddress.country %></p>
-            <p><%= profile.address.businessAddress.zipcode %></p>
-            <%}%>
-
-            <h5>Social Media</h5>
-            <p>Linkedin Profile: 
-                <% if(profile.social_media.linkedin){ %>
-                    <a href="https://www.linkedin.com/in/<%= profile.social_media.linkedin  %>" target="_blank">https://www.linkedin.com/in/<%= profile.social_media.linkedin  %>
-                    </a>
-                    <%}%>
-                </p>
-                <p>Instagram Profile: 
-                    <% if(profile.social_media.instagram){ %>
-                        <a href="https://www.instagram.com/<%= profile.social_media.instagram %>" target="_blank">https://www.instagram.com/<%= profile.social_media.instagram %></a>
-                        <%}%>
-                    </p>
-                    <p>Website: 
-                        <a href="<%= profile.social_media.website  %>" target="_blank"><%= profile.social_media.website  %></a>
-                    </p>
-                
-            <h5>Professionl Information</h5>
-            <p>Year Of Admission: <%= profile.yearOfAdmission  %></p>
-            <p>Year Of Graduation: <%= profile.yearOfGraduation  %></p>
-            <p>Branch: <%= profile.branch  %></p>
-            
-            <%if(userType && userType=="alumni"){%>
-            <% if(Object.entries(profile.workExperience.employer).length>0) { %>
-            <p> <strong>Work Experience</strong></p>
-                <% for(let j=0; j< Object.entries(profile.workExperience.employer).length; j++){ %>
-
-                <div class="bg-secondary my-3 px-2 py-2">
+            <div class="container">
                 <div class="row">
-                    <div class="form-group col-6"><p>Employer: <%= profile.workExperience.employer[j] %> </p></div>
-                    <div class="form-group col-3"><p>Job Title: <%= profile.workExperience.jobTitle[j] %> </p></div>
-                    <div class="form-group col-3"><p>Job Domain: <%= profile.workExperience.jobDomain[j] %> </p></div>
-                    <div class="form-group col-6"><p>Job From: <%= profile.workExperience.jobFrom[j] %> </p></div>
-                    <div class="form-group col-6"><p>Job Till: <%= profile.workExperience.jobTill[j] %> </p></div>
-                </div>
-                </div>
+                    <div class="col-lg-6 col-md-12">
+                        <ol>
+                            <li><a href="/">Home</a></li>
+                            <li>View Profile</li>
+                        </ol>
+                        <h2>Profile</h2>
+                    </div>
 
-                <% } %>
-            <% } %>
-            <% } %>
-
-            <p> <strong>Skills</strong></p>
-            <ul>
-                <% profile.skills.forEach(skill => { %>
-                <li><%= skill  %></li>
-                <% }) %>
-            </ul>
                     
-        </div>
-                
-                
-    <!-- to select multiple options from dropdown -->
-    <script src="../assets/vendor/chosen/chosen.jquery.js"></script>
-    <script src="../assets/vendor/jquery.waypoints.min.js"></script>
-    <script src="../assets/vendor/owl.carousel/owl.carousel.min.js"></script>
-    <script src="../assets/vendor/aos/aos.js"></script>
-    <script src="../assets/vendor/venobox.min.js"></script>
-    <script src="../assets/js/main.js"></script>
-    <script src="../assets/vendor/bootstrap.bundle.min.js"></script>
+                </div>
 
+            </div>
+        </section><!-- End Breadcrumbs -->
+        
+        <section id="profile" class="services section-bg">    
+
+            <div class="container">
+        
+                <!-- profile photo -->
+                <!-- many changes requird here -->
+                <div class="section-title">
+                    <h2>Profile</h2>
+                </div>
+                    
+                    <div id="profile-image" class="d-flex justify-content-center">
+                        <% if( profileImage.data ) { %>
+                            <img style="border-radius: 20px"
+                                src="data:image/<%=profileImage.contentType%>;base64, <%=profileImage.data.toString('base64')%>"
+                            id="profile-img">
+                        <% } else { %>
+                            <i class="fas fa-user" style="font-size: 200px;"></i>
+                        <% } %>
+                    </div>
+                
+                
+                <div class="mt-5">
+                    <!-- first & last name -->
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="firstName">First Name</label>
+                            <input type="text" name="firstName" class="form-control" value="<%= firstName  %>" disabled="disabled">
+                        </div>
+                        <div class="col-6">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" name="lastName" class="form-control" value="<%= lastName  %>" disabled="disabled">
+                        </div>
+                    </div><br>
+                    <div class="form-group">
+                        <div class="text-center"><strong>Education At Our Institute</strong> </div>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <!-- Year Of Adminssion -->
+                                <label for="profile[yearOfAdmission]">Adminssion</label>
+                                <input name="profile[yearOfAdmission]" id="yearOfAdmission" class="form-control" value="<%= profile.yearOfAdmission %>" disabled="disabled">
+                            
+                            </div>
+                            <div class="col-4">
+                                <!-- Year Of Graduation -->
+                                <label for="profile[yearOfGraduation]">Graduation</label>
+                                <input name="profile[yearOfGraduation]" id="yearOfGraduation" class="form-control" value="<%= profile.yearOfGraduation %>" disabled="disabled">
+                            </div>
+
+                            <div class="col-4">
+                                <!-- branch -->
+                                <label for="profile[branch]">Branch</label>
+                                <input name="profile[branch]" id="branch" class="form-control" value="<%= profile.branch %>" disabled="disabled">
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            
+                        </div>
+    
+                    </div>
+                    
+                </div>
+            
+            </div>
+        </section>
+            
+        <section id="profile" class="services">
+            <div class="section-title">
+                <h2>Personal Info</h2>
+            </div>
+
+            <div class="container">
+                <!-- other data -->
+                    
+                    <!-- bio -->
+                    <div class="form-group">
+                        <label for="profile[bio]"><strong>Bio</strong></label>
+                        <textarea name="profile[bio]" id="" cols="" rows="5" class="form-control" disabled="disabled"><%= profile.bio %></textarea>
+                    </div>
+
+                    <div class="form-group row">
+                        <!-- gender -->
+                        <div class="col-md-6 col-sm-12">
+                            <label for="profile[gender]"><strong>Gender</strong></label><br>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="male" name="profile[gender]" value="male" <% if(profile.gender=="male") {%>checked="checked "<%}%> disabled="disabled">
+                                <label class="form-check-label" for="male">Male</label>
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="female" name="profile[gender]" value="female" <% if (profile.gender=="female") {%>checked="checked "<%}%> disabled="disabled">
+                                <label class="form-check-label" for="female">Female</label>
+                            </div>
+                            
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="other" name="profile[gender]" value="other" <% if(profile.gender=="other") {%>checked="checked "<%}%> disabled="disabled">
+                                <label class="form-check-label" for="other">Other</label>
+                            </div>
+                        </div>
+
+                        <!-- dob -->
+                        <div class="col-md-6 col-sm-12">
+                            <label><strong>Date Of Birth</strong></label>
+                            <br>
+                            <!-- safari & internet explorer doesn't support this date picker-->
+                            <input class="form-control" type="date" name="profile[dob]"  min="1950-12-31" max="2100-12-31" 
+                                <% if(profile.dob && profile.dob!="") { %>
+                                    value="<%= profile.dob.toISOString().slice(0,10)  %>"
+                                <% } %> disabled="disabled">
+                        </div>
+                    </div>
+                    
+                    <hr><br>
+                    <div class="section-title">
+                        <h2>Contact Info</h2>
+                    </div>
+                    
+                    <!-- home address -->
+                    <div class="form-group">
+                        <div><strong>Home Address</strong> </div>
+                        <div class="form-row">
+                            <div class="col-12 form-group">
+                                <input type="text" name="profile[address][homeAddress][addressLine1]" value= "<%= profile.address.homeAddress.addressLine1 %>" class="form-control" disabled="disabled" >
+                            </div>
+                        
+                            <div class="col-6 form-group">
+                                
+                                <input type="text" name="profile[address][homeAddress][country]" value= "<%= profile.address.homeAddress.country %>" class="form-control" disabled="disabled" >
+                            </div>
+                            <div class="col-6 form-group">
+                                
+                                <input type="text" name="profile[address][homeAddress][zipcode]" value= "<%= profile.address.homeAddress.zipcode %>" class="form-control" disabled="disabled" >
+                            </div>
+                        </div>
+                    </div>
+        
+                    <%if(userType && userType=="alumni"){%>
+                    <!-- business address -->
+                    <div class="form-group">
+                        <div><strong>Business Address</strong> </div>
+                        
+                        <div class="form-row">
+
+                            <div class="col-12 form-group">
+                                <input type="text" name="profile[address][businessAddress][addressLine1]" value= "<%= profile.address.businessAddress.addressLine1 %>" class="form-control" disabled="disabled" >
+                            </div>
+                            <div class="col-6 form-group">
+                                
+                                <input type="text" name="profile[address][businessAddress][country]" value= "<%= profile.address.businessAddress.country %>" class="form-control" disabled="disabled" >
+                            </div>
+                            <div class="col-6 form-group">
+                                
+                                <input type="text" name="profile[address][businessAddress][zipcode]" value= "<%= profile.address.businessAddress.zipcode %>" class="form-control" disabled="disabled" >
+                            </div>
+                        </div>
+                    </div>
+                    <%}%>
+
+                    <div class="row">
+                        <!-- mobile -->
+                        <div class="col-6">
+                            <label for="profile[contact][mobile]">Mobile Number</label>
+                            <input type="tel" name="profile[contact][mobile]" value= "<%= profile.contact.mobile %>" class="form-control" disabled="disabled" >
+                        </div>
+            
+                        <!-- email -->
+                        <div class="col-6">
+                            <label for="profile[contact][email]">Email</label>
+                            <input type="email" name="profile[contact][email]" value= "<%= profile.contact.email %>" class="form-control" disabled="disabled">
+                        </div>
+                    </div>
+        
+                    <div class="row">
+                        <!-- linkedin -->
+                        <div class="col-6">
+                            <label for="profile[social_media][linkedin]">LinkedIn Username</label>
+                            <input type="text" name="profile[social_media][linkedin]" class="form-control" disabled="disabled" value= "<%= profile.social_media.linkedin %>" >
+                        </div>
+            
+                        <!-- instagram -->
+                        <div class="col-6">
+                            <label for="profile[social_media][instagram]">Instagram Username</label>
+                            <input type="text" name="profile[social_media][instagram]" class="form-control" disabled="disabled" value= <%= profile.social_media.instagram %> >
+                        </div>
+                    </div>
+        
+                    <!-- website -->
+                    <div class="form-group">
+                        <label for="profile[social_media][website]">Website</label>
+                        <input type="text" name="profile[social_media][website]" id="website" class="form-control" disabled="disabled" value= <%= profile.social_media.website %> >
+                    </div>
+                    <hr><br>
+                    
+                    <div class="section-title">
+                        <h2>Professional info</h2>
+                    </div>
+                    
+        
+                    <%if(userType && userType=="alumni"){%>
+                    <!-- Work Experience -->
+        
+                    <div class="form-group">
+                        <div><strong>Work Experience</strong></div>
+                            <% if(Object.entries(profile.workExperience.employer).length>0) { %>
+                                <% for(let j=0; j< Object.entries(profile.workExperience.employer).length; j++){ %>
+                                <div class="section-bg my-3 px-2 py-2 rounded border border-dark">
+                                    
+                                    <div class="row">
+                                        <div class="form-group col-4">
+                                            <label for="employer">Employer</label>
+                                            <input type="text" name="profile[workExperience][employer]" class="form-control" value="<%= profile.workExperience.employer[j] %>" disabled="disabled">
+                                        </div>
+                                        <div class="form-group col-4">
+                                            <label for="jobTitle">Title</label>
+                                            <input type="text" name="profile[workExperience][jobTitle]" class="form-control" value="<%= profile.workExperience.jobTitle[j] %>" disabled="disabled">
+                                        </div>
+                                
+                                        <div class="form-group col-4">
+                                            <label for="jobDomain">Domain</label>
+                                            <input type="text" name="profile[workExperience][jobDomain]" class="form-control" value="<%= profile.workExperience.jobDomain[j] %>" disabled="disabled">
+                                        </div>
+                                
+                                        <div class="form-group col-6">
+                                            <label for="jobFrom">Job From</label>
+                                            <input type="date" name="profile[workExperience][jobFrom]" class="form-control" value="<%= profile.workExperience.jobFrom[j] %>" disabled="disabled">
+                                        </div>
+                                
+                                        <div class="form-group col-6">
+                                            <label for="jobTill">Job Till</label>
+                                            <input type="date" name="profile[workExperience][jobTill]" class="form-control" value="<%= profile.workExperience.jobTill[j] %>" disabled="disabled">
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                            <% } %>
+        
+                    
+                    </div>
+                    <%}%>
+        
+                    <!-- skills -->
+                    <div class="form-group">
+                        <label for="profile[skills]">Skills</label>
+                        <select name="profile[skills]" id="skills" data-placeholder="type to search.." multiple
+                            class="form-control chosen-select" >
+                            <option value=""></option>
+                            <% ["Web Dev", "DevOps", "Pen Test"].forEach(skill => { %>
+                            <% if( profile.skills.includes(skill) ) { %>
+                            <option selected value="<%= skill %>" ><%= skill %></option>
+                            <% } else { %>
+                            <option value="<%= skill %>"><%= skill %></option>
+                            <% } %>
+                            <% }) %>
+                        </select>
+                    </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <%- include ('../partials/footer'); -%>
+    
+    <script src="../../assets/vendor/chosen/chosen.jquery.js"></script>
+    
     <script>
-                /* ===================================================================
+        /* ===================================================================
             multiple choises */
-            $(".chosen-select").chosen({
+        $(".chosen-select").chosen({
             no_results_text: "Oops, nothing found!"
         });
+        $(".chosen-select").attr('disabled', true).trigger("chosen:updated")
 
-        var prevScrollpos = window.pageYOffset;
-        window.onscroll = function () {
-            var currentScrollPos = window.pageYOffset;
-            if (prevScrollpos > currentScrollPos) {
-                document.getElementById("navbar").style.top = "0";
-            } else {
-                document.getElementById("navbar").style.top = "-90px";
-            }
-            prevScrollpos = currentScrollPos;
-        }
+        // function customTouch() {
+        //     console.log(this);
+        //     this.click();
+        // }
+        // x=document.getElementsByClassName("search-choice-close")
+        // for(let i=0; i<x.length; i++) {
+        //     x[i].addEventListener("touchstart", customTouch, false);
+        // }
+        // document.getElementById('skills_chosen').addEventListener("touchstart", customTouch, false)
+        // document.getElementById('skills_chosen').firstChild.addEventListener("touchstart", customTouch, false)
+
+        // $(".toast").toast('show');
     </script>
 </body>
 </html>

@@ -302,6 +302,12 @@
                         </div>
                     </div>
                     
+                    <hr><br>
+                    <div class="section-title">
+                        <h2>Contact Info</h2>
+                    </div>
+                    
+
                     <!-- home address -->
                     <div class="form-group">
                         <div><strong>Home Address</strong> </div>
@@ -342,9 +348,7 @@
                         </div>
                     </div>
                     <%}%>
-                    <hr><br>
-                    
-                    <h3>Contact Information</h3>
+
                     <div class="row">
                         <!-- mobile -->
                         <div class="col-6">
@@ -379,8 +383,11 @@
                         <input type="text" name="profile[social_media][website]" id="website" class="form-control" value= <%= profile.social_media.website %> >
                     </div>
                     <hr><br>
-        
-                    <h3>Professionl Information</h3>
+                    
+                    <div class="section-title">
+                        <h2>Professional Info</h2>
+                    </div>
+
                     <div class="form-group">
                         <div><strong>Education at our institute</strong> </div>
                         <div class="row">
@@ -453,19 +460,19 @@
                                         </p>
                                     
                                     <div class="row">
-                                        <div class="form-group col-6">
+                                        <div class="form-group col-4">
                                             <label for="employer">Employer</label>
                                             <input type="text" name="profile[workExperience][employer]" class="form-control" value="<%= profile.workExperience.employer[j] %>"
                                                 required="required">
                                         </div>
-                                        <div class="form-group col-3">
-                                            <label for="jobTitle">Job Title</label>
+                                        <div class="form-group col-4">
+                                            <label for="jobTitle">Title</label>
                                             <input type="text" name="profile[workExperience][jobTitle]" class="form-control" value="<%= profile.workExperience.jobTitle[j] %>"
                                                 required="required">
                                         </div>
                                 
-                                        <div class="form-group col-3">
-                                            <label for="jobDomain">Job Domain</label>
+                                        <div class="form-group col-4">
+                                            <label for="jobDomain">Domain</label>
                                             <input type="text" name="profile[workExperience][jobDomain]" class="form-control" value="<%= profile.workExperience.jobDomain[j] %>"
                                                 required="required">
                                         </div>
@@ -513,25 +520,28 @@
                                         </div>
         
                                         <div class="form-group">
-                                            <label for="jobTitle">Job Title</label>
+                                            <label for="jobTitle">Title</label>
                                             <input type="text" id="workModalData-jobTitle" class="form-control">
                                         </div>
         
                                         <div class="form-group">
-                                            <label for="jobDomain">Job Domain</label>
+                                            <label for="jobDomain">Domain</label>
                                             <input type="text" id="workModalData-jobDomain"  class="form-control">
                                         </div>
-        
-                                        <div class="form-group">
-                                            <label for="jobFrom">job From</label>
-                                            <input type="date" id="workModalData-jobFrom"  class="form-control">
+                                        
+                                        <div class="form-row">
+                                            <div class="form-group col-6">
+                                                <label for="jobFrom">Job From</label>
+                                                <input type="date" id="workModalData-jobFrom"  class="form-control">
+                                            </div>
+            
+                                            <div class="form-group col-6">
+                                                <label for="jobTill">Job Till</label>
+                                                <input type="date" id="workModalData-jobTill"  class="form-control">
+                                            </div>
                                         </div>
-        
-                                        <div class="form-group">
-                                            <label for="jobTill">Job Till</label>
-                                            <input type="date" id="workModalData-jobTill"  class="form-control">
-                                        </div>
-                                        <div class="form-text-sm text-secondary"><i class="fas fa-exclamation-circle"></i> Do not mention "Job Till" if it's your current job. </div>
+
+                                        
                                     </div>
                                 </div>
                                 <div class="modal-footer">

@@ -237,17 +237,17 @@
               </button>
             </p>
                 <div class="row">
-                <div class="form-group col-6">
+                <div class="form-group col-4">
                     <label for="employer">Employer</label>
                     <input type="text" name="profile[workExperience][employer]" class="form-control" value="${employer}" required="required">
                 </div>
-                <div class="form-group col-3">
-                    <label for="jobTitle">Job Title</label>
+                <div class="form-group col-4">
+                    <label for="jobTitle">Title</label>
                     <input type="text" name="profile[workExperience][jobTitle]" class="form-control" value="${jobTitle}" required="required">
                 </div>
             
-                <div class="form-group col-3">
-                    <label for="jobDomain">Job Domain</label>
+                <div class="form-group col-4">
+                    <label for="jobDomain">Domain</label>
                         <input type="text" name="profile[workExperience][jobDomain]" class="form-control" value="${jobDomain}" required="required">
                 </div>
                                 
