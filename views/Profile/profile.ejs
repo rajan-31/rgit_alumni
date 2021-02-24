@@ -3,19 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Profile | APSIT Alumni</title>
+
+    <!-- Favicons -->
+    <link href="../assets/img/favicon.png" rel="icon">
+    <link href="../assets/img/logo.png" rel="apple-touch-icon">
+
+    
+    <!-- Google Fonts -->
+    <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+    
     <link rel="stylesheet" href="../assets/vendor/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/vendor/chosen/chosen.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
 
-    <style>
-        #navbar {
-        position: fixed; /* Make it stick/fixed */
-        top: 0; /* Stay on top */
-        width: 100%; /* Full width */
-        transition: top 0.5s; /* Transition effect when sliding down (and up) */
-        }
+    <!-- Template Main CSS File -->
+    <link href="../assets/css/style.css" rel="stylesheet">
 
+    <style>
         .chosen-drop, .chosen-results {
             max-height: 150px;
         }
@@ -41,6 +49,16 @@
             font-size: 1rem;
             margin: 0.5rem 0.3rem;
         }
+
+        #profile-img {
+            object-fit: cover;
+            width:200px;
+            height:200px;
+        }
+
+        input[type=checkbox] {
+            transform: scale(1.3);
+        }
     </style>
 
     <!-- Jquery with fallback -->
@@ -52,449 +70,513 @@
 
 </head>
 <body>
-    <nav id="navbar" class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="/"><img src="../assets/img/logo.png" height="50"></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/news">News</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/events">Events</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contribute">Contribute</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/communicate">Communicate</a>
-                    </li>
-                    
-                </ul>
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Logout</a>
-                    </li>
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top header-inner-pages">
+        <div class="container d-flex align-items-center">
 
-                </ul>
-            </div>
-        </div>
-    </nav>
+            <h1 class="align-items-center mr-auto"><a href="#"><img id="main_logo" src="assets/img/logo.png" alt="APSIT" height="100px"></a></h1>
+            <!-- Uncomment below if you prefer to use an image logo -->
+            <!-- <a href="index.html" class="logo mr-auto"><img src="../assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
+            <nav class="nav-menu d-none d-lg-block">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li ><a href="/news">News</a></li>
+                    <li ><a href="/events">Events</a></li>
+                    <li><a href="/contribute">Contribute</a></li>
+                    <li><a href="/communicate">Communicate</a></li>
 
-
-    <!-- start flash message -->
-    <% if(successMessage && successMessage.length>0 ){ %>
-        <div class="alert alert-success" style="margin-top: 4.75rem;" role="alert">
-            <div class="container text-center">
-                <%= successMessage %>
-            </div>
-        </div>
-    <% } else if(errorMessage && errorMessage.length>0 ){ %>
-        <div class="alert alert-danger" style="margin-top: 4.75rem;" role="alert">
-            <div class="container text-center">
-                <%= errorMessage %>
-            </div>
-        </div>
-    <% } %>
-    <!-- end flash message -->
-
-    <div class="container mb-5" style="margin-top: 5rem;">
-        
-        <h1>Profile</h1>
-
-        <!-- profile photo -->
-        <!-- many changes requird here -->
-        <div class="my-5">
-            <% if( profileImage.data ) { %>
-                <img style="border-radius: 20px"
-                    src="data:image/<%=profileImage.contentType%>;base64, <%=profileImage.data.toString('base64')%>"
-                    width="300" height="200">
-            <% } else { %>
-                <i class="fas fa-user" style="font-size: 200px;"></i>
-            <% } %>
-        </div>
-        
-        <div class="my-5">
-
-            <form id="profileImageForm" action="/profile/image" enctype="multipart/form-data" method="post">
-                <div class="form-group">
-                    <label for="profileImage">Upload Profile Image</label>
-                    <input type="file" accept=".jpg,.jpeg,.png" name="profileImage" class="form-control-file" required="required">
-                </div>
-                <div class="form-text-sm text-secondary"><i class="fas fa-exclamation-circle"></i> Maximum file size is 1MB</div>
-            </form>
-            <button type="submit" form="profileImageForm" class="btn btn-primary">Update Image</button> <!-- this button is for form above -->
-
-            <% if( profileImage.data ) { %>
-                <button type="submit" form="deleteProfileImage" class="btn btn-danger">Remove Image</button> <!-- this button is for form below -->
-                <form id="deleteProfileImage" action="/profile/image?_method=DELETE" method="POST"></form>
-            <% }%>
-
-        </div>
-
-        <div class="my-5">
-        <form action="/profile/accountData" method="post">
-            <!-- first & last name -->
-            <div class="row">
-                <div class="col-6">
-                    <label for="firstName">First Name</label>
-                    <input type="text" name="firstName" class="form-control" value="<%= firstName  %>">
-                </div>
-                <div class="col-6">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" name="lastName" class="form-control" value="<%= lastName  %>">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="userType">User Type</label>
-                <select name="userType" class="form-control" required="required">
-                    <option value="" >Select User Type</option>
-                    <option value="alumni" <% if(userType=="alumni") {%>selected="selected "<%}%> >Alumni</option>
-                    <option value="student" <% if(userType=="student") {%>selected="selected "<%}%> >Student</option>
-                </select>
-            </div>
-            <!-- ask permission for contact -->
-            <%if(userType && userType=="alumni"){%>
-            <div class="form-check">
-                <div class="form-group">
-                        <input type="checkbox" name="receiveMsg" id="receiveMsg" value="true" <% if(receiveMsg) {%>checked="checked "<%}%>>
-                        <label class="form-check-label" for="receiveMsg">
-                            Would you like to get contacted by students?
-                        </label>
-                </div>
-            </div>
-            <%}%>
-
-            <div class="alert alert-warning" role="alert">
-                <i class="fas fa-exclamation-circle"></i> You will be logged out, if you change the First Name.
-            </div>
-            <button type="submit" class="btn btn-warning">Update Above Data</button>
-        </form>
-        </div>
-
-        <!-- other data -->
-        <div class="my-5">
-        <form action="/profile" method="post">
-
-            <!-- gender -->
-            <div class="form-group">
-                <label for="profile[gender]">Select Gender</label>
-                <br>
-                <input type="radio" id="male" name="profile[gender]" value="male" <% if(profile.gender=="male") {%>checked="checked "<%}%>  >
-                <label for="male">Male</label>
-
-                <input type="radio" id="female" name="profile[gender]" value="female" <% if (profile.gender=="female") {%>checked="checked "<%}%>>
-                <label for="female">Female</label>
-
-                <input type="radio" id="other" name="profile[gender]" value="other" <% if(profile.gender=="other") {%>checked="checked "<%}%>>
-                <label for="other">Other</label>
-            </div>
-
-            <!-- bio -->
-            <div class="form-group">
-                <label for="profile[bio]">Bio</label>
-                <textarea name="profile[bio]" id="" cols="" rows="5" class="form-control" placeholder="Enter something about you..."><%= profile.bio %></textarea>
-            </div>
-
-            <!-- dob -->
-            <div class="form-group">
-                <label>Date Of Birth: </label>
-                <!-- safari & internet explorer doesn't support this date picker-->
-                <input type="date" name="profile[dob]"  min="1950-12-31" max="2100-12-31" <% if(profile.dob && profile.dob!="") { %>value="<%= profile.dob.toISOString().slice(0,10)  %>"<% } %>>
-            </div>
-            <hr><br>
-
-            <h5>Address Information</h5>
-            <!-- home address -->
-            <div class="form-group">
-                <div><strong>Home Address:</strong> </div>
-                <label for="profile[address][homeAddress][addressLine1]">Adress Line 1: </label>
-                <input type="text" name="profile[address][homeAddress][addressLine1]" value= "<%= profile.address.homeAddress.addressLine1 %>" class="form-control" >
-                <div class="form-row">
-                    <div class="col-6">
-                        <label for="profile[address][homeAddress][country]">Country: </label>
-                        <input type="text" name="profile[address][homeAddress][country]" value= "<%= profile.address.homeAddress.country %>" class="form-control">
-                    </div>
-                    <div class="col-6">
-                        <label for="profile[address][homeAddress][zipcode]">Zipcode: </label>
-                        <input type="text" name="profile[address][homeAddress][zipcode]" value= "<%= profile.address.homeAddress.zipcode %>" class="form-control">
-                    </div>
-                </div>
-            </div>
-
-            <%if(userType && userType=="alumni"){%>
-            <!-- business address -->
-            <div class="form-group">
-                <div><strong>Business Address:</strong> </div>
-                <label for="profile[address][businessAddress][addressLine1]">Adress Line 1: </label>
-                <input type="text" name="profile[address][businessAddress][addressLine1]" value= "<%= profile.address.businessAddress.addressLine1 %>" class="form-control" >
-                <div class="form-row">
-                    <div class="col-6">
-                        <label for="profile[address][businessAddress][country]">Country: </label>
-                        <input type="text" name="profile[address][businessAddress][country]" value= "<%= profile.address.businessAddress.country %>" class="form-control">
-                    </div>
-                    <div class="col-6">
-                        <label for="profile[address][businessAddress][zipcode]">Zipcode: </label>
-                        <input type="text" name="profile[address][businessAddress][zipcode]" value= "<%= profile.address.businessAddress.zipcode %>" class="form-control">
-                    </div>
-                </div>
-            </div>
-            <%}%>
-            <hr><br>
-            
-            <h5>Contact Information</h5>
-            <div class="row">
-                <!-- mobile -->
-                <div class="col-6">
-                    <label for="profile[contact][mobile]">Mobile Number</label>
-                    <input type="tel" name="profile[contact][mobile]" value= "<%= profile.contact.mobile %>" class="form-control" >
-                </div>
-    
-                <!-- email -->
-                <div class="col-6">
-                    <label for="profile[contact][email]">Email</label>
-                    <input type="email" name="profile[contact][email]" value= "<%= profile.contact.email %>" class="form-control">
-                </div>
-            </div>
-
-            <div class="row">
-                <!-- linkedin -->
-                <div class="col-6">
-                    <label for="profile[social_media][linkedin]">LinkedIn Username</label>
-                    <input type="text" name="profile[social_media][linkedin]" class="form-control" value= "<%= profile.social_media.linkedin %>" >
-                </div>
-    
-                <!-- instagram -->
-                <div class="col-6">
-                    <label for="profile[social_media][instagram]">Instagram Username</label>
-                    <input type="text" name="profile[social_media][instagram]" class="form-control" value= <%= profile.social_media.instagram %> >
-                </div>
-            </div>
-
-            <!-- website -->
-            <div class="form-group">
-                <label for="profile[social_media][website]">Website</label>
-                <input type="text" name="profile[social_media][website]" id="website" class="form-control" value= <%= profile.social_media.website %> >
-            </div>
-            <hr><br>
-
-            <h5>Professionl Information</h5>
-            <div class="form-group">
-                <div><strong>Education at our institute</strong> </div>
-                <div class="row">
-                    <div class="col-6">
-                        <!-- Year Of Adminssion -->
-                        <label for="profile[yearOfAdmission]">Year Of Adminssion</label>
-                        <select name="profile[yearOfAdmission]" id="yearOfAdmission" class="form-control">
-                            <option value=""></option>
-                            <% for( let i = 2010; i <= (new Date).getFullYear(); i++ ) { %>
-                            <% if(i==profile.yearOfAdmission) { %>
-                            <option value="<%= i %>" selected="selected"><%= i %></option>
-                            <% } else { %>
-                            <option value="<%= i %>"><%= i %></option>
-                            <% } %>
-                            <% } %>
-                        </select>
-                    
-                    </div>
-                    <div class="col-6">
-                        <!-- Year Of Graduation -->
-                        <label for="profile[yearOfGraduation]">Year Of Graduation</label>
-                        <select name="profile[yearOfGraduation]" id="yearOfGraduation" class="form-control">
-                            <option value=""></option>
-                            <% for( let i = 2010; i <= (new Date).getFullYear()+4; i++ ) { %>
-                            <% if(i==profile.yearOfGraduation) { %>
-                            <option value="<%= i %>" selected="selected"><%= i %></option>
-                            <% } else { %>
-                            <option value="<%= i %>"><%= i %></option>
-                            <% } %>
-                            <% } %>
-                        </select>
-
-                    </div>
-                </div>
-            </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-6 mx-auto">
-                            <!-- branch -->
-                            <label for="profile[branch]">Branch</label>
-                            <select name="profile[branch]" id="branch" class="form-control">
-                                <option value=""></option>
-                                <% ["IT", "Mech", "CS"].forEach(branch => { %>
-                                <% if(branch==profile.branch) { %>
-                                <option value="<%= branch %>" selected="selected"><%= branch %></option>
-                                <% } else { %>
-                                <option value="<%= branch %>"><%= branch %></option>
-                                <% } %>
-                                <% }) %>
-                            </select>
-                        </div>
-                    </div>
-
-                </div>
-            
-
-            <%if(userType && userType=="alumni"){%>
-            <!-- Work Experience -->
-
-            <div class="form-group">
-                <div><strong>Work Experience</strong></div>
-                    <% if(Object.entries(profile.workExperience.employer).length>0) { %>
-                        <% for(let j=0; j< Object.entries(profile.workExperience.employer).length; j++){ %>
-                        <div class="bg-secondary my-3 px-2 py-2">
-                            <button type="button" class="removeWork">
-                                X
-                            </button>
-                            
-                            <div class="row">
-                                <div class="form-group col-6">
-                                    <label for="employer">Employer</label>
-                                    <input type="text" name="profile[workExperience][employer]" class="form-control" value="<%= profile.workExperience.employer[j] %>"
-                                        required="required">
-                                </div>
-                                <div class="form-group col-3">
-                                    <label for="jobTitle">Job Title</label>
-                                    <input type="text" name="profile[workExperience][jobTitle]" class="form-control" value="<%= profile.workExperience.jobTitle[j] %>"
-                                        required="required">
-                                </div>
-                        
-                                <div class="form-group col-3">
-                                    <label for="jobDomain">Job Domain</label>
-                                    <input type="text" name="profile[workExperience][jobDomain]" class="form-control" value="<%= profile.workExperience.jobDomain[j] %>"
-                                        required="required">
-                                </div>
-                        
-                                <div class="form-group col-6">
-                                    <label for="jobFrom">job From</label>
-                                    <input type="date" name="profile[workExperience][jobFrom]" class="form-control" value="<%= profile.workExperience.jobFrom[j] %>"
-                                        required="required">
-                                </div>
-                        
-                                <div class="form-group col-6">
-                                    <label for="jobTill">Job Till</label>
-                                    <input type="date" name="profile[workExperience][jobTill]" class="form-control" value="<%= profile.workExperience.jobTill[j] %>">
-                                </div>
-                            </div>
-                        </div>
-                        <% } %>
-                    <% } %>
-
-                <div id="addedWork">
-                </div>
-
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-outline-dark btn-block" data-toggle="modal" data-target="#addWorkModal">
-                <i class="fas fa-plus"></i> Add more
-            </button>
-            
-            <!-- Modal -->
-            <div class="modal fade" id="addWorkModal" tabindex="-1" role="dialog" aria-labelledby="addWorkModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addWorkModalLabel">Add Education</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div id="workModalData">
-                                
-                                <div class="form-group">
-                                    <label for="employer">Employer</label>
-                                    <input type="text" id="workModalData-employer" class="form-control">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="jobTitle">Job Title</label>
-                                    <input type="text" id="workModalData-jobTitle" class="form-control">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="jobDomain">Job Domain</label>
-                                    <input type="text" id="workModalData-jobDomain"  class="form-control">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="jobFrom">job From</label>
-                                    <input type="date" id="workModalData-jobFrom"  class="form-control">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="jobTill">Job Till</label>
-                                    <input type="date" id="workModalData-jobTill"  class="form-control">
-                                </div>
-                                <div class="form-text-sm text-secondary"><i class="fas fa-exclamation-circle"></i> Do not mention "Job Till" if it's your current job. </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" id="workModalButton" class="btn btn-primary">ADD</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </div>
-            <%}%>
-
-            <!-- skills -->
-            <div class="form-group">
-                <label for="profile[skills]">Skills</label>
-                <select name="profile[skills]" id="skills" data-placeholder="type to search.." multiple
-                    class="form-control chosen-select">
-                    <option value=""></option>
-                    <% ["Web Dev", "DevOps", "Pen Test"].forEach(skill => { %>
-                    <% if( profile.skills.includes(skill) ) { %>
-                    <option selected value="<%= skill %>"><%= skill %></option>
+                    <% if(!loggedInUser){ %>
+                    <li><a href="/signup">Sign UP</a></li>
+                    <li><a href="/login">Login</a></li>
+                    <% } else if(loggedInUser.role=="admin"){ %>
+                    <li><a href="/admin">Admin Panel</a></li>
+                    <li><a href="/logout">Logout</a></li>
                     <% } else { %>
-                    <option value="<%= skill %>"><%= skill %></option>
+                    <li class="drop-down active"><a href="#profile"><%= loggedInUser.firstName || loggedInUser.username %> <i class="fas fa-angle-down"></i></a>
+                        <ul>
+                            <li class="active"><a href="#profile"><i class="fas fa-user pr-1"></i>Profile</a></li>
+                            <li><a href="/logout"><i class="fas fa-sign-out-alt pr-1"></i>Logout</a></li>
+                        </ul>
+                    </li>
                     <% } %>
-                    <% }) %>
-                </select>
+                </ul>
+            </nav><!-- .nav-menu -->
+        </div>
+    </header><!-- End Header -->
+
+    <main id="main">
+        <!-- ======= Breadcrumbs ======= -->
+        <section id="breadcrumbs" class="breadcrumbs"><br><br><br>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-12">
+                        <ol>
+                            <li><a href="/">Home</a></li>
+                            <li>Profile</li>
+                        </ol>
+                        <h2>Profile</h2>
+                    </div>
+
+                    <!-- start flash message -->
+                    <% if(successMessage && successMessage.length>0 ){ %>
+                        <div class="col-lg-6 col-md-12">
+                            <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 100px;">
+                                <div class="toast border border-success" data-delay="5000" style="position: absolute; top: 0; right: 0;">
+                                    <div class="toast-header">
+                                        <i class="far fa-check-circle text-success"></i>
+                                        <strong class="mr-auto">&nbsp;Success.</strong>
+                                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                    <div class="toast-body">
+                                            <%= successMessage %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    <% } else if(errorMessage && errorMessage.length>0 ){ %>
+                        <div class="col-lg-6 col-md-12">
+                            <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 100px;">
+                                <div class="toast border border-warning" data-delay="5000" style="position: absolute; top: 0; right: 0;">
+                                    <div class="toast-header">
+                                        <i class="fas fa-exclamation-circle text-warning"></i>
+                                        <strong class="mr-auto">&nbsp;Failed.</strong>
+                                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                    <div class="toast-body">
+                                            <%= errorMessage %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    <% } %>
+                    <!-- end flash message -->
+                    
+                </div>
+
+            </div>
+        </section><!-- End Breadcrumbs -->
+        
+        <section id="profile" class="services section-bg">    
+
+            <div class="container">
+        
+                <!-- profile photo -->
+                <!-- many changes requird here -->
+                <div class="section-title">
+                    <h2>Mandatory Info</h2>
+                </div>
+                    
+                    <div id="profile-image" class="d-flex justify-content-center">
+                        <% if( profileImage.data ) { %>
+                            <img style="border-radius: 20px"
+                                src="data:image/<%=profileImage.contentType%>;base64, <%=profileImage.data.toString('base64')%>"
+                            id="profile-img">
+                        <% } else { %>
+                            <i class="fas fa-user" style="font-size: 200px;"></i>
+                        <% } %>
+                    </div>
+                
+                <div class="mt-3">
+                    <div class="d-flex justify-content-center">
+                        <form id="profileImageForm" action="/profile/image" enctype="multipart/form-data" method="post">
+                            <div class="form-group">
+                                <div class="custom-file ">
+                                    <label class="custom-file-label" for="images">Choose file up to size 1 MB...</label>
+                                    <input type="file" accept=".jpg,.jpeg,.png" name="images" class="custom-file-input" required="required">
+                                  </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" form="profileImageForm" class="btn btn-primary rounded-pill mx-1"><i class="fas fa-upload"></i> Update</button> <!-- this button is for form above -->
+            
+                        <% if( profileImage.data ) { %>
+                            <button type="submit" form="deleteProfileImage" class="btn btn-danger rounded-pill mx-1"><i class="fas fa-trash"></i> Remove</button> <!-- this button is for form below -->
+                            <form id="deleteProfileImage" action="/profile/image?_method=DELETE" method="POST"></form>
+                        <% }%>
+                    </div>
+        
+                </div>
+        
+                <div class="mt-5">
+                <form action="/profile/accountData" method="post">
+                    <!-- first & last name -->
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="firstName">First Name</label>
+                            <input type="text" name="firstName" class="form-control" value="<%= firstName  %>">
+                        </div>
+                        <div class="col-6">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" name="lastName" class="form-control" value="<%= lastName  %>">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="userType">User Type</label>
+                        <select name="userType" class="form-control" required="required">
+                            <option value="" >Select User Type</option>
+                            <option value="alumni" <% if(userType=="alumni") {%>selected="selected "<%}%> >Alumni</option>
+                            <option value="student" <% if(userType=="student") {%>selected="selected "<%}%> >Student</option>
+                        </select>
+                    </div>
+
+                    <div class="text-center">
+                        <!-- ask permission for contact -->
+                        <%if(userType && userType=="alumni"){%>
+                        <div class="form-check">
+                            <!-- <div class="form-group"> -->
+                                    <input type="checkbox" name="receiveMsg" id="receiveMsg" value="true" <% if(receiveMsg) {%>checked="checked "<%}%>>
+                                    <label class="form-check-label" for="receiveMsg">&nbsp;
+                                        I would like to get contacted by students.
+                                    </label>
+                            <!-- </div> -->
+                        </div>
+                        <%}%>
+            
+                        <div class="small my-1" role="alert">
+                            <i class="fas fa-exclamation-circle"></i> You will be logged out, if you change the First Name.
+                        </div>
+                    
+                        <button type="submit" class="btn btn-warning rounded-pill"><i class="fas fa-upload"></i> Update</button>
+                    </div>
+                </form>
+                </div>
+            
+            </div>
+        </section>
+            
+        <section id="profile" class="services">
+            <div class="section-title">
+                <h2>Personal Info</h2>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block">Update Data</button>
-        </form>
-        </div>
-        
-    </div>
-    
-    <!-- to select multiple options from dropdown -->
-    <script src="../assets/vendor/chosen/chosen.jquery.js"></script>
-    <script src="../assets/vendor/jquery.waypoints.min.js"></script>
-    <script src="../assets/vendor/owl.carousel/owl.carousel.min.js"></script>
-    <script src="../assets/vendor/aos/aos.js"></script>
-    <script src="../assets/vendor/venobox.min.js"></script>
-    <script src="../assets/js/main.js"></script>
-    <script src="../assets/vendor/bootstrap.bundle.min.js"></script>
+            <div class="container">
+                <!-- other data -->
+                <form action="/profile" method="post">
+                    
+                    <!-- bio -->
+                    <div class="form-group">
+                        <label for="profile[bio]"><strong>Bio</strong></label>
+                        <textarea name="profile[bio]" id="" cols="" rows="5" class="form-control" placeholder="Enter something about you..."><%= profile.bio %></textarea>
+                    </div>
 
+                    <div class="form-group row">
+                        <!-- gender -->
+                        <div class="col-md-6 col-sm-12">
+                            <label for="profile[gender]"><strong>Gender</strong></label><br>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="male" name="profile[gender]" value="male" <% if(profile.gender=="male") {%>checked="checked "<%}%>  >
+                                <label class="form-check-label" for="male">Male</label>
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="female" name="profile[gender]" value="female" <% if (profile.gender=="female") {%>checked="checked "<%}%>>
+                                <label class="form-check-label" for="female">Female</label>
+                            </div>
+                            
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="other" name="profile[gender]" value="other" <% if(profile.gender=="other") {%>checked="checked "<%}%>>
+                                <label class="form-check-label" for="other">Other</label>
+                            </div>
+                        </div>
+
+                        <!-- dob -->
+                        <div class="col-md-6 col-sm-12">
+                            <label><strong>Date Of Birth</strong></label>
+                            <br>
+                            <!-- safari & internet explorer doesn't support this date picker-->
+                            <input class="form-control" type="date" name="profile[dob]"  min="1950-12-31" max="2100-12-31" 
+                                <% if(profile.dob && profile.dob!="") { %>
+                                    value="<%= profile.dob.toISOString().slice(0,10)  %>"
+                                <% } %>>
+                        </div>
+                    </div>
+                    
+                    <!-- home address -->
+                    <div class="form-group">
+                        <div><strong>Home Address</strong> </div>
+                        <div class="form-row">
+                            <div class="col-12 form-group">
+                                <input type="text" name="profile[address][homeAddress][addressLine1]" value= "<%= profile.address.homeAddress.addressLine1 %>" class="form-control" placeholder="Adress Line">
+                            </div>
+                        
+                            <div class="col-6 form-group">
+                                
+                                <input type="text" name="profile[address][homeAddress][country]" value= "<%= profile.address.homeAddress.country %>" class="form-control" placeholder="Country">
+                            </div>
+                            <div class="col-6 form-group">
+                                
+                                <input type="text" name="profile[address][homeAddress][zipcode]" value= "<%= profile.address.homeAddress.zipcode %>" class="form-control" placeholder="Zipcode">
+                            </div>
+                        </div>
+                    </div>
+        
+                    <%if(userType && userType=="alumni"){%>
+                    <!-- business address -->
+                    <div class="form-group">
+                        <div><strong>Business Address</strong> </div>
+                        
+                        <div class="form-row">
+
+                            <div class="col-12 form-group">
+                                <input type="text" name="profile[address][businessAddress][addressLine1]" value= "<%= profile.address.businessAddress.addressLine1 %>" class="form-control" placeholder="Adress Line">
+                            </div>
+                            <div class="col-6 form-group">
+                                
+                                <input type="text" name="profile[address][businessAddress][country]" value= "<%= profile.address.businessAddress.country %>" class="form-control" placeholder="Country">
+                            </div>
+                            <div class="col-6 form-group">
+                                
+                                <input type="text" name="profile[address][businessAddress][zipcode]" value= "<%= profile.address.businessAddress.zipcode %>" class="form-control" placeholder="Zipcode">
+                            </div>
+                        </div>
+                    </div>
+                    <%}%>
+                    <hr><br>
+                    
+                    <h3>Contact Information</h3>
+                    <div class="row">
+                        <!-- mobile -->
+                        <div class="col-6">
+                            <label for="profile[contact][mobile]">Mobile Number</label>
+                            <input type="tel" name="profile[contact][mobile]" value= "<%= profile.contact.mobile %>" class="form-control" >
+                        </div>
+            
+                        <!-- email -->
+                        <div class="col-6">
+                            <label for="profile[contact][email]">Email</label>
+                            <input type="email" name="profile[contact][email]" value= "<%= profile.contact.email %>" class="form-control">
+                        </div>
+                    </div>
+        
+                    <div class="row">
+                        <!-- linkedin -->
+                        <div class="col-6">
+                            <label for="profile[social_media][linkedin]">LinkedIn Username</label>
+                            <input type="text" name="profile[social_media][linkedin]" class="form-control" value= "<%= profile.social_media.linkedin %>" >
+                        </div>
+            
+                        <!-- instagram -->
+                        <div class="col-6">
+                            <label for="profile[social_media][instagram]">Instagram Username</label>
+                            <input type="text" name="profile[social_media][instagram]" class="form-control" value= <%= profile.social_media.instagram %> >
+                        </div>
+                    </div>
+        
+                    <!-- website -->
+                    <div class="form-group">
+                        <label for="profile[social_media][website]">Website</label>
+                        <input type="text" name="profile[social_media][website]" id="website" class="form-control" value= <%= profile.social_media.website %> >
+                    </div>
+                    <hr><br>
+        
+                    <h3>Professionl Information</h3>
+                    <div class="form-group">
+                        <div><strong>Education at our institute</strong> </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <!-- Year Of Adminssion -->
+                                <label for="profile[yearOfAdmission]">Year Of Adminssion</label>
+                                <select name="profile[yearOfAdmission]" id="yearOfAdmission" class="form-control">
+                                    <option value=""></option>
+                                    <% for( let i = 2010; i <= (new Date).getFullYear(); i++ ) { %>
+                                    <% if(i==profile.yearOfAdmission) { %>
+                                    <option value="<%= i %>" selected="selected"><%= i %></option>
+                                    <% } else { %>
+                                    <option value="<%= i %>"><%= i %></option>
+                                    <% } %>
+                                    <% } %>
+                                </select>
+                            
+                            </div>
+                            <div class="col-6">
+                                <!-- Year Of Graduation -->
+                                <label for="profile[yearOfGraduation]">Year Of Graduation</label>
+                                <select name="profile[yearOfGraduation]" id="yearOfGraduation" class="form-control">
+                                    <option value=""></option>
+                                    <% for( let i = 2010; i <= (new Date).getFullYear()+4; i++ ) { %>
+                                    <% if(i==profile.yearOfGraduation) { %>
+                                    <option value="<%= i %>" selected="selected"><%= i %></option>
+                                    <% } else { %>
+                                    <option value="<%= i %>"><%= i %></option>
+                                    <% } %>
+                                    <% } %>
+                                </select>
+        
+                            </div>
+                        </div>
+                    </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-6 mx-auto">
+                                    <!-- branch -->
+                                    <label for="profile[branch]">Branch</label>
+                                    <select name="profile[branch]" id="branch" class="form-control">
+                                        <option value=""></option>
+                                        <% ["IT", "Mech", "CS"].forEach(branch => { %>
+                                        <% if(branch==profile.branch) { %>
+                                        <option value="<%= branch %>" selected="selected"><%= branch %></option>
+                                        <% } else { %>
+                                        <option value="<%= branch %>"><%= branch %></option>
+                                        <% } %>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </div>
+        
+                        </div>
+                    
+        
+                    <%if(userType && userType=="alumni"){%>
+                    <!-- Work Experience -->
+        
+                    <div class="form-group">
+                        <div><strong>Work Experience</strong></div>
+                            <% if(Object.entries(profile.workExperience.employer).length>0) { %>
+                                <% for(let j=0; j< Object.entries(profile.workExperience.employer).length; j++){ %>
+                                <div class="section-bg my-3 px-2 py-2 rounded border border-dark">
+
+                                        <p>&nbsp;
+                                            <button type="button" class="removeWork close" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </p>
+                                    
+                                    <div class="row">
+                                        <div class="form-group col-6">
+                                            <label for="employer">Employer</label>
+                                            <input type="text" name="profile[workExperience][employer]" class="form-control" value="<%= profile.workExperience.employer[j] %>"
+                                                required="required">
+                                        </div>
+                                        <div class="form-group col-3">
+                                            <label for="jobTitle">Job Title</label>
+                                            <input type="text" name="profile[workExperience][jobTitle]" class="form-control" value="<%= profile.workExperience.jobTitle[j] %>"
+                                                required="required">
+                                        </div>
+                                
+                                        <div class="form-group col-3">
+                                            <label for="jobDomain">Job Domain</label>
+                                            <input type="text" name="profile[workExperience][jobDomain]" class="form-control" value="<%= profile.workExperience.jobDomain[j] %>"
+                                                required="required">
+                                        </div>
+                                
+                                        <div class="form-group col-6">
+                                            <label for="jobFrom">Job From</label>
+                                            <input type="date" name="profile[workExperience][jobFrom]" class="form-control" value="<%= profile.workExperience.jobFrom[j] %>"
+                                                required="required">
+                                        </div>
+                                
+                                        <div class="form-group col-6">
+                                            <label for="jobTill">Job Till</label>
+                                            <input type="date" name="profile[workExperience][jobTill]" class="form-control" value="<%= profile.workExperience.jobTill[j] %>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                            <% } %>
+        
+                        <div id="addedWork">
+                        </div>
+        
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-outline-dark btn-block" data-toggle="modal" data-target="#addWorkModal">
+                        <i class="fas fa-plus"></i> Add more
+                    </button>
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="addWorkModal" tabindex="-1" role="dialog" aria-labelledby="addWorkModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title" id="addWorkModalLabel">Add Experience</h3>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="workModalData">
+                                        
+                                        <div class="form-group">
+                                            <label for="employer">Employer</label>
+                                            <input type="text" id="workModalData-employer" class="form-control">
+                                        </div>
+        
+                                        <div class="form-group">
+                                            <label for="jobTitle">Job Title</label>
+                                            <input type="text" id="workModalData-jobTitle" class="form-control">
+                                        </div>
+        
+                                        <div class="form-group">
+                                            <label for="jobDomain">Job Domain</label>
+                                            <input type="text" id="workModalData-jobDomain"  class="form-control">
+                                        </div>
+        
+                                        <div class="form-group">
+                                            <label for="jobFrom">job From</label>
+                                            <input type="date" id="workModalData-jobFrom"  class="form-control">
+                                        </div>
+        
+                                        <div class="form-group">
+                                            <label for="jobTill">Job Till</label>
+                                            <input type="date" id="workModalData-jobTill"  class="form-control">
+                                        </div>
+                                        <div class="form-text-sm text-secondary"><i class="fas fa-exclamation-circle"></i> Do not mention "Job Till" if it's your current job. </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" id="workModalButton" class="btn btn-primary">ADD</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <%}%>
+        
+                    <!-- skills -->
+                    <div class="form-group">
+                        <label for="profile[skills]">Skills</label>
+                        <select name="profile[skills]" id="skills" data-placeholder="type to search.." multiple
+                            class="form-control chosen-select">
+                            <option value=""></option>
+                            <% ["Web Dev", "DevOps", "Pen Test"].forEach(skill => { %>
+                            <% if( profile.skills.includes(skill) ) { %>
+                            <option selected value="<%= skill %>"><%= skill %></option>
+                            <% } else { %>
+                            <option value="<%= skill %>"><%= skill %></option>
+                            <% } %>
+                            <% }) %>
+                        </select>
+                    </div>
+        
+                    <button type="submit" class="btn btn-primary btn-block">Update Data</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+    
+    <%- include ('../partials/footer'); -%>
+    
+    <script src="../assets/vendor/chosen/chosen.jquery.js"></script>
+    
     <script>
         /* ===================================================================
             multiple choises */
             $(".chosen-select").chosen({
             no_results_text: "Oops, nothing found!"
         });
-
-        var prevScrollpos = window.pageYOffset;
-        window.onscroll = function () {
-            var currentScrollPos = window.pageYOffset;
-            if (prevScrollpos > currentScrollPos) {
-                document.getElementById("navbar").style.top = "0";
-            } else {
-                document.getElementById("navbar").style.top = "-90px";
-            }
-            prevScrollpos = currentScrollPos;
-        }
 
         function customTouch() {
             console.log(this);
@@ -506,6 +588,8 @@
         }
         document.getElementById('skills_chosen').addEventListener("touchstart", customTouch, false)
         document.getElementById('skills_chosen').firstChild.addEventListener("touchstart", customTouch, false)
+
+        $(".toast").toast('show');
     </script>
 </body>
 </html>

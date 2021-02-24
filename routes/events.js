@@ -44,9 +44,7 @@ let uploadEventImages = upload.array('images', 5);
 
 
 router.get("/events", middlewares.isLoggedIn, function (req, res) {
-    let ass = new Date().getTime();
     Event.find({}, { images: { $slice: 1 } }, function (err, allEvents) {
-        console.log("event:",new Date().getTime()-ass);
         if (err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.")

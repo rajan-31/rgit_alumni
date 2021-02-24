@@ -51,12 +51,10 @@
             <nav class="nav-menu d-none d-lg-block">
                 <ul>
                     <li><a href="/">Home</a></li>
-                    <li><a href="/#about">About</a></li>
-                    <li><a href="/#contact">Contact</a></li>
                     <li><a href="/news">News</a></li>
                     <li><a href="/events">Events</a></li>
                     <li><a href="/contribute">Contribute</a></li>
-                    <li class="active"><a href="/communicate">Communicate</a></li>
+                    <li class="active"><a href="#communicate">Communicate</a></li>
 
                     <% if(!loggedInUser){ %>
                     <li><a href="/signup">Sign UP</a></li>
@@ -95,7 +93,7 @@
             </div>
         </section><!-- End Breadcrumbs -->
 
-        <section id="services" class="services section-bg">
+        <section id="communicate" class="services section-bg">
             <div class="container" data-aos="fade-up">
         
                 <div class="section-title">
@@ -114,7 +112,7 @@
                             <% if( item.profileImage && item.profileImage.data) { %>
                             <img style="border-radius: 20px"
                                 src="data:image/<%=item.profileImage.contentType%>;base64, <%=item.profileImage.data.toString('base64')%>"
-                                width="300" height="200">
+                                width="200" height="200">
                             <% } else { %>
                             <i class="fas fa-user" style="font-size: 200px;"></i>
                             <% } %>
@@ -217,7 +215,7 @@
         </div>
         <div class="credits">
 
-            Designed with ❤ by <a href="">Rajan Khade</a>, <a href="">Aditya Shinde</a> and <a href="">Chinmay
+            Designed with ❤ by <a href="">Rajan Khade</a> and <a href="">Chinmay
                 Dharap</a>.
         </div>
     </div>

@@ -45,9 +45,7 @@ let uploadNewsImages = upload.array('images', 5);
 
 
 router.get("/news", middlewares.isLoggedIn, function(req, res){
-    let ass = new Date().getTime();
     News.find({}, { images: { $slice: 1 } }, function(err, allNews){
-        console.log("news:",new Date().getTime()-ass);
         if(err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
