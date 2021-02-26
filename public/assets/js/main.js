@@ -252,7 +252,7 @@
                 </div>
                                 
                 <div class="form-group col-6">
-                    <label for="jobFrom">job From</label>
+                    <label for="jobFrom">Job From</label>
                     <input type="date" name="profile[workExperience][jobFrom]" class="form-control" value="${jobFrom}" required="required">
                 </div>
             
@@ -268,6 +268,9 @@
             $('#workModalData-jobDomain').val('')
             $('#workModalData-jobFrom').val('')
             $('#workModalData-jobTill').val('')
+            $('.removeWork').click(function () {
+              $(this).closest('div').remove();
+            });
         $(this).attr('data-dismiss', 'modal')
       }
   });

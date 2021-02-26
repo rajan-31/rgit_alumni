@@ -25,7 +25,9 @@
 
     <style>
         .chosen-drop, .chosen-results {
-            max-height: 150px;
+            max-height: 100px;
+            /* height: 100px; */
+            /* overflow: scroll; */
         }
 
         .chosen-container-multi .chosen-choices {
@@ -48,6 +50,10 @@
         .chosen-container-multi .chosen-choices li.search-field input[type=text]{
             font-size: 1rem;
             margin: 0.5rem 0.3rem;
+        }
+
+        .chosen-search-input {
+            width: 100%;
         }
 
         #profile-img {
@@ -235,8 +241,8 @@
                         <div class="form-check">
                             <!-- <div class="form-group"> -->
                                     <input type="checkbox" name="receiveMsg" id="receiveMsg" value="true" <% if(receiveMsg) {%>checked="checked "<%}%>>
-                                    <label class="form-check-label" for="receiveMsg">&nbsp;
-                                        I would like to get contacted by students.
+                                    <label class="form-check-label" for="receiveMsg">
+                                        Get contacted by students.
                                     </label>
                             <!-- </div> -->
                         </div>
@@ -496,13 +502,15 @@
                         </div>
         
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-outline-dark btn-block" data-toggle="modal" data-target="#addWorkModal">
-                        <i class="fas fa-plus"></i> Add more
-                    </button>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#addWorkModal">
+                            <i class="fas fa-plus"></i> Add Work Experience
+                        </button>
+                    </div>
                     
                     <!-- Modal -->
                     <div class="modal fade" id="addWorkModal" tabindex="-1" role="dialog" aria-labelledby="addWorkModalLabel"
-                        aria-hidden="true">
+                        aria-hidden="true" style="z-index: 10000;">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -560,7 +568,7 @@
                         <select name="profile[skills]" id="skills" data-placeholder="type to search.." multiple
                             class="form-control chosen-select">
                             <option value=""></option>
-                            <% ["Web Dev", "DevOps", "Pen Test"].forEach(skill => { %>
+                            <% ["Web Development", "Frontend Developer", "Pen Tester", "DevOps", "Machine Learning", "Blockchain"].forEach(skill => { %>
                             <% if( profile.skills.includes(skill) ) { %>
                             <option selected value="<%= skill %>"><%= skill %></option>
                             <% } else { %>
@@ -569,8 +577,10 @@
                             <% }) %>
                         </select>
                     </div>
-        
-                    <button type="submit" class="btn btn-primary btn-block">Update Data</button>
+                    
+                    <div class="text-center mt-5">
+                        <button type="submit" class="btn btn-primary rounded-pill"><i class="fas fa-upload"></i> Update Data</button>
+                    </div>
                 </form>
             </div>
         </section>
@@ -589,15 +599,28 @@
         });
 
         function customTouch() {
-            console.log(this);
+            // console.log(this);
+            document.querySelector('.chosen-search-input').value = "";
             this.click();
         }
-        x=document.getElementsByClassName("search-choice-close")
+
+        // close buttons
+        x=document.getElementsByClassName("search-choice-close");
         for(let i=0; i<x.length; i++) {
             x[i].addEventListener("touchstart", customTouch, false);
         }
-        document.getElementById('skills_chosen').addEventListener("touchstart", customTouch, false)
-        document.getElementById('skills_chosen').firstChild.addEventListener("touchstart", customTouch, false)
+
+        document.querySelector('.chosen-search-input').addEventListener("touchstart", customTouch, false)
+        document.querySelector('.chosen-choices').addEventListener("touchstart", customTouch, false)
+        
+        // document.getElementsByClassName('chosen-choices')[0].addEventListener("touchstart", customTouch, false)
+        // console.log(document.getElementsByClassName('chosen-choices'))
+        // console.log(document.getElementById('skills_chosen'), document.getElementById('skills_chosen').firstChild)
+
+        $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
 
         $(".toast").toast('show');
     </script>

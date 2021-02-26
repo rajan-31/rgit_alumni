@@ -105,7 +105,7 @@
             <% alumni.forEach(function(item){ %>
             
             <div class="col-xl-4 col-md-6 d-flex align-items-stretch mb-3" data-aos="zoom-in" data-aos-delay="100">
-                <div class="icon-box">
+                <div class="icon-box keep-width">
             
                     <div>
                         <center>
@@ -125,10 +125,12 @@
             
                     <br>
             
-                    <% if(item.bio && item.bio.length>200){%>
-                    <p><%= item.bio.slice(0,197)+"..." %></p>
+                    <% if(item.bio && item.bio.length>213){%>
+                    <p><%= item.bio.slice(0,210)+"..." %></p>
                     <% }else{ %>
-                    <p><%= item.bio + " ".repeat(200-item.bio.length) %></p>
+                    <p><%= item.bio %>
+                        <span class="show-whitespaces"><%="  ".repeat(200-item.bio.length) %></span>
+                    </p>
                     <% } %>
             
                     <hr><br>

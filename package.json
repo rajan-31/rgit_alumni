@@ -11,7 +11,8 @@
     "atlas": "nodemon app.js",
     "createTestAdmin": "set CREATE_TEST_ADMIN=true& nodemon app.js",
     "startMongo": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ../startMongo.ps1",
-    "para": "start npm run local && start npm run startMongo"
+    "para": "start npm run local && start npm run startMongo",
+    "para-mobile": "start npm run mobile && start npm run startMongo"
   },
   "author": "Unknown",
   "license": "ISC",
