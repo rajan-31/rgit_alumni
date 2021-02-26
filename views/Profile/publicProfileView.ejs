@@ -354,11 +354,17 @@
                                             <label for="jobFrom">Job From</label>
                                             <input type="date" name="profile[workExperience][jobFrom]" class="form-control" value="<%= profile.workExperience.jobFrom[j] %>" disabled="disabled">
                                         </div>
-                                
+                                        <%if(profile.workExperience.jobTill[j]) {%>
                                         <div class="form-group col-6">
                                             <label for="jobTill">Job Till</label>
                                             <input type="date" name="profile[workExperience][jobTill]" class="form-control" value="<%= profile.workExperience.jobTill[j] %>" disabled="disabled">
                                         </div>
+                                        <%} else {%>
+                                            <div class="form-group col-6">
+                                                <label >Job Till</label>
+                                                <input type="text" class="form-control" value="Present" disabled="disabled">
+                                            </div>
+                                        <%}%>
                                     </div>
                                 </div>
                                 <% } %>

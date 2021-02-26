@@ -488,11 +488,18 @@
                                             <input type="date" name="profile[workExperience][jobFrom]" class="form-control" value="<%= profile.workExperience.jobFrom[j] %>"
                                                 required="required">
                                         </div>
-                                
+
+                                        <%if(profile.workExperience.jobTill[j]) {%>
                                         <div class="form-group col-6">
                                             <label for="jobTill">Job Till</label>
                                             <input type="date" name="profile[workExperience][jobTill]" class="form-control" value="<%= profile.workExperience.jobTill[j] %>">
                                         </div>
+                                        <%} else {%>
+                                            <div class="form-group col-6">
+                                                <label >Job Till</label>
+                                                <p class="form-control" disabled="disabled">Present</p>
+                                            </div>
+                                        <%}%>
                                     </div>
                                 </div>
                                 <% } %>
@@ -536,6 +543,13 @@
                                             <label for="jobDomain">Domain</label>
                                             <input type="text" id="workModalData-jobDomain"  class="form-control">
                                         </div>
+
+                                        <div class="form-group">
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                                                <label class="custom-control-label" for="customSwitch1">Currently working here</label>
+                                            </div>
+                                        </div>
                                         
                                         <div class="form-row">
                                             <div class="form-group col-6">
@@ -543,7 +557,7 @@
                                                 <input type="date" id="workModalData-jobFrom"  class="form-control">
                                             </div>
             
-                                            <div class="form-group col-6">
+                                            <div class="form-group col-6" id="hide-jobTill">
                                                 <label for="jobTill">Job Till</label>
                                                 <input type="date" id="workModalData-jobTill"  class="form-control">
                                             </div>
@@ -623,6 +637,10 @@
         });
 
         $(".toast").toast('show');
+
+        $("#customSwitch1").on("click", function() {
+            $("#hide-jobTill").toggle();
+        })  
     </script>
 </body>
 </html>

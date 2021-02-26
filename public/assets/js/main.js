@@ -227,7 +227,17 @@
         jobTill = $('#workModalData-jobTill').val();
 
     if (employer && jobTitle && jobDomain && jobFrom){
-
+      let present_job = `<div class="form-group col-6">
+                            <label >Job Till</label>
+                            <input type="text" class="form-control" value="Prsent" disabled="disabled">
+                        </div>`;
+      if (jobTill) {
+        present_job = `<div class="form-group col-6">
+                          <label for="jobTill">Job Till</label>
+                          <input type="date" name="profile[workExperience][jobTill]" class="form-control" value="${jobTill}">
+                      </div>`
+      }
+      
         $('#addedWork').append(
             `
             <div class="section-bg my-3 px-2 py-2 rounded border border-dark">
@@ -255,11 +265,9 @@
                     <label for="jobFrom">Job From</label>
                     <input type="date" name="profile[workExperience][jobFrom]" class="form-control" value="${jobFrom}" required="required">
                 </div>
-            
-                <div class="form-group col-6">
-                    <label for="jobTill">Job Till</label>
-                    <input type="date" name="profile[workExperience][jobTill]" class="form-control" value="${jobTill}">
-                </div>
+                
+                ${present_job}
+                
                 </div>
             </div>
             `);
