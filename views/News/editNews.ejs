@@ -51,19 +51,17 @@
                     <li><a href="/contribute">Contribute</a></li>
                     <li><a href="/communicate">Communicate</a></li>
 
-                    <% if(!loggedInUser){ %>
-                    <li><a href="/signup">Sign UP</a></li>
-                    <li><a href="/login">Login</a></li>
-                    <% } else if(loggedInUser.role=="admin"){ %>
-                    <li><a href="/admin">Admin Panel</a></li>
-                    <li><a href="/logout">Logout</a></li>
+                    <% if(loggedInUser.role=="admin"){ %>
+                        <li><a href="/admin">Admin Panel</a></li>
+                        <li><a href="/logout">Logout</a></li>
                     <% } else { %>
-                    <li class="drop-down"><a href="#"><%= loggedInUser.firstName || loggedInUser.username %> <i class="fas fa-angle-down"></i></a>
-                        <ul>
-                            <li><a href="/profile"><i class="fas fa-user pr-1"></i>Profile</a></li>
-                            <li><a href="/logout"><i class="fas fa-sign-out-alt pr-1"></i>Logout</a></li>
-                        </ul>
-                    </li>
+                        <li class="drop-down"><a href="#"><%= loggedInUser.firstName %> <i class="fas fa-angle-down"></i></a>
+                            <ul>
+                                <li><a href="/profile"><i class="fas fa-user pr-1"></i>Profile</a></li>
+                                <li><a href="/chats"><i class="fas fa-comments pr-1"></i>Chats</a></li>
+                                <li><a href="/logout"><i class="fas fa-sign-out-alt pr-1"></i>Logout</a></li>
+                            </ul>
+                        </li>
                     <% } %>
                 </ul>
             </nav><!-- .nav-menu -->

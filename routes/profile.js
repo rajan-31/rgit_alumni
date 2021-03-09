@@ -46,8 +46,8 @@ let profileImageUpload = upload.single('profileImage')
 /* end multer config */
 
 /* profile route */
-router.get('/profile', middlewares.isLoggedIn, function(req, res){
-    User.findById( req.user._id, {_id: 0, username: 0, __v: 0}, function(err, userData){
+router.get('/profile', middlewares.rejectAdmin, function(req, res){
+    User.findById( req.user._id, '-username -__v', function(err, userData){
         if(err){
             req.flash("errorMessage","Something went wrong, please try again.");
             res.render("/")
@@ -109,6 +109,7 @@ router.post('/profile/image', middlewares.isLoggedIn, function(req, res){
                     req.flash("errorMessage","Please choose a file of type JPG or JPEG or PNG");
                     res.redirect('/profile');
                 } else {
+                    console.log(err);
                     req.flash("errorMessage","Something went wrong with file upload.");
                     res.redirect('/profile');
                 }
@@ -171,7 +172,7 @@ router.get('/profile/:id', function(req, res){
         } else if(userData){
             res.render('Profile/publicProfileView', userData );
         } else {
-            res.redirect('back');
+            res.redirect('/communicate');
         }
     })
 });
@@ -203,9 +204,7 @@ router.get('/communicate', middlewares.isLoggedIn, function(req, res){
                         firstName: "$firstName", 
                         lastName: "$lastName",
                         profileImage: "$profileImage",
-                        bio: "$profile.bio",
-                        dob: "$profile.dob"
-                    }
+                        bio: "$profile.bio"                    }
                     // $push: "$$ROOT"
                 }
             } 

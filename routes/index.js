@@ -52,7 +52,7 @@ router.post('/signup', function(req, res){
         User.register(new User({firstName:receivedData.firstName, lastName: receivedData.lastName, username: receivedData.username, userType :receivedData.userType}), receivedData.password, function(err, user){
             if(err){
                 if (err.name == "UserExistsError") {
-                    req.flash("errorMessage", "Username already taken, please try different username.");
+                    req.flash("errorMessage", "Email already taken, please try different Email.");
                     res.redirect("/signup");
                 } else{
                     req.flash("errorMessage", "Something went wrong in, please try again");

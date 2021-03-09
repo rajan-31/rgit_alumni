@@ -7,7 +7,7 @@
     "start": "node app.js",
     "local": "set MONGODB_SERVER=local& start http://localhost:8080& nodemon app.js",
     "localWithLog": "set MONGODB_SERVER=local& nodemon app.js >> app.log",
-    "mobile": "set PLATFORM=mobile& set MONGODB_SERVER=local& start http://192.168.0.102:8080& nodemon app.js",
+    "mobile": "set PLATFORM=mobile& set MONGODB_SERVER=local& start http://192.168.0.101:8080& nodemon app.js",
     "atlas": "nodemon app.js",
     "createTestAdmin": "set CREATE_TEST_ADMIN=true& nodemon app.js",
     "startMongo": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ../startMongo.ps1",
@@ -17,7 +17,6 @@
   "author": "Unknown",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.19.0",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^3.2.0",
     "dotenv": "^8.2.0",
@@ -31,6 +30,7 @@
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^6.0.1"
+    "passport-local-mongoose": "^6.0.1",
+    "socket.io": "^3.1.2"
   }
 }

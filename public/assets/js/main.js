@@ -229,7 +229,7 @@
     if (employer && jobTitle && jobDomain && jobFrom){
       let present_job = `<div class="form-group col-6">
                             <label >Job Till</label>
-                            <input type="text" class="form-control" value="Prsent" disabled="disabled">
+                            <input type="text" class="form-control" value="Present" disabled="disabled">
                         </div>`;
       if (jobTill) {
         present_job = `<div class="form-group col-6">

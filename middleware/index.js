@@ -4,9 +4,23 @@ let allMiddlewares={};
 allMiddlewares.isAdmin = function (req, res, next) {
     if (req.isAuthenticated() && req.user.role == "admin") {
         return next();
+    } else {
+        req.flash("errorMessage", "Please, Login First");
+        res.redirect("/admin/login");
     }
-    req.flash("errorMessage", "Please, Login First");
-    res.redirect("/admin/login");
+};
+
+// reject admin from accessing
+allMiddlewares.rejectAdmin = function (req, res, next) {
+    if (req.isAuthenticated() && req.user.role != "admin") {
+        return next();
+    } else if( req.isAuthenticated() && req.user.role == "admin" ) {
+        req.flash("errorMessage", "Admins can't Access that page!");
+        res.redirect("/");
+    } else {
+        req.flash("errorMessage","Please, Login First");
+        res.redirect("/login");
+    }
 };
 
 // middleware - to check whether user is logged in or not

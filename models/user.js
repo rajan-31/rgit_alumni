@@ -36,7 +36,7 @@ const profileSchema = new mongoose.Schema({
         linkedin: String,
         instagram: String,
         website: String
-    },
+    }
 });
 
 const userSchema = new mongoose.Schema({
@@ -82,7 +82,22 @@ const userSchema = new mongoose.Schema({
                 website: ""
             }
         }
-    }
+    },
+    //////////////////////////////////////////
+    chats: [
+        {   _id: false,
+            userid: mongoose.Schema.Types.ObjectId,
+            username: String,
+            messages: [
+                {
+                    _id: false,
+                    who: Boolean,
+                    msg: String
+                }
+            ]
+        }
+    ]
+    /////////////////////////////////////////
 });
 
 userSchema.plugin(passportLocalMongoose);

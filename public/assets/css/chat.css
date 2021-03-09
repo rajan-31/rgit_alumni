@@ -1,0 +1,119 @@
+.select-box {
+    padding: 10px 10px;
+    border-bottom: 1px solid black;
+}
+
+.selected-box {
+    background-color: #ebebeb;
+}
+
+#user-pane {
+    height: 500px;
+    border: 1px solid black;
+    padding: 0 0;
+}
+
+.user-pane-img {
+    background-color: white;
+    display: inline-block;
+    border-radius: 60px;
+    box-shadow: 0px 0px 2px #888;
+    padding: 0.2em 0.3em;
+}
+
+#chat-pane {
+    height: 500px;
+    background-color: #e5ddd5;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    padding: 0 0;
+}
+
+#selcted-user-details {
+    height: 70px;
+    border-bottom: 1px solid black;
+    background-color: #ededed;
+    padding: 15px 15px;
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+}
+
+#selcted-user-details #chat-username {
+    font-size: 25px;
+    padding: 0 5px;
+}
+
+#chat-user-image {
+    font-size: 15px;
+    background-color: white;
+    display: inline-block;
+    border-radius: 60px;
+    box-shadow: 0px 0px 2px #888;
+    padding: 0.5em 0.6em;
+}
+
+#message-pane {
+    height: 379px;
+    background-color: #e5ddd5;
+    overflow-y: auto;
+}
+
+.message-rec {
+    padding: 10px 10px;
+}
+
+.message-sent {
+    padding: 10px 10px;
+}
+
+.message-rec .message{
+    background-color: white;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.message-sent .message {
+    background-color: #dcf8c6;
+    border-bottom-right-radius: 3px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.message {
+    padding: 2px 7px;
+    max-width: 500px;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.left-triangle {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 10px 10px 0;
+    border-color: transparent white transparent transparent;
+
+}
+
+.right-triangle {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 10px 10px 0 0;
+    border-color: #dcf8c6 transparent transparent transparent;
+}
+
+#type-pane {
+    height: 49px;
+    background-color: #f0f0f0;
+    max-height: 300px;
+}
+
+#send-message {
+    resize: none;
+}
+
+/* misc */
