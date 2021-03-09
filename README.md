@@ -65,3 +65,11 @@ db.admins.insert({
 - try to use cdns of scripts/ stylesheets
 - multer ==> In case you need to handle a text-only multipart form, you should use the .none() method
 - ask about max file size 
+
+
+
+
+/////////////
+- improve profile & public profile page
+- improve communicate page with icons
+- improve chat page

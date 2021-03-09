@@ -19,6 +19,7 @@ const express       = require("express"),
       
 const e = require("express");
 const allMiddlewares = require("./middleware");
+const { findByIdAndUpdate } = require("./models/user");
       ///////////////////////
 
 const User  = require("./models/user"),
@@ -176,15 +177,15 @@ io.use((socket, next) => {
 
 io.on('connection', (socket) => {
     /* send chats */
-    User.findById( socket.request.user._id, 'chats', function(err, userData){
+    User.findById( socket.request.user._id, 'chats unread', function(err, userData){
         if(err){
             console.log(err);
         } else {
             socket.username = socket.request.user.fullName;
-            socket.emit("my chats", userData.chats);
+            socket.emit("my chats", userData.chats, userData.unread);
             // console.log(JSON.stringify(userData.chats, null, 2));
         }
-    });
+    }).lean();
 
     /* join room */
     socket.join(socket.request.user._id);
@@ -235,11 +236,42 @@ io.on('connection', (socket) => {
                             username: socket.username
                             }
                         });
+                        (async function() {
+                            const matchingSockets = await io.in(to).allSockets();
+                            const isDisconnected = matchingSockets.size === 0;
+                            if(isDisconnected) {
+                                User.findByIdAndUpdate(to, 
+                                {
+                                    "$push": {
+                                        "unread": sender
+                                    }
+                                },
+                                function(err) {
+                                    if(err) {
+                                        console.log(err)
+                                    }
+                                });
+                            }
+                        })();
                     }
                 });
             }
         });
 
+    });
+
+    socket.on("removeUnread", (userToRemove) => {
+        User.findByIdAndUpdate(socket.userid, 
+            {
+                "$pull": {
+                    "unread": userToRemove
+                }
+            },
+            function(err) {
+                if(err) {
+                    console.log(err)
+                }
+            });
     });
 
 });
@@ -314,7 +346,7 @@ app.get('/chats/:id', allMiddlewares.rejectAdmin, function(req, res) {
                 });
 
             }
-        });
+        }).lean();
     } else {
         res.redirect('/communicate');
     }

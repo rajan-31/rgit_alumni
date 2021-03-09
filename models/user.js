@@ -96,7 +96,8 @@ const userSchema = new mongoose.Schema({
                 }
             ]
         }
-    ]
+    ],
+    unread: [mongoose.Schema.Types.ObjectId]
     /////////////////////////////////////////
 });
 

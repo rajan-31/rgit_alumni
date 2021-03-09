@@ -90,20 +90,22 @@
         <div  id="original">
             <div class="container">
                 <div class="row" id="main-content">
-                    <div id="user-pane" class="col-4">
+                    <div id="user-pane" class="col-12">
                         
                     </div>
-                    <div id="chat-pane" class="col-8">
-                        <div id="selcted-user-details" hidden="hidden">
-                            <span id="chat-user-image" class="fas fa-user"></span>
-                            <span id="chat-username"></span>
+                    <div id="chat-pane" class="col-12">
+                        <div id="selcted-user-details">
+                          <span id="back-btn" class="fas fa-arrow-left">&nbsp;</span>
+                          <span id="chat-user-image" class="fas fa-user"></span>
+                          <a id="chat-username-link" href=""><span id="chat-username"></span></a>
+                          
                         </div>
                         <div id="message-pane" hidden="hidden">
                             
                         </div>
                         <div id="type-pane" class="d-none justify-content-center align-items-center">
-                            <textarea id="send-message" class="form-control ml-2" placeholder="Enter your message..." cols="30" rows="1">heyyy</textarea>
-                            <button id="send-btn" class="btn btn-success rounded-circle mx-2"><i class="fas fa-paper-plane"></i></button>
+                          <textarea id="send-message" class="form-control ml-2" placeholder="Enter your message..." cols="30" rows="1"></textarea>
+                          <button id="send-btn" class="btn btn-success rounded-circle mx-2"><i class="fas fa-paper-plane"></i></button>
                         </div>
                     </div>
                 </div>
