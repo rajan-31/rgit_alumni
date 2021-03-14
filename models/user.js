@@ -83,7 +83,6 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
-    //////////////////////////////////////////
     chats: [
         {   _id: false,
             userid: mongoose.Schema.Types.ObjectId,
@@ -97,9 +96,19 @@ const userSchema = new mongoose.Schema({
             ]
         }
     ],
-    unread: [mongoose.Schema.Types.ObjectId]
-    /////////////////////////////////////////
+    unread: [mongoose.Schema.Types.ObjectId],
+    // account verified or not
+    active: {
+        type: Boolean,
+        default: false
+    },
+    activation_code: String,
+    activation_expires: Date,
 });
 
-userSchema.plugin(passportLocalMongoose);
+const options = {
+    usernameLowerCase: true,
+}
+
+userSchema.plugin(passportLocalMongoose, options);
 module.exports = mongoose.model("User", userSchema);

@@ -2,33 +2,32 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 const User  = require("../models/user"),
       News  = require("../models/news"),
       Event = require("../models/event");
 
-const middlewares = require('../middleware/index.js');
 const allMiddlewares = require("../middleware/index.js");
-const Mail = require("nodemailer/lib/mailer");
-
-
+const allTemplates = require("../services/mail_templates")
 
 router.get("/",function(req, res){
-    News.find({}, { images: { $slice: 1 } }, function (err, allNews) {
-        if (err) {
-            console.log(err);
-        } else {
-            Event.find({}, { images: { $slice: 1 } }, function (err, allEvents) {
-                if (err) {
-                    console.log(err);
-                } else if(req.isAuthenticated()) {
-                    res.render("Home/home", { news: allNews, events: allEvents, dataFromFile: global.static_data });
-                } else {
-                    res.render("Home/guest", { news: allNews, events: allEvents, dataFromFile: global.static_data });
-                }
-            }).sort({ date: -1 }).limit(3).lean();
-        }
-    }).sort({ date: -1 }).limit(3).lean();
+    // News.find({}, { images: { $slice: 1 } }, function (err, allNews) {
+    //     if (err) {
+    //         console.log(err);
+    //     } else {
+    //         Event.find({}, { images: { $slice: 1 } }, function (err, allEvents) {
+    //             if (err) {
+    //                 console.log(err);
+    //             } else if(req.isAuthenticated()) {
+    //                 res.render("Home/home", { news: allNews, events: allEvents, dataFromFile: global.static_data });
+    //             } else {
+    //                 res.render("Home/guest", { news: allNews, events: allEvents, dataFromFile: global.static_data });
+    //             }
+    //         }).sort({ date: -1 }).limit(3).lean();
+    //     }
+    // }).sort({ date: -1 }).limit(3).lean();
+    res.render("Home/guest", { news: [], events: [], dataFromFile: global.static_data });
 });
 
 /* contribute route*/
@@ -55,13 +54,65 @@ router.post('/signup', function(req, res){
                     req.flash("errorMessage", "Email already taken, please try different Email.");
                     res.redirect("/signup");
                 } else{
-                    req.flash("errorMessage", "Something went wrong in, please try again");
+                    console.log(err);
+                    req.flash("errorMessage", "Something went wrong, please try again");
+                    res.redirect("/signup");
                 }
             } else{
-                // use loacl strategy
-                passport.authenticate("user")(req, res, function(){
-                    req.flash("successMessage","Account Created Successfully.")
-                    res.redirect("/profile");
+                crypto.randomBytes(5, async function (err, buf) {
+                    const activation_code = user._id + buf.toString('hex');
+                    user.activation_code = activation_code;
+                    user.activation_expires = Date.now() + 2 * 24 * 3600 * 1000;    // 48Hrs
+                    const activation_link = 'http://localhost:8080/account/activate/' + activation_code;
+
+                    const transporter = nodemailer.createTransport({
+                        service: "Gmail",
+                        host: process.env.MAIL_HOST,
+                        port: process.env.MAIL_PORT,
+                        secure: false, // true for 465, false for other ports
+                        auth: {
+                            user: process.env.MAIL_USER,
+                            pass: process.env.MAIL_PASS
+                        }
+                    });
+
+                    let sender = process.env.MAIL_USER;
+                    let senderName = process.env.MAIL_NAME;
+                    try {
+                        await transporter.sendMail({
+                            from: `${senderName} <${sender}>`, // sender address
+                            to: `${user.firstName} ${user.lastName} <${user.username}>`, // list of receivers
+                            replyTo: `Do not reply to this mail. <noreply@apsitskills.com>`,
+                            subject: "Email Verification - APSIT Alumni Portal", // Subject line
+                            // text: '',
+                            html: allTemplates.activation_mail(activation_link)
+                            
+                        });
+                        transporter.close();
+                        user.save(function(err, user){
+                            if(err) {
+                                console.log(err);
+                                req.flash("errorMessage", "Something went wrong, please try again");
+                                res.redirect("/signup");
+                            } else {
+                                // use loacl strategy
+                                // passport.authenticate("user")(req, res, function(){
+                                    // req.flash("successMessage","Account Created Successfully.")
+                                    // res.redirect("/profile");
+                                    // });
+                                    
+                                    // res.send('The activation email has been sent to ' + user.username + ', please click the activation link within 48 hours.');
+                                    req.flash("successMessage", `Account Created Successfully. To activate your account, the activation email has been sent to ${user.username}, it will expire in 48 hours.`);
+                                    res.redirect('/login');
+
+                                }
+                            });
+                    } catch (err) {
+                        console.log(err);
+                        req.flash("errorMessage", 'Something went wrong, please try again. If you get "Email already taken", then check your mail for activation link or generate a new one on login page.');
+                        res.redirect("/signup");
+                    }
+                            
                 });
             }
         });
@@ -91,7 +142,7 @@ router.post('/login', passport.authenticate("user",
         failureFlash: { type: 'errorMessage', message: 'Invalid username or password.' }
     }), function (req, res) {
         req.flash("successMessage", `Welcome back, ${req.user.firstName}!`);
-        res.redirect('/')
+        res.redirect('/profile')
 });
 
 /* Google login */
@@ -126,7 +177,8 @@ router.get('/logout', function(req, res){
 
     req.session.destroy(function(err) {
         if(err) {
-            req.flash("errorMessage", "Something went wrong please try again.");
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect('/'); // will always fire after session is destroyed
         } else {
             // req.flash("successMessage", "Logged you out successfully.");
@@ -135,6 +187,101 @@ router.get('/logout', function(req, res){
       });
 });
 
+//////////////////////////////////
+// account activation
+router.get("/account/activate/resend", function(req, res) {
+    res.render("activation");
+});
+
+router.get('/account/activate/:code', function(req, res) {
+    const activation_code =  req.params.code
+    User.findOne({ activation_code: activation_code} ,'active activation_expires', function(err, data) {
+        if(err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect("/login");
+        } else {
+            if(data.active == false && data.activation_expires > Date.now()) {
+                User.findByIdAndUpdate(data._id, { active: true}, function(err) {
+                    if(err) {
+                        console.log(err);
+                        req.flash("errorMessage", "Something went wrong, please try again.");
+                        res.redirect("/login");
+                    } else {
+                        req.flash("successMessage", "Account activated successfully, login to continue.");
+                        res.redirect("/login");
+                    }
+                });
+            } else if (data.active == true) {
+                req.flash("successMessage", "Account already activated, login to continue.");
+                res.redirect("/login");
+            } else {
+                req.flash("errorMessage", "Account activation code is expired, please generate new one.");
+                res.redirect("/login");
+            }
+        }
+    }).lean();
+});
+
+router.post('/account/activate/resend', function(req, res) {
+    const resend_to = req.body.username;
+    User.findOne({ username: resend_to}, 'active activation_code firstName lastName', async function(err, data) {
+        if (err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect("/login");
+        } else if(!data) {
+            req.flash("errorMessage", "No account found with given email, please check your email or create a new one.");
+            res.redirect("/login");
+        } else if (data.active == true) {
+            req.flash("successMessage", "Account already activated, login to continue.");
+            res.redirect("/login");
+        } else {
+            data.activation_expires = Date.now() + 2 * 24 * 3600 * 1000;
+            const activation_link = 'http://localhost:8080/account/activate/' + data.activation_code;
+            const transporter = nodemailer.createTransport({
+                service: "Gmail",
+                host: process.env.MAIL_HOST,
+                port: process.env.MAIL_PORT,
+                secure: false, // true for 465, false for other ports
+                auth: {
+                    user: process.env.MAIL_USER,
+                    pass: process.env.MAIL_PASS
+                }
+            });
+
+            let sender = process.env.MAIL_USER;
+            let senderName = process.env.MAIL_NAME;
+            try {
+                await transporter.sendMail({
+                    from: `${senderName} <${sender}>`, // sender address
+                    to: `${data.firstName} ${data.lastName} <${resend_to}>`, // list of receivers
+                    replyTo: `Do not reply to this mail. <noreply@apsitskills.com>`,
+                    subject: "Email Verification - APSIT Alumni Portal", // Subject line
+                    // text: '',
+                    html: allTemplates.activation_mail(activation_link)
+                    
+                });
+                transporter.close();
+                data.save(function(err, data){
+                    if(err) {
+                        console.log(err);
+                        req.flash("errorMessage", "Something went wrong, please try again");
+                        res.redirect("/login");
+                    } else {
+                            req.flash("successMessage", `The activation email has been sent to ${resend_to}, please click the activation link within 48 hours.`);
+                            res.redirect('/login');
+                        }
+                });
+
+            } catch (err) {
+                console.log(err);
+                req.flash("errorMessage", "Something went wrong, please check your mails and try again!");
+                res.redirect("/login");
+            }
+        }
+    });
+});
 ////////////////////////////////
 // email routes
 router.post('/mail',function(req, res, next) {
@@ -145,6 +292,8 @@ router.post('/mail',function(req, res, next) {
     } else res.send("Please Login First!");
 } , async function(req, res) {
     let email = req.body.email;
+    let original_user = req.user.username;
+    let original_name = req.user.fullName;
     let subject = req.body.subject;
     let message = req.body.message;
     if(allMiddlewares.isValidEmail(email)) {
@@ -152,7 +301,6 @@ router.post('/mail',function(req, res, next) {
         subject = req.body.subject,
         message = req.body.message;
 
-        /* for gmail */
         const transporter = nodemailer.createTransport({
             service: "Gmail",
             host: process.env.MAIL_HOST,
@@ -163,8 +311,9 @@ router.post('/mail',function(req, res, next) {
                 pass: process.env.MAIL_PASS
             }
         });
-        /* for smtp server */
-        // const transporter = nodemailer.createTransport({
+
+        /* for own smtp */
+        // {
         //     host: process.env.MAIL_HOST,
         //     port: process.env.MAIL_PORT,
         //     secure: process.env.MAIL_SECURE, // upgrade later with STARTTLS
@@ -172,7 +321,7 @@ router.post('/mail',function(req, res, next) {
         //         user: process.env.MAIL_USER,
         //         pass: process.env.MAIL_PASS
         //     }
-        //   });
+        // };
 
         // send email
         let sender = process.env.MAIL_USER;
@@ -181,65 +330,10 @@ router.post('/mail',function(req, res, next) {
             await transporter.sendMail({
                 from: `${senderName} <${sender}>`, // sender address
                 to: sender, // list of receivers
+                replyTo: `Do not reply to this mail. <noreply@apsitskills.com>`,
                 subject: subject, // Subject line
                 // text: message, // plain text body
-                html: 
-                `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <style type="text/css">
-                    .styled-table {
-                        border-collapse: collapse;
-                        margin: 25px 0;
-                        font-size: 1.3em;
-                        font-family: sans-serif;
-                        min-width: 400px;
-                        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-                    }
-                    .styled-table thead tr {
-                        background-color: #009879;
-                        color: #ffffff;
-                        text-align: left;
-                    }
-                    .styled-table th,
-                    .styled-table td {
-                        padding: 12px 15px;
-                    }
-                    .styled-table tbody tr {
-                        border-bottom: 1px solid #dddddd;
-                    }
-                    .styled-table tbody tr.active-row {
-                        font-weight: bold;
-                        color: #009879;
-                    }
-                    </style>
-                </head>
-                <body>
-                    <table class="styled-table">
-                    <tbody>
-                        <tr>
-                        <td>From</td>
-                        <td>${name}</td>
-                        </tr>
-                        <tr class="active-row">
-                        <td>Email ID</td>
-                        <td><a href="mailto:${email}">${email}</a><br><small>(Click email address to reply.)</small></td>
-                        </tr>
-                        <tr>
-                        <td>Subject</td>
-                        <td>${subject}</td>
-                        </tr>
-                        <tr> 
-                        <td>Message</td>
-                        <td>${message}</td>
-                        </tr>
-                    </tbody>
-                    
-                </table>
-                </body>
-                </html>
-                `, // html body
+                html: allTemplates.home_page_mail(name, email, subject, message, original_name, original_user),
               });
               transporter.close();
               res.send("OK")

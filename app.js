@@ -16,10 +16,6 @@ const express       = require("express"),
       ////////////////////////
       const httpServer = require("http").createServer(app);
       const io = require("socket.io")(httpServer);
-      
-const e = require("express");
-const allMiddlewares = require("./middleware");
-const { findByIdAndUpdate } = require("./models/user");
       ///////////////////////
 
 const User  = require("./models/user"),
@@ -33,6 +29,7 @@ const indexRoutes = require("./routes/index"),
       newsRoutes  = require("./routes/news"),
       eventRoutes = require("./routes/events"),
       adminRoutes = require("./routes/admin"),
+      chatRoutes = require("./routes/chat"),
       profileRoutes = require("./routes/profile");
 
 require('dotenv').config()  // loading environment variables
@@ -60,25 +57,25 @@ mongoose.connection.on('connected', function () {
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.set("view engine", "ejs");      // required to use ejs
-app.use(express.static(__dirname + "/public"));     // public directory to serve
+app.use(express.static(path.join(__dirname, "public")));     // public directory to serve
 app.use(methodOverride("_method"));
 app.use(flash());
 
 
 /* passport configuration */
 const MongoStore = connectMongo(expressSession);    // for session storage
-////////////////////////////////////
 const sessionMiddleware = expressSession({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        maxAge: 3600000 * 24 * 7,
-    }, //7days // set "secure:true" only when using https
+        maxAge: 3600000 * 24 * 7,   //7days
+        // sameSite: "lax",
+        // "secure:true",   // set only when using https
+    }, 
     store: new MongoStore({ mongooseConnection: mongoose.connection }) // may be more configuration in future
-})
+});
 app.use(sessionMiddleware);
-////////////////////////////////////
 
 /* Multer configuration */
 const storage = multer.diskStorage({
@@ -108,7 +105,7 @@ passport.use(new GoogleStrategy({
 function (accessToken, refreshToken, profile, done) {
     User.findOne({
         'googleId': profile.id
-    }, 'firstName lastName username userType',  function (err, user) {
+    }, 'firstName lastName username userType active',  function (err, user) {
         if (err) {
             return done(err);
         }
@@ -118,6 +115,7 @@ function (accessToken, refreshToken, profile, done) {
                 lastName: profile._json.family_name,
                 username: profile._json.email,
                 googleId: profile.id,
+                active: true
                 // more details can be taken
             });
             user.save(function (err) {
@@ -135,7 +133,7 @@ function (accessToken, refreshToken, profile, done) {
 // passport.serializeUser(User.serializeUser());
 // passport.deserializeUser(User.deserializeUser());
 passport.serializeUser(function (user, done) {
-    user = { _id: user._id, username :user.username, firstName: user.firstName, fullName: user.firstName + " " + user.lastName, role: user.role };
+    user = { _id: user._id, username :user.username, firstName: user.firstName, fullName: user.firstName + " " + user.lastName, role: user.role, active: user.active };
     done(null, user);
 });
 
@@ -159,123 +157,8 @@ app.use(function(req, res, next){
 const rawdata = fs.readFileSync('./data/data.json');
 global.static_data = JSON.parse(rawdata);
 
-/////////////////////////
-// convert a connect middleware to a Socket.IO middleware
-const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
-io.use(wrap(sessionMiddleware));
-io.use(wrap(passport.initialize()));
-io.use(wrap(passport.session()));
-
-io.use((socket, next) => {
-  if (socket.request.user) {
-    socket.userid = socket.request.user._id;
-    next();
-  } else {
-    next(new Error('unauthorized'))
-  }
-});
-
-io.on('connection', (socket) => {
-    /* send chats */
-    User.findById( socket.request.user._id, 'chats unread', function(err, userData){
-        if(err){
-            console.log(err);
-        } else {
-            socket.username = socket.request.user.fullName;
-            socket.emit("my chats", userData.chats, userData.unread);
-            // console.log(JSON.stringify(userData.chats, null, 2));
-        }
-    }).lean();
-
-    /* join room */
-    socket.join(socket.request.user._id);
-
-    /* seperate msg */
-    socket.on("private message", ({ content, to }) => {
-        const sender = socket.request.user._id;
-        
-        User.findByIdAndUpdate( sender, {
-            "$push": {
-                "chats.$[a].messages": {
-                    who: 0,
-                    msg: content
-                }
-            }
-        },
-        {
-            arrayFilters: [
-                {"a.userid": to}
-            ]
-        },
-        function(err){
-            if (err)
-                console.log(err)
-            else {
-                User.findByIdAndUpdate( to, {
-                    "$push": {
-                        "chats.$[a].messages": {
-                            who: 1,
-                            msg: content
-                        }
-                    }
-                },
-                {
-                    arrayFilters: [
-                        {"a.userid": sender}
-                    ]
-                },
-                function(err){
-                    if (err)
-                        console.log(err)
-                    else {
-                        // send to receiver
-                        socket.to(to).emit("private message", {
-                            content,
-                            from: {
-                            userid: sender,
-                            username: socket.username
-                            }
-                        });
-                        (async function() {
-                            const matchingSockets = await io.in(to).allSockets();
-                            const isDisconnected = matchingSockets.size === 0;
-                            if(isDisconnected) {
-                                User.findByIdAndUpdate(to, 
-                                {
-                                    "$push": {
-                                        "unread": sender
-                                    }
-                                },
-                                function(err) {
-                                    if(err) {
-                                        console.log(err)
-                                    }
-                                });
-                            }
-                        })();
-                    }
-                });
-            }
-        });
-
-    });
-
-    socket.on("removeUnread", (userToRemove) => {
-        User.findByIdAndUpdate(socket.userid, 
-            {
-                "$pull": {
-                    "unread": userToRemove
-                }
-            },
-            function(err) {
-                if(err) {
-                    console.log(err)
-                }
-            });
-    });
-
-});
-/////////////////////////
+/* Socket.io events */
+require("./services/socketio-events.js")(io, User, sessionMiddleware, passport);
 
 
 /* using all routes */
@@ -284,75 +167,8 @@ app.use(newsRoutes);
 app.use(eventRoutes);
 app.use(adminRoutes);
 app.use(profileRoutes);
-//////////////////////////////////
+app.use(chatRoutes);
 
-app.get('/chats', allMiddlewares.rejectAdmin, function(req, res) {
-    res.render('chats');
-});
-
-app.get('/chats/:id', allMiddlewares.rejectAdmin, function(req, res) {
-    const currentUser = req.user._id;
-    const currentUserName = req.user.fullName;
-    const receiver = req.params.id;
-
-    /* new chat */
-    if (currentUser != receiver && req.user.role != "admin") {
-        User.findById( receiver, 'firstName lastName', function(err, receiverData) {
-            if(err) {
-                console.log(err);
-                res.redirect('/communicate');
-            } else {
-                const receiverFullName = receiverData.firstName + " " + receiverData.lastName;
-                
-
-                User.findOneAndUpdate( {
-                    _id: currentUser,
-                    'chats.userid': { $ne: receiver}
-                }, 
-                {
-                    "$push": {
-                        "chats": {
-                                userid: receiver,
-                                username: receiverFullName,
-                                messages: []
-                            }
-                    }
-                },
-                function(err, changes){
-                    if (err) {
-                        console.log(err);
-                        res.redirect('/communicate');
-                    }
-                    else if (changes != null){
-                        User.findByIdAndUpdate( receiver, {
-                            "$push": {
-                                "chats": {
-                                        userid: currentUser,
-                                        username: currentUserName,
-                                        messages: []
-                                    }
-                            }
-                        },
-                        function(err){
-                            if (err)
-                                console.log(err);
-                            else {
-                                res.redirect('/chats');
-                            }
-                        });
-                    } else {
-                        res.redirect('/chats');
-                    }
-                });
-
-            }
-        }).lean();
-    } else {
-        res.redirect('/communicate');
-    }
-});
-
-//////////////////////////////////
 
 app.get('/*', function(req, res){
     res.send(`
@@ -377,7 +193,7 @@ httpServer.listen(port, ip, function(){
 if(process.env.CREATE_TEST_ADMIN == "true") {
     const adminUsername = "admin", adminPassword = "admin";
 
-    Admin.register(new Admin({ username: adminUsername, createdBy: "1st Admin" }), adminPassword, function (err, user) {
+    Admin.register(new Admin({ username: adminUsername, createdBy: "1st Admin", active: true }), adminPassword, function (err, user) {
         if (err) {
             if(err.name == "UserExistsError")
                 console.log("Test Admin with that USERNAME is already present!");

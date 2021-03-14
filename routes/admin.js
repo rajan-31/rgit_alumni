@@ -13,7 +13,6 @@ const Admin = require("../models/admin"),
 const middlewares = require('../middleware/index.js');
 const { json } = require("body-parser");
 const { render } = require("ejs");
-const e = require("express");
 
 
 router.get("/admin/login", function (req, res) {
@@ -30,7 +29,7 @@ router.post('/admin/login', passport.authenticate("admin",
     }), function (req, res) {});
 
 router.post('/admin/signup', middlewares.isAdmin, function (req, res) {
-    Admin.register(new Admin({ username: req.body.username, createdBy: req.user.username }), req.body.password, function (err, user) {
+    Admin.register(new Admin({ username: req.body.username, createdBy: req.user.username, active: true }), req.body.password, function (err, user) {
         if (err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.");

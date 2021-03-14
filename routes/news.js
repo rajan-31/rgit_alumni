@@ -10,7 +10,6 @@ const middlewares = require('../middleware/index.js');
 const fs = require('fs'),
     path = require('path'),
     multer = require('multer');
-const { time } = require("console");
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads')

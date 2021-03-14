@@ -10,8 +10,6 @@ const middlewares = require('../middleware/index.js');
 const fs = require('fs'),
     path = require('path'),
     multer = require('multer');
-const e = require("express");
-const { connect } = require("http2");
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads')

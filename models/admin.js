@@ -8,8 +8,16 @@ const adminSchema = new mogoose.Schema({
     role: {
         type: String,
         default: "admin"
+    },
+    active: {
+        type: Boolean,
+        default: false
     }
 });
 
-adminSchema.plugin(passportLocalMongoose);
+const options = {
+    usernameLowerCase: true,
+}
+
+adminSchema.plugin(passportLocalMongoose, options);
 module.exports = mogoose.model("Admin", adminSchema);

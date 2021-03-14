@@ -2,7 +2,7 @@ let chats ;
 let selectedUser;
 
 $( document ).ready( () => {
-    const URL = "http://192.168.0.101:8080";
+    const URL = "" // "http://localhost:8080";
 
     const socket = io(URL, { autoConnect: false});
     // connection
@@ -45,6 +45,7 @@ $( document ).ready( () => {
     
     // handle connection err
     socket.on("connect_error", (err) => {
+        console.log(err);
         console.log("CONNECTION eRRor!!!!")
     });
 

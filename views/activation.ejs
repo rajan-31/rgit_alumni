@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Login | APSIT Alumini</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">	
+	<!-- Favicons -->
+	<link href="../../assets/img/favicon.png" rel="icon">
+	<link href="../../assets/img/logo.png" rel="apple-touch-icon">
+
+	<link rel="stylesheet" type="text/css" href="../../assets/vendor/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
+	<link rel="stylesheet" type="text/css" href="../../assets/css/util.css">
+	<link rel="stylesheet" type="text/css" href="../../assets/css/main.css">
+
+	<!-- Jquery with fallback -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+	<script>
+	   window.jQuery || document.write('<script src="../../assets/vendor/jquery.min.js"><\/script>');
+	</script>
+</head>
+<body>
+	<!-- start flash message -->
+	<% if(successMessage && successMessage.length>0 ){ %>
+	<div class="alert alert-success mb-0" role="alert">
+		<div class="container text-center">
+			<%= successMessage %>
+		</div>
+	</div>
+	<% } else if(errorMessage && errorMessage.length>0 ){ %>
+	<div class="alert alert-danger mb-0" role="alert">
+		<div class="container text-center">
+			<%= errorMessage %>
+		</div>
+	</div>
+	<% } %>
+	<!-- end flash message -->
+	
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100 p-t-30 p-b-30">
+
+				<span class="login100-form-title p-b-40" style="color: #37517E;">
+					Welcome to APSIT <br>Alumini Portal
+				</span>
+				
+				<span class="login100-form-title p-b-40">
+					Account Activation Link
+				</span>
+
+				<form action="/account/activate/resend" method="POST" id="resendForm" class="login100-form validate-form">
+					<div class="wrap-input100 validate-input m-b-16" data-validate="Please enter email: ex@abc.xyz">
+						<input class="input100" type="text" name="username" placeholder="Registered Email">
+						<span class="focus-input100"></span>
+					</div>
+				</form>
+                <div class="container-login100-form-btn col-6 mx-auto">
+                    <button class="login100-form-btn" form="resendForm">
+                        <i class="fas fa-sign-in-alt p-r-5"></i>
+                        Get Link
+                    </button>
+                </div>
+
+				<div class="flex-col-c p-t-30">
+                    <span class="txt2 p-b-10">
+                        Don’t have an account?
+                    </span>
+
+                    <a href="/signup" class="txt3 bo1 hov1">
+                        Sign up now
+                    </a>
+                </div>
+				
+					
+			</div>
+		</div>
+	</div>
+
+	<script src="../../assets/vendor/bootstrap.bundle.min.js"></script>
+	<script src="../../assets/vendor/chosen/chosen.jquery.js"></script>
+	<script src="../../assets/js/mainAuth.js"></script>
+
+</body>
+</html>
