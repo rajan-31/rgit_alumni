@@ -50,6 +50,7 @@ router.get('/profile', middlewares.rejectAdmin, function(req, res){
             req.flash("errorMessage","Something went wrong, please try again.");
             res.render("/")
         } else {
+            userData.skills = ["Web Development", "Frontend Development", "Penetration testing", "DevOps", "Machine Learning", "Blockchain"];
             res.render("Profile/profile", userData);
         }
     });
@@ -170,6 +171,7 @@ router.get('/profile/:id', function(req, res){
         } else if(userData){
             res.render('Profile/publicProfileView', userData );
         } else {
+            req.flash("errorMessage", "Something went wrong, please try again later.");
             res.redirect('/communicate');
         }
     })
@@ -221,7 +223,7 @@ router.get('/communicate', middlewares.isLoggedIn, function(req, res){
             let alumni = data[0].obj;
             res.render('communicate', {alumni: alumni});
         } else {
-            req.flash("errorMessage", "Something went wrong, please try again.")
+            req.flash("errorMessage", "No users found, please try again later.")
             res.redirect("/");
         }
     });

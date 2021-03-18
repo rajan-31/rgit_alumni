@@ -57,7 +57,9 @@ mongoose.connection.on('connected', function () {
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.set("view engine", "ejs");      // required to use ejs
-app.use(express.static(path.join(__dirname, "public")));     // public directory to serve
+app.use(express.static(path.join(__dirname, "public"), {
+    // maxAge: 1000 * 60,
+}));     // public directory to serve
 app.use(methodOverride("_method"));
 app.use(flash());
 
@@ -103,17 +105,21 @@ passport.use(new GoogleStrategy({
     callbackURL: process.env.GOOGLE_OAUTH_CALLBACK
 },
 function (accessToken, refreshToken, profile, done) {
+    const imp_data = profile._json;
     User.findOne({
-        'googleId': profile.id
+        $or: [
+            { googleId: profile.id },
+            { username: imp_data.email.toLowerCase() }
+        ]
     }, 'firstName lastName username userType active',  function (err, user) {
         if (err) {
             return done(err);
         }
         if (!user) {
             user = new User({
-                firstName: profile._json.given_name,
-                lastName: profile._json.family_name,
-                username: profile._json.email,
+                firstName: imp_data.given_name,
+                lastName: imp_data.family_name,
+                username: imp_data.email,
                 googleId: profile.id,
                 active: true
                 // more details can be taken
@@ -172,9 +178,11 @@ app.use(chatRoutes);
 
 app.get('/*', function(req, res){
     res.send(`
-    <h1>Error 404</h1>
-    <h3>Are you lost?!</h3>
-    <a href="/">Go Home</a>
+    <center>
+        <h1>Error 404</h1>
+        <h3>Are you lost?!</h3>
+        <a href="/">Go Home</a>
+    </center>
     `)
 });
 

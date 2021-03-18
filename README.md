@@ -69,17 +69,26 @@ db.admins.insert({
 - try to use cdns of scripts/ stylesheets
 - multer ==> In case you need to handle a text-only multipart form, you should use the .none() method
 - ask about max file size 
-
+- set maxage for static content
 
 
 
 /////////////
 - account activation => https://medium.com/@mayumi8713917/sending-activation-code-by-email-with-node-js-42646f260674
-- 
-- improve profile & public profile page
-- ~~improve communicate page with icons~~
-- improve chat page
 
-- account activation mail template & check other routes' results
+- ~~improve profile & public profile page~~
+- ~~improve communicate page with icons~~
+- ~~improve chat page~~
+
+- ~~account activation mail template & check other routes' results~~
 
 - change render to sendFile for static templates & also remove flash
+- don't use lean where save is used
+
+- check for objectid error (profile/wrong_id)
+
+- ~~admission n grad yr max options, added work visibility~~
+- ~~select2~~
+
+- testimonials - admin panel, home page
+- reset password

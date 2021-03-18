@@ -43,17 +43,62 @@ let uploadEventImages = upload.array('images', 5);
 /* end multer config */
 
 
+// router.get("/events", middlewares.isLoggedIn, function (req, res) {
+//     Event.find({}, { images: { $slice: 1 } }, function (err, allEvents) {
+//         if (err) {
+//             console.log(err);
+//             req.flash("errorMessage", "Something went wrong, please try again.")
+//             res.redirect("/")
+//         } else {
+//             res.render("Events/events", { events: allEvents });
+//         }
+//     }).sort({ date: -1 }).lean();
+// });
+
+/////////////////////////////////
 router.get("/events", middlewares.isLoggedIn, function (req, res) {
-    Event.find({}, { images: { $slice: 1 } }, function (err, allEvents) {
+        Event.find({}, { images: { $slice: 1 } }, function (err, allEvents) {
+            if (err) {
+                console.log(err);
+                req.flash("errorMessage", "Something went wrong, please try again.")
+                res.redirect("/")
+            } else {
+                const lastId = allEvents[allEvents.length - 1]._id;
+                const lastDate = new Date(allEvents[allEvents.length - 1].date).getTime();
+                res.render("Events/events", { events: allEvents, lastId: lastId, lastDate: lastDate, lastPage: 1});
+            }
+        }).sort({ date: -1, _id: 1 }).limit(6).lean();
+    });
+
+router.post("/events/page/:num", middlewares.isLoggedIn, function (req, res) {
+    const lastId = req.body.lastid;
+    const lastDate = new Date(Number(req.body.lastdate));
+    const lastPage = req.params.num;
+    Event.find({
+        $or: [
+            { date: { $lt: lastDate } },
+            {
+                date: lastDate,
+                _id: { $gt: mongoose.Types.ObjectId(lastId) }
+            }
+        ]
+    }, { images: { $slice: 1 } }, function (err, allEvents) {
         if (err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
             res.redirect("/")
         } else {
-            res.render("Events/events", { events: allEvents });
+            if(allEvents.length > 0) {
+                const pass_lastId = allEvents[allEvents.length - 1]._id;
+                const pass_lastDate = new Date(allEvents[allEvents.length - 1].date).getTime();
+                res.render("Events/paged_events", { events: allEvents , lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
+            } else {
+                res.redirect("/events");
+            }
         }
-    }).sort({ date: -1 }).lean();
+    }).sort({ date: -1, _id: 1 }).limit(6).lean();
 });
+/////////////////////////////////
 
 router.post("/events", middlewares.isAdmin, function (req, res) {
     uploadEventImages(req, res, function (err) {

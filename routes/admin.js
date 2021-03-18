@@ -190,16 +190,16 @@ router.delete("/admin/delete/:id", middlewares.isAdmin, function (req, res) {
 
 /* end new routes */
 
-router.get('/admin/logout', function (req, res) {
-    req.session.destroy(function(err) {
-        if(err) {
-            req.flash("errorMessage", "Something went wrong please try again.");
-            res.redirect('/');
-        } else {
-            res.redirect('/');
-        }
-      });
-});
+// router.get('/admin/logout', function (req, res) {
+//     req.session.destroy(function(err) {
+//         if(err) {
+//             req.flash("errorMessage", "Something went wrong please try again.");
+//             res.redirect('/');
+//         } else {
+//             res.redirect('/');
+//         }
+//       });
+// });
 
 
 module.exports = router;

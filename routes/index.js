@@ -12,22 +12,23 @@ const allMiddlewares = require("../middleware/index.js");
 const allTemplates = require("../services/mail_templates")
 
 router.get("/",function(req, res){
-    // News.find({}, { images: { $slice: 1 } }, function (err, allNews) {
-    //     if (err) {
-    //         console.log(err);
-    //     } else {
-    //         Event.find({}, { images: { $slice: 1 } }, function (err, allEvents) {
-    //             if (err) {
-    //                 console.log(err);
-    //             } else if(req.isAuthenticated()) {
-    //                 res.render("Home/home", { news: allNews, events: allEvents, dataFromFile: global.static_data });
-    //             } else {
-    //                 res.render("Home/guest", { news: allNews, events: allEvents, dataFromFile: global.static_data });
-    //             }
-    //         }).sort({ date: -1 }).limit(3).lean();
-    //     }
-    // }).sort({ date: -1 }).limit(3).lean();
-    res.render("Home/guest", { news: [], events: [], dataFromFile: global.static_data });
+    News.find({}, { images: { $slice: 1 } }, function (err, allNews) {
+        if (err) {
+            console.log(err);
+        } else {
+            Event.find({}, { images: { $slice: 1 } }, function (err, allEvents) {
+                if (err) {
+                    console.log(err);
+                } else if(req.isAuthenticated()) {
+                    res.render("Home/home", { news: allNews, events: allEvents, dataFromFile: global.static_data });
+                } else {
+                    res.render("Home/guest", { news: allNews, events: allEvents, dataFromFile: global.static_data });
+                }
+            }).sort({ date: -1 }).limit(3).lean();
+        }
+    }).sort({ date: -1 }).limit(3).lean();
+    
+    // res.render("Home/guest", { news: [], events: [], dataFromFile: global.static_data });
 });
 
 /* contribute route*/
@@ -231,7 +232,7 @@ router.post('/account/activate/resend', function(req, res) {
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect("/login");
         } else if(!data) {
-            req.flash("errorMessage", "No account found with given email, please check your email or create a new one.");
+            req.flash("errorMessage", "Invalid Email!");
             res.redirect("/login");
         } else if (data.active == true) {
             req.flash("successMessage", "Account already activated, login to continue.");
@@ -283,6 +284,88 @@ router.post('/account/activate/resend', function(req, res) {
     });
 });
 ////////////////////////////////
+
+///////////////////////////////
+// reset password
+router.get("/account/password/reset", function(req, res) {
+    res.render("password_reset");
+});
+
+router.post("/account/password/reset", function(req, res) {
+    const _username = req.body.username;
+    User.findOne({ username: _username}, function(err, user) {
+        if(err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please check your mails and try again!");
+            res.redirect("/login");
+        } else if (!user) {
+            req.flash("errorMessage", "Invalid Email!");
+            res.redirect("/login");
+        } else if(user.googleid) {
+            req.flash("errorMessage", "Can't change password of account created using Google!");
+            res.redirect("/login");
+        } else {
+            crypto.randomBytes(5, async function (err, buf) {
+                const activation_code = user._id + buf.toString('hex');
+                user.activation_code = activation_code;
+                user.activation_expires = Date.now() + 2 * 24 * 3600 * 1000;    // 48Hrs
+                const activation_link = 'http://localhost:8080/account/activate/' + activation_code;
+
+                const transporter = nodemailer.createTransport({
+                    service: "Gmail",
+                    host: process.env.MAIL_HOST,
+                    port: process.env.MAIL_PORT,
+                    secure: false, // true for 465, false for other ports
+                    auth: {
+                        user: process.env.MAIL_USER,
+                        pass: process.env.MAIL_PASS
+                    }
+                });
+
+                let sender = process.env.MAIL_USER;
+                let senderName = process.env.MAIL_NAME;
+                try {
+                    await transporter.sendMail({
+                        from: `${senderName} <${sender}>`, // sender address
+                        to: `${user.firstName} ${user.lastName} <${user.username}>`, // list of receivers
+                        replyTo: `Do not reply to this mail. <noreply@apsitskills.com>`,
+                        subject: "Email Verification - APSIT Alumni Portal", // Subject line
+                        // text: '',
+                        html: allTemplates.activation_mail(activation_link)
+                        
+                    });
+                    transporter.close();
+                    user.save(function(err, user){
+                        if(err) {
+                            console.log(err);
+                            req.flash("errorMessage", "Something went wrong, please try again");
+                            res.redirect("/signup");
+                        } else {
+                            // use loacl strategy
+                            // passport.authenticate("user")(req, res, function(){
+                                // req.flash("successMessage","Account Created Successfully.")
+                                // res.redirect("/profile");
+                                // });
+                                
+                                // res.send('The activation email has been sent to ' + user.username + ', please click the activation link within 48 hours.');
+                                req.flash("successMessage", `Account Created Successfully. To activate your account, the activation email has been sent to ${user.username}, it will expire in 48 hours.`);
+                                res.redirect('/login');
+
+                            }
+                        });
+                } catch (err) {
+                    console.log(err);
+                    req.flash("errorMessage", 'Something went wrong, please try again. If you get "Email already taken", then check your mail for activation link or generate a new one on login page.');
+                    res.redirect("/signup");
+                }
+                        
+            });
+        }
+    });
+});
+
+//////////////////////////////
+
 // email routes
 router.post('/mail',function(req, res, next) {
     if(req.body.message.length > 1000){

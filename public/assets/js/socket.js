@@ -20,7 +20,7 @@ $( document ).ready( () => {
                     $("#user-pane").append(`
                     <div data-userid=${user.userid} class="select-box d-flex">
                         <div class="fas fa-user my-auto user-pane-img"></div>
-                        <div class="select-box-username">&nbsp;${user.username}</div>
+                        <div class="select-box-username my-auto">&nbsp;${user.username}</div>
                         <div class="fas fa-envelope notify text-success ml-auto my-auto"></div>
                     </div>
                     `);
@@ -28,7 +28,7 @@ $( document ).ready( () => {
                     $("#user-pane").append(`
                     <div data-userid=${user.userid} class="select-box d-flex">
                         <div class="fas fa-user my-auto user-pane-img"></div>
-                        <div class="select-box-username">&nbsp;${user.username}</div>
+                        <div class="select-box-username my-auto">&nbsp;${user.username}</div>
                         <div class="notify text-success ml-auto"></div>
                     </div>
                     `);
@@ -39,14 +39,16 @@ $( document ).ready( () => {
     });
     
     // listen to all events for development purpose
-    socket.onAny((event, ...args) => {
-        console.log("Listening all =>", event, args);
-    });
+    // socket.onAny((event, ...args) => {
+    //     console.log("Listening all =>", event, args);
+    // });
     
     // handle connection err
+    let alert_count = 0;
     socket.on("connect_error", (err) => {
         console.log(err);
-        console.log("CONNECTION eRRor!!!!")
+        alert_count+=1;
+        alert("Lost chat server connection!")
     });
 
     socket.on("private message", ({ content, from }) => {
@@ -83,7 +85,7 @@ $( document ).ready( () => {
             $("#user-pane").append(`
                 <div data-userid=${from.userid} class="select-box d-flex">
                     <div class="fas fa-user my-auto user-pane-img"></div>
-                    <div>&nbsp;${from.username}</div>
+                    <div class="select-box-username my-auto">&nbsp;${from.username}</div>
                     <div class="fas fa-envelope notify text-success ml-auto my-auto"></div>
                 </div>
             `);
@@ -129,8 +131,8 @@ $( document ).ready( () => {
     function addClickListenerToUserList() {
     
         $( ".select-box" ).click(function() {
-            $('#user-pane').hide();
-            $('#chat-pane').show();
+            $('#utils-pane').hide('slow');
+            $('#chat-pane').show('slow');
     
             $( ".select-box" ).removeClass( "selected-box" );
             $this = $( this );

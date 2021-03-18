@@ -1843,3 +1843,14 @@ section {
 .keep-width{
   width: inherit;
 }
+
+.next-btn {
+  background-color: #47b2e4;
+  border-color: #47b2e4;
+  color: #fff;
+}
+
+.next-btn:hover {
+    background: #209dd8;
+    color: #fff;
+}

@@ -2,9 +2,39 @@
     margin: 0px 8px;
 }
 
+#utils-pane {
+    box-shadow: 0px 0px 10px #888;
+    padding: 0 0;
+}
+
+#utils-pane-header {
+    height: 60px;
+    background-color: rgb(40 58 90 / 90%);
+    /* border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-top: 1px solid black; */
+}
+
+#header-content {
+    padding: 10px 10px;
+    font-size: 2em;
+    color: white;
+}
+
 .select-box {
     padding: 11px 10px;
-    border-bottom: 1px solid black;
+    height: 60px;
+    box-shadow: 0px 0px 1px #888;
+    cursor: pointer;
+}
+
+.select-box:hover {
+    background-color: #dee2e6;
+}
+
+.select-box-username {
+    font-size: 17px;
+    padding-left: 3px;
 }
 
 .selected-box {
@@ -12,25 +42,25 @@
 }
 
 #user-pane {
-    height: 500px;
-    border: 1px solid black;
+    height: 440px;
+    /* border: 1px solid black; */
     overflow-y: auto;
     padding: 0 0;
-    box-shadow: 0px 0px 10px #888;
 }
 
 .user-pane-img {
     background-color: white;
     display: inline-block;
     border-radius: 60px;
-    box-shadow: 0px 0px 2px #888;
+    box-shadow: 0px 0px 2px #000;
     padding: 0.2em 0.3em;
+    font-size: 1.5rem;
 }
 
 #chat-pane {
     height: 500px;
     background-color: #e5ddd5;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     padding: 0 0;
     box-shadow: 0px 0px 10px #888;
 }
@@ -46,7 +76,7 @@
 }
 
 #selcted-user-details #chat-username {
-    font-size: 25px;
+    font-size: 20px;
     padding: 0 5px;
 }
 
@@ -60,7 +90,8 @@
 }
 
 #back-btn {
-    padding: 7px 8px;;
+    padding: 7px 8px;
+    cursor: pointer;
 }
 
 #message-pane {

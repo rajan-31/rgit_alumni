@@ -13,6 +13,6 @@ function scrollSmoothToBottom (id) {
 $('#back-btn').on('click', () => {
     selectedUser = '';
     $( ".select-box" ).removeClass( "selected-box" );
-    $('#user-pane').show();
-    $('#chat-pane').hide();
+    $('#utils-pane').show('slow');
+    $('#chat-pane').hide('slow');
 });

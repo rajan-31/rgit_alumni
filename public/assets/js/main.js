@@ -226,15 +226,18 @@
         jobFrom = $('#workModalData-jobFrom').val(), 
         jobTill = $('#workModalData-jobTill').val();
 
+        // console.log(jobFrom)
+        // console.log(jobTill)
+
     if (employer && jobTitle && jobDomain && jobFrom){
-      let present_job = `<div class="form-group col-6">
-                            <label >Job Till</label>
+      let present_job = `<div class="form-group col-sm-12 col-md-6">
+                            <label >Till</label>
                             <input type="text" class="form-control" value="Present" disabled="disabled">
                         </div>`;
       if (jobTill) {
-        present_job = `<div class="form-group col-6">
-                          <label for="jobTill">Job Till</label>
-                          <input type="date" name="profile[workExperience][jobTill]" class="form-control" value="${jobTill}">
+        present_job = `<div class="form-group col-sm-12 col-md-6">
+                          <label for="jobTill">Till</label>
+                          <input type="month" name="profile[workExperience][jobTill]" class="form-control" value="${jobTill}">
                       </div>`
       }
       
@@ -247,23 +250,23 @@
               </button>
             </p>
                 <div class="row">
-                <div class="form-group col-4">
+                <div class="form-group col-md-12 col-lg-4">
                     <label for="employer">Employer</label>
                     <input type="text" name="profile[workExperience][employer]" class="form-control" value="${employer}" required="required">
                 </div>
-                <div class="form-group col-4">
-                    <label for="jobTitle">Title</label>
+                <div class="form-group col-md-12 col-lg-4">
+                    <label for="jobTitle">Title/Post</label>
                     <input type="text" name="profile[workExperience][jobTitle]" class="form-control" value="${jobTitle}" required="required">
                 </div>
             
-                <div class="form-group col-4">
+                <div class="form-group col-md-12 col-lg-4">
                     <label for="jobDomain">Domain</label>
                         <input type="text" name="profile[workExperience][jobDomain]" class="form-control" value="${jobDomain}" required="required">
                 </div>
                                 
-                <div class="form-group col-6">
-                    <label for="jobFrom">Job From</label>
-                    <input type="date" name="profile[workExperience][jobFrom]" class="form-control" value="${jobFrom}" required="required">
+                <div class="form-group col-sm-12 col-md-6">
+                    <label for="jobFrom">From</label>
+                    <input type="month" name="profile[workExperience][jobFrom]" class="form-control" value="${jobFrom}" required="required">
                 </div>
                 
                 ${present_job}

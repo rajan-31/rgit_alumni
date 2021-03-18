@@ -2,10 +2,10 @@
 let allMiddlewares={};
 
 allMiddlewares.isAdmin = function (req, res, next) {
-    if (req.isAuthenticated() && req.user.role == "admin" && req.user.active == true) {
+    if (req.isAuthenticated() && req.user.role == "admin" ) { /* && req.user.active == true //for future use*/
         return next();
     } else {
-        req.flash("errorMessage", "Please, Login First");
+        req.flash("errorMessage", "Please, Login First!");
         res.redirect("/admin/login");
     }
 };
@@ -17,25 +17,24 @@ allMiddlewares.rejectAdmin = function (req, res, next) {
     } else if( req.isAuthenticated() && req.user.role == "admin" ) {
         req.flash("errorMessage", "Admins can't Access that page!");
         res.redirect("/");
-    } else if (req.user.active != true) {
+    } else if ( req.isAuthenticated() && req.user.active != true) {
         req.flash("errorMessage",`Please, first activate your account by clicking link sent on your mail ${req.user.username}`);
         res.redirect("/login");
     } else {
-        req.flash("errorMessage","Please, Login First");
+        req.flash("errorMessage","Please, Login First!");
         res.redirect("/login");
     }
 };
 
 // middleware - to check whether user is logged in or not
 allMiddlewares.isLoggedIn = function (req, res, next) {
-    console.log(req.user)
     if (req.isAuthenticated() && req.user.active == true) {
         return next();
-    } else if (req.user.active != true) {
+    } else if (req.isAuthenticated() && req.user.active != true) {
         req.flash("errorMessage",`Please, first activate your account by clicking link sent on your mail ${req.user.username}`);
         res.redirect("/login");
     } else {
-        req.flash("errorMessage","Please, Login First");
+        req.flash("errorMessage","Please, Login First!");
         res.redirect("/login");
     }
 };

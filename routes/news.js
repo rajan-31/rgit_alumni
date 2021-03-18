@@ -43,17 +43,62 @@ let uploadNewsImages = upload.array('images', 5);
 /* end multer config */
 
 
-router.get("/news", middlewares.isLoggedIn, function(req, res){
-    News.find({}, { images: { $slice: 1 } }, function(err, allNews){
-        if(err) {
+// router.get("/news", middlewares.isLoggedIn, function(req, res){
+//     News.find({}, { images: { $slice: 1 } }, function(err, allNews){
+//         if(err) {
+//             console.log(err);
+//             req.flash("errorMessage", "Something went wrong, please try again.")
+//             res.redirect("/")
+//         } else {
+//             res.render("News/news", {news: allNews});
+//         }
+//     }).sort({ date: -1 }).lean();
+// });
+
+//////////////////////////////
+router.get("/news", middlewares.isLoggedIn, function (req, res) {
+    News.find({}, { images: { $slice: 1 } }, function (err, allNews) {
+        if (err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
             res.redirect("/")
         } else {
-            res.render("News/news", {news: allNews});
+            const lastId = allNews[allNews.length - 1]._id;
+            const lastDate = new Date(allNews[allNews.length - 1].date).getTime();
+            res.render("News/news", { news: allNews, lastId: lastId, lastDate: lastDate, lastPage: 1});
         }
-    }).sort({ date: -1 }).lean();
+    }).sort({ date: -1, _id: 1 }).limit(6).lean();
 });
+
+router.post("/news/page/:num", middlewares.isLoggedIn, function (req, res) {
+const lastId = req.body.lastid;
+const lastDate = new Date(Number(req.body.lastdate));
+const lastPage = req.params.num;
+News.find({
+    $or: [
+        { date: { $lt: lastDate } },
+        {
+            date: lastDate,
+            _id: { $gt: mongoose.Types.ObjectId(lastId) }
+        }
+    ]
+}, { images: { $slice: 1 } }, function (err, allNews) {
+    if (err) {
+        console.log(err);
+        req.flash("errorMessage", "Something went wrong, please try again.")
+        res.redirect("/")
+    } else {
+        if(allNews.length > 0) {
+            const pass_lastId = allNews[allNews.length - 1]._id;
+            const pass_lastDate = new Date(allNews[allNews.length - 1].date).getTime();
+            res.render("News/paged_news", { news: allNews , lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
+        } else {
+            res.redirect("/news");
+        }
+    }
+}).sort({ date: -1, _id: 1 }).limit(6).lean();
+});
+//////////////////////////////
 
 router.post("/news", middlewares.isAdmin, function(req, res){
     // console.log(req.body);

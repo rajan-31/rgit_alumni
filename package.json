@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "local": "set MONGODB_SERVER=local& start http://localhost:8080& nodemon app.js",
+    "local": "set MONGODB_SERVER=local& nodemon app.js",
     "localWithLog": "set MONGODB_SERVER=local& nodemon app.js >> app.log",
     "mobile": "set PLATFORM=mobile& set MONGODB_SERVER=local& start http://192.168.0.101:8080& nodemon app.js",
     "atlas": "nodemon app.js",

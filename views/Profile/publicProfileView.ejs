@@ -17,39 +17,12 @@
     rel="stylesheet">
     
     <link rel="stylesheet" href="../../assets/vendor/bootstrap.min.css">
-    <link rel="stylesheet" href="../../assets/vendor/chosen/chosen.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
 
     <!-- Template Main CSS File -->
     <link href="../../assets/css/style.css" rel="stylesheet">
 
     <style>
-        .chosen-drop, .chosen-results {
-            max-height: 150px;
-        }
-
-        .chosen-container-multi .chosen-choices {
-            min-height: 2.5rem;
-            border-color: #343a40;
-            border-radius: 0.3rem;
-        }
-
-        .chosen-container-multi .chosen-choices li.search-choice {
-            margin: 0.3rem 0.3rem;
-            font-size: 1rem;
-            padding: 0.45rem 2rem 0.45rem 0.5rem;
-        }
-
-        .chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
-            top: 0.5rem;
-            right: 0.5rem;
-        }
-
-        .chosen-container-multi .chosen-choices li.search-field input[type=text]{
-            font-size: 1rem;
-            margin: 0.5rem 0.3rem;
-        }
-
         #profile-img {
             object-fit: cover;
             width:200px;
@@ -58,6 +31,40 @@
 
         input[type=checkbox] {
             transform: scale(1.3);
+        }
+
+        .custom-show {
+            height: auto;
+            min-height: 38px;
+            max-height: 6em; 
+            overflow: auto;
+        }
+
+        .custom-show-skills {
+            height: auto;
+            min-height: 38px;
+            max-height: 7em; 
+            overflow: auto;
+            padding-top: .100rem;
+            padding-left: .100rem;
+            padding-right: .100rem;
+        }
+
+        .skill-item {
+            padding: 0px 2px;
+            background-color: #e4e4e4;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: inline-block;
+            margin-left: 5px;
+            margin-top: 5px;
+            position: relative;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: bottom;
+            white-space: nowrap;
         }
     </style>
 
@@ -146,44 +153,38 @@
                 
                 <div class="mt-5">
                     <!-- first & last name -->
-                    <div class="row">
+                    <div class="row text-center">
                         <div class="col-6">
-                            <label for="firstName">First Name</label>
-                            <input type="text" name="firstName" class="form-control" value="<%= firstName  %>" disabled="disabled">
+                            <label>First Name</label>
+                            <div class="form-control"><%= firstName  %></div>
                         </div>
                         <div class="col-6">
-                            <label for="lastName">Last Name</label>
-                            <input type="text" name="lastName" class="form-control" value="<%= lastName  %>" disabled="disabled">
+                            <label>Last Name</label>
+                            <div class="form-control"><%= lastName  %></div>
                         </div>
                     </div><br>
                     <div class="form-group">
-                        <div class="text-center"><strong>Education At Our Institute</strong> </div>
+                        <div class="text-center pb-1"><strong>Education At Our Institute</strong> </div>
                         <div class="row text-center">
-                            <div class="col-4">
+                            <div class="col-6 col-md-4">
                                 <!-- Year Of Adminssion -->
-                                <label for="profile[yearOfAdmission]">Adminssion</label>
-                                <input name="profile[yearOfAdmission]" id="yearOfAdmission" class="form-control" value="<%= profile.yearOfAdmission %>" disabled="disabled">
+                                <label>Adminssion</label>
+                                <div class="form-control"><%= profile.yearOfAdmission  %></div>
                             
                             </div>
-                            <div class="col-4">
+                            <div class="col-6 col-md-4">
                                 <!-- Year Of Graduation -->
-                                <label for="profile[yearOfGraduation]">Graduation</label>
-                                <input name="profile[yearOfGraduation]" id="yearOfGraduation" class="form-control" value="<%= profile.yearOfGraduation %>" disabled="disabled">
+                                <label>Graduation</label>
+                                <div class="form-control"><%= profile.yearOfGraduation  %></div>
                             </div>
 
-                            <div class="col-4">
+                            <div class="col-6 col-md-4 mx-auto">
                                 <!-- branch -->
-                                <label for="profile[branch]">Branch</label>
-                                <input name="profile[branch]" id="branch" class="form-control" value="<%= profile.branch %>" disabled="disabled">
+                                <label>Branch</label>
+                                <div class="form-control"><%= profile.branch  %></div>
                             </div>
 
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            
-                        </div>
-    
                     </div>
                     
                 </div>
@@ -201,40 +202,21 @@
                     
                     <!-- bio -->
                     <div class="form-group">
-                        <label for="profile[bio]"><strong>Bio</strong></label>
-                        <textarea name="profile[bio]" id="" cols="" rows="5" class="form-control" disabled="disabled"><%= profile.bio %></textarea>
+                        <label><strong>Bio</strong></label>
+                        <div class="form-control" style="height: auto; max-height: 15em; overflow: auto;"><%= profile.bio %></div>
                     </div>
 
                     <div class="form-group row">
                         <!-- gender -->
                         <div class="col-md-6 col-sm-12">
-                            <label for="profile[gender]"><strong>Gender</strong></label><br>
-
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="male" name="profile[gender]" value="male" <% if(profile.gender=="male") {%>checked="checked "<%}%> disabled="disabled">
-                                <label class="form-check-label" for="male">Male</label>
-                            </div>
-
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="female" name="profile[gender]" value="female" <% if (profile.gender=="female") {%>checked="checked "<%}%> disabled="disabled">
-                                <label class="form-check-label" for="female">Female</label>
-                            </div>
-                            
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="other" name="profile[gender]" value="other" <% if(profile.gender=="other") {%>checked="checked "<%}%> disabled="disabled">
-                                <label class="form-check-label" for="other">Other</label>
-                            </div>
+                            <label><strong>Gender</strong></label><br>
+                            <div class="form-control"><%= profile.gender  %></div>
                         </div>
 
                         <!-- dob -->
                         <div class="col-md-6 col-sm-12">
                             <label><strong>Date Of Birth</strong></label>
-                            <br>
-                            <!-- safari & internet explorer doesn't support this date picker-->
-                            <input class="form-control" type="date" name="profile[dob]"  min="1950-12-31" max="2100-12-31" 
-                                <% if(profile.dob && profile.dob!="") { %>
-                                    value="<%= profile.dob.toISOString().slice(0,10)  %>"
-                                <% } %> disabled="disabled">
+                            <div id="dob" class="form-control"><%= profile.dob  %></div>
                         </div>
                     </div>
                     
@@ -248,16 +230,14 @@
                         <div><strong>Home Address</strong> </div>
                         <div class="form-row">
                             <div class="col-12 form-group">
-                                <input type="text" name="profile[address][homeAddress][addressLine1]" value= "<%= profile.address.homeAddress.addressLine1 %>" class="form-control" disabled="disabled" >
+                                <div class="form-control custom-show"><%= profile.address.homeAddress.addressLine1 %></div>
                             </div>
-                        
+                            
                             <div class="col-6 form-group">
-                                
-                                <input type="text" name="profile[address][homeAddress][country]" value= "<%= profile.address.homeAddress.country %>" class="form-control" disabled="disabled" >
+                                <div class="form-control"><%= profile.address.homeAddress.country %></div>
                             </div>
                             <div class="col-6 form-group">
-                                
-                                <input type="text" name="profile[address][homeAddress][zipcode]" value= "<%= profile.address.homeAddress.zipcode %>" class="form-control" disabled="disabled" >
+                                <div class="form-control"><%= profile.address.homeAddress.zipcode %></div>
                             </div>
                         </div>
                     </div>
@@ -270,15 +250,13 @@
                         <div class="form-row">
 
                             <div class="col-12 form-group">
-                                <input type="text" name="profile[address][businessAddress][addressLine1]" value= "<%= profile.address.businessAddress.addressLine1 %>" class="form-control" disabled="disabled" >
+                                <div class="form-control custom-show"><%= profile.address.businessAddress.addressLine1 %></div>
                             </div>
                             <div class="col-6 form-group">
-                                
-                                <input type="text" name="profile[address][businessAddress][country]" value= "<%= profile.address.businessAddress.country %>" class="form-control" disabled="disabled" >
+                                <div class="form-control"><%= profile.address.businessAddress.country %></div>
                             </div>
                             <div class="col-6 form-group">
-                                
-                                <input type="text" name="profile[address][businessAddress][zipcode]" value= "<%= profile.address.businessAddress.zipcode %>" class="form-control" disabled="disabled" >
+                                <div class="form-control"><%= profile.address.businessAddress.zipcode %></div>
                             </div>
                         </div>
                     </div>
@@ -286,36 +264,42 @@
 
                     <div class="row">
                         <!-- mobile -->
-                        <div class="col-6">
-                            <label for="profile[contact][mobile]">Mobile Number</label>
-                            <input type="tel" name="profile[contact][mobile]" value= "<%= profile.contact.mobile %>" class="form-control" disabled="disabled" >
+                        <div class="col-md-6 pb-4">
+                            <label><strong>Mobile Number</strong></label>
+                            <div class="form-control"><%= profile.contact.mobile %></div>
                         </div>
             
                         <!-- email -->
-                        <div class="col-6">
-                            <label for="profile[contact][email]">Email</label>
-                            <input type="email" name="profile[contact][email]" value= "<%= profile.contact.email %>" class="form-control" disabled="disabled">
+                        <div class="col-md-6 pb-4">
+                            <label><strong>Email</strong></label>
+                            <div class="form-control"><%= profile.contact.email %></div>
                         </div>
                     </div>
         
-                    <div class="row">
+                    <div class="row text-center">
                         <!-- linkedin -->
-                        <div class="col-6">
-                            <label for="profile[social_media][linkedin]">LinkedIn Username</label>
-                            <input type="text" name="profile[social_media][linkedin]" class="form-control" disabled="disabled" value= "<%= profile.social_media.linkedin %>" >
+                        <div class="col-sm-6 col-md-4  pb-4">
+                            <label><strong>LinkedIn Profile</strong></label>
+                            <div>
+                                <a class="visit_url" href="<%= profile.social_media.linkedin %>" target="_blank">View Profile <i class="fas fa-external-link-alt"></i></a>
+                            </div>
                         </div>
             
                         <!-- instagram -->
-                        <div class="col-6">
-                            <label for="profile[social_media][instagram]">Instagram Username</label>
-                            <input type="text" name="profile[social_media][instagram]" class="form-control" disabled="disabled" value= <%= profile.social_media.instagram %> >
+                        <div class="col-sm-6 col-md-4 pb-4">
+                            <label><strong>Instagram Profile</strong></label>
+                            <div>
+                                <a class="visit_url" href="<%= profile.social_media.instagram %>" target="_blank">View Profile <i class="fas fa-external-link-alt"></i></a>
+                            </div>
                         </div>
-                    </div>
-        
-                    <!-- website -->
-                    <div class="form-group">
-                        <label for="profile[social_media][website]">Website</label>
-                        <input type="text" name="profile[social_media][website]" id="website" class="form-control" disabled="disabled" value= <%= profile.social_media.website %> >
+
+                        <!-- website -->
+                        <div class="col-sm-6 col-md-4 pb-4 mx-auto">
+                            <label><strong>Personal Website</strong></label>
+                            <div>
+                                <a class="visit_url" href="<%= profile.social_media.website %>" target="_blank">View Website <i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                        </div>
                     </div>
                     <hr><br>
                     
@@ -334,33 +318,33 @@
                                 <div class="section-bg my-3 px-2 py-2 rounded border border-dark">
                                     
                                     <div class="row">
-                                        <div class="form-group col-4">
-                                            <label for="employer">Employer</label>
-                                            <input type="text" name="profile[workExperience][employer]" class="form-control" value="<%= profile.workExperience.employer[j] %>" disabled="disabled">
+                                        <div class="form-group col-md-12 col-lg-4">
+                                            <label>Employer</label>
+                                            <div class="form-control custom-show"><%= profile.workExperience.employer[j] %></div>
                                         </div>
-                                        <div class="form-group col-4">
-                                            <label for="jobTitle">Title</label>
-                                            <input type="text" name="profile[workExperience][jobTitle]" class="form-control" value="<%= profile.workExperience.jobTitle[j] %>" disabled="disabled">
-                                        </div>
-                                
-                                        <div class="form-group col-4">
-                                            <label for="jobDomain">Domain</label>
-                                            <input type="text" name="profile[workExperience][jobDomain]" class="form-control" value="<%= profile.workExperience.jobDomain[j] %>" disabled="disabled">
+                                        <div class="form-group col-md-12 col-lg-4">
+                                            <label>Title/Post</label>
+                                            <div class="form-control custom-show"><%= profile.workExperience.jobTitle[j] %></div>
                                         </div>
                                 
+                                        <div class="form-group col-md-12 col-lg-4">
+                                            <label>Domain</label>
+                                            <div class="form-control custom-show"><%= profile.workExperience.jobDomain[j] %></div>
+                                        </div>
+                                        
                                         <div class="form-group col-6">
-                                            <label for="jobFrom">Job From</label>
-                                            <input type="date" name="profile[workExperience][jobFrom]" class="form-control" value="<%= profile.workExperience.jobFrom[j] %>" disabled="disabled">
+                                            <label>From</label>
+                                            <div class="form-control change-format-month"><%= profile.workExperience.jobFrom[j] %></div>
                                         </div>
                                         <%if(profile.workExperience.jobTill[j]) {%>
                                         <div class="form-group col-6">
-                                            <label for="jobTill">Job Till</label>
-                                            <input type="date" name="profile[workExperience][jobTill]" class="form-control" value="<%= profile.workExperience.jobTill[j] %>" disabled="disabled">
+                                            <label>Till</label>
+                                            <div class="form-control change-format-month"><%= profile.workExperience.jobTill[j] %></div>
                                         </div>
                                         <%} else {%>
                                             <div class="form-group col-6">
-                                                <label >Job Till</label>
-                                                <input type="text" class="form-control" value="Present" disabled="disabled">
+                                                <label>Till</label>
+                                                <div class="form-control">Present</div>
                                             </div>
                                         <%}%>
                                     </div>
@@ -374,18 +358,22 @@
         
                     <!-- skills -->
                     <div class="form-group">
-                        <label for="profile[skills]">Skills</label>
-                        <select name="profile[skills]" id="skills" data-placeholder="type to search.." multiple
-                            class="form-control chosen-select" >
-                            <option value=""></option>
-                            <% ["Web Dev", "DevOps", "Pen Test"].forEach(skill => { %>
-                            <% if( profile.skills.includes(skill) ) { %>
-                            <option selected value="<%= skill %>" ><%= skill %></option>
-                            <% } else { %>
-                            <option value="<%= skill %>"><%= skill %></option>
-                            <% } %>
-                            <% }) %>
-                        </select>
+                        <label>Skills</label>
+                        <div id="data-skills-public" hidden="hidden"><%= profile.skills.join("|") %></div>
+                        <div id="skills-public" class="form-control custom-show-skills">
+                            <!-- <span class="skill-item">DevOps</span>
+                            <span class="skill-item">Machine Learning</span>
+                            <span class="skill-item">Blockchain</span>
+                            <span class="skill-item">Pen Tester</span>
+                            <span class="skill-item">DevOps</span>
+                            <span class="skill-item">Machine Learning</span>
+                            <span class="skill-item">Blockchain</span>
+                            <span class="skill-item">Pen Tester</span>
+                            <span class="skill-item">DevOps</span>
+                            <span class="skill-item">Machine Learning</span>
+                            <span class="skill-item">Blockchain</span>
+                            <span class="skill-item">Pen Tester</span> -->
+                        </div>
                     </div>
             </div>
         </section>
@@ -394,28 +382,34 @@
     
     <%- include ('../partials/footer'); -%>
     
-    <script src="../../assets/vendor/chosen/chosen.jquery.js"></script>
-    
     <script>
-        /* ===================================================================
-            multiple choises */
-        $(".chosen-select").chosen({
-            no_results_text: "Oops, nothing found!"
-        });
-        $(".chosen-select").attr('disabled', true).trigger("chosen:updated")
-
-        // function customTouch() {
-        //     console.log(this);
-        //     this.click();
-        // }
-        // x=document.getElementsByClassName("search-choice-close")
-        // for(let i=0; i<x.length; i++) {
-        //     x[i].addEventListener("touchstart", customTouch, false);
-        // }
-        // document.getElementById('skills_chosen').addEventListener("touchstart", customTouch, false)
-        // document.getElementById('skills_chosen').firstChild.addEventListener("touchstart", customTouch, false)
-
         // $(".toast").toast('show');
+
+        // show dob in format
+        var temp = new Date($("#dob").text()).toGMTString().slice(5,16);
+        $("#dob").text(temp)
+
+        // change date format to month
+        $(".change-format-month").each(function() {
+            var $this = $( this );
+            var temp = new Date($this.text()).toGMTString().slice(8,16);
+            $this.text(temp)
+        });
+
+        // remove social link
+        $(".visit_url").each(function() {
+            var $this = $( this );
+            if($this.attr("href") == "") {
+                $this.replaceWith("<div>Not Available</div>")
+            }
+        });
+
+        // render skills
+        var temp_skills = $("#data-skills-public").text().split("|");
+        for(var i = temp_skills.length-1; i>=0; i--) {
+            $("#skills-public").append("<span class='skill-item'>"+temp_skills[i]+"</span>");
+        }
+
     </script>
 </body>
 </html>
