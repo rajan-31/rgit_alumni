@@ -339,8 +339,8 @@
             <div class="icon-box keep-width">
           
               <div>
-                <center><img style="border-radius: 20px" src="data:image/<%=item.images[0].contentType%>;base64, 
-                      <%=item.images[0].data.toString('base64')%>" width="300" height="200"></center>
+                <center><img style="border-radius: 20px" src="data:image/<%=item.thumbnail.contentType%>;base64, 
+                      <%=item.thumbnail.data.toString('base64')%>" width="300" height="200"></center>
               </div>
               <hr>
               <center>
@@ -391,8 +391,8 @@
             <div class="icon-box keep-width">
           
               <div>
-                <center><img style="border-radius: 20px" src="data:image/<%=item.images[0].contentType%>;base64, 
-                      <%=item.images[0].data.toString('base64')%>" width="300" height="200"></center>
+                <center><img style="border-radius: 20px" src="data:image/<%=item.thumbnail.contentType%>;base64, 
+                      <%=item.thumbnail.data.toString('base64')%>" width="300" height="200"></center>
               </div>
               <hr>
               <center>
@@ -427,6 +427,43 @@
     </div>
     </section>
     <!-- ====== End EVENTS ====== -->
+    <!-- ======= Testimonials ========= -->
+
+    <section id="testimonials" class="services portfolio-details">
+    <div class="container" data-aos="fade-up">
+    
+        <div class="section-title">
+        <h2>Testimonials</h2>
+        </div>
+        <div class="portfolio-details">
+          <div class="owl-carousel testimonials-slider">
+
+            <% for(let i = 0; i < countTestimonials; i++) {%>
+              <div class="testimonial item">
+                <div class="testi-img d-flex justify-content-center">
+                  <img src="data:image/<%= allTestimonials[i].image.contentType%>;base64, <%=allTestimonials[i].image.data.toString('base64')%>" alt="Student">
+                </div>
+            
+                <div class="testi-header text-center">
+                  <span class="testi-name"><%= allTestimonials[i].name %>,</span>
+                  <span class="testi-branch"><%= allTestimonials[i].branch %></span>
+                </div>
+            
+                <div class="testi-content-container">
+                  <i class="fas fa-quote-left"></i>
+                  <span class="testi-content text-center"> <%= allTestimonials[i].content %> </span>
+                  <i class="fas fa-quote-right"></i>
+                </div>
+              </div>
+            <% } %>
+
+          </div>
+        </div>
+
+
+    </div>
+    </section>
+    <!-- ====== End Testimonials ====== -->
 
     <!-- ======= Contact Section ======= -->
     <footer id="footer">

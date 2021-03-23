@@ -118,9 +118,10 @@ router.post('/profile/image', middlewares.isLoggedIn, function(req, res){
                 res.redirect('/profile');
             }
         } else if(req.file){
+            const pathToFile = path.join(__dirname, '..' + '/uploads/' + req.file.filename);
             const image = {
-                data: fs.readFileSync(path.join(__dirname, '..' + '/uploads/' + req.file.filename)),
-                contentType: 'image/png'
+                data: fs.readFileSync(pathToFile),
+                contentType: req.file.mimetype
             };
             if(image.data) {
                 User.findByIdAndUpdate(req.user._id, { profileImage: image }, function (err, data) {
@@ -137,7 +138,6 @@ router.post('/profile/image', middlewares.isLoggedIn, function(req, res){
                 req.flash("errorMessage", "Please choose a image.");
                 res.redirect('/profile')
             }
-            const pathToFile = path.join(__dirname, '..' + '/uploads/' + req.file.filename);
             fs.unlink(pathToFile, function(err) {
                 if (err) {
                     console.log(err);
@@ -182,51 +182,36 @@ router.get('/profile/:id', function(req, res){
 /* communicate routes */
 
 router.get('/communicate', middlewares.isLoggedIn, function(req, res){
-    User.aggregate([
-        {
-            $match: {
-                "userType": {
-                    "$exists": true,
-                    "$ne": null
-                },
-                "receiveMsg": {
-                    "$exists": true,
-                    "$eq": true
-                }
-            } 
-        },
-        { 
-            $group: {
-                _id: "$userType",
-                obj: {
-                    $push: {
-                        _id: "$_id",
-                        firstName: "$firstName", 
-                        lastName: "$lastName",
-                        profileImage: "$profileImage",
-                        bio: "$profile.bio"                    }
-                    // $push: "$$ROOT"
-                }
-            } 
-        }
-    ]).exec(function (err, data) {
+    User.find({ userType: "alumni", receiveMsg: true }, "firstName lastName profileImage profile.bio", function(err, users) {
         if (err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
             res.redirect("/");
-        } else if (data.length>0) {
-            // console.log(JSON.stringify(data, null, 2));
-            // let students = data[0]._id == "student" ? data[0].obj : data[1].obj;
-            // let alumni = data[0]._id == "alumni" ? data[0].obj : data[1].obj;
-            // res.render('communicate', { students: students, alumni: alumni});
-            
-            let alumni = data[0].obj;
-            res.render('communicate', {alumni: alumni});
+        } else if (users.length > 0) {
+            const lastId = users[users.length - 1]._id;
+            res.render('communicate', {alumni: users, lastId: lastId, lastPage: 1});
         } else {
             req.flash("errorMessage", "No users found, please try again later.")
             res.redirect("/");
         }
-    });
+    }).sort({ _id: 1 }).limit(12).lean();
+});
+
+router.post("/communicate/page/:num", middlewares.isLoggedIn, function (req, res) {
+    const lastId = req.body.lastid;
+    const lastPage = req.params.num;
+    User.find({ _id: { $gt: mongoose.Types.ObjectId(lastId) } }, "firstName lastName profileImage profile.bio", function (err, users) {
+        if (err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.")
+            res.redirect("/");
+        } else if (users.length > 0) {
+            const lastId = users[users.length - 1]._id;
+            res.render('paged_communicate', { alumni: users, lastId: lastId, lastPage: lastPage });
+        } else {
+            res.redirect("/communicate");
+        }
+    }).sort({ _id: 1 }).limit(12).lean();
 });
 
 /* end communicate routes */

@@ -361,18 +361,6 @@
                         <label>Skills</label>
                         <div id="data-skills-public" hidden="hidden"><%= profile.skills.join("|") %></div>
                         <div id="skills-public" class="form-control custom-show-skills">
-                            <!-- <span class="skill-item">DevOps</span>
-                            <span class="skill-item">Machine Learning</span>
-                            <span class="skill-item">Blockchain</span>
-                            <span class="skill-item">Pen Tester</span>
-                            <span class="skill-item">DevOps</span>
-                            <span class="skill-item">Machine Learning</span>
-                            <span class="skill-item">Blockchain</span>
-                            <span class="skill-item">Pen Tester</span>
-                            <span class="skill-item">DevOps</span>
-                            <span class="skill-item">Machine Learning</span>
-                            <span class="skill-item">Blockchain</span>
-                            <span class="skill-item">Pen Tester</span> -->
                         </div>
                     </div>
             </div>
@@ -405,9 +393,13 @@
         });
 
         // render skills
-        var temp_skills = $("#data-skills-public").text().split("|");
-        for(var i = temp_skills.length-1; i>=0; i--) {
-            $("#skills-public").append("<span class='skill-item'>"+temp_skills[i]+"</span>");
+        var temp_skills;
+        if($("#data-skills-public").text() != "") {
+            temp_skills = $("#data-skills-public").text().split("|");
+            for(var i = temp_skills.length-1; i>=0; i--) {
+                console.log(temp_skills.length)
+                $("#skills-public").append("<span class='skill-item'>"+temp_skills[i]+"</span>");
+            }
         }
 
     </script>

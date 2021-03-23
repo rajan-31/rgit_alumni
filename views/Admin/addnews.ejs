@@ -2,7 +2,7 @@
 
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link active">
-              <i class="nav-icon fas fa-copy"></i>
+              <i class="nav-icon fas fa-newspaper"></i>
               <p>
                 News Section
                 <i class="fas fa-angle-left right"></i>
@@ -29,7 +29,7 @@
   
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-copy"></i>
+              <i class="nav-icon fas fa-calendar-day"></i>
               <p>
                 Events Section
                 <i class="fas fa-angle-left right"></i>
@@ -52,10 +52,36 @@
   
             </ul>
           </li>
+
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-quote-left"></i>
+              <p>
+                Testimonials Section
+                <i class="fas fa-angle-left right"></i>
+          
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/testimonials" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Testimonials</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/addTestimonials" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Add Testimonials</p>
+                </a>
+              </li>
+          
+            </ul>
+          </li>
   
           <li class="nav-item">
             <a href="/admin/alumnilist" class="nav-link">
-              <i class="nav-icon fas fa-th"></i>
+              <i class="nav-icon fas fa-user-tie"></i>
               <p>
                 Alumni
   
@@ -65,7 +91,7 @@
   
           <li class="nav-item">
             <a href="/admin/studentlist" class="nav-link">
-              <i class="nav-icon fas fa-th"></i>
+              <i class="nav-icon fas fa-user"></i>
               <p>
                 Students
   
@@ -75,7 +101,7 @@
 
           <li class="nav-item">
             <a href="/admin/adminlist" class="nav-link">
-              <i class="nav-icon fas fa-th"></i>
+              <i class="nav-icon fas fa-user-cog"></i>
               <p>
                 Admins
   
@@ -136,7 +162,7 @@
           </div>
 
 <div>
-  <form action="/news" method="POST" enctype="multipart/form-data" id="newsForm" role="form">
+  <form action="/news" method="POST" enctype="multipart/form-data" id="mainForm" role="form">
     <div class="row">
       <!-- title -->
       <div class="col-lg-6">
@@ -211,7 +237,11 @@
     <!-- /.card-body -->
   
     <div>
-      <button id="addNewsButton" type="submit" class="btn btn-block btn-primary btn-lg" form="newsForm"><i class="fas fa-plus"></i> Add News</button><br>
+      <button id="addNewsButton" type="submit" class="btn btn-block btn-primary btn-lg" form="mainForm">
+        <i id="submit-btn-icon" class="fas fa-plus"></i>
+        <span id="spinner" style="vertical-align: middle;" role="status" aria-hidden="true"></span>
+        Add News
+      </button><br>
     </div>
   </form>
 
@@ -233,23 +263,6 @@
 
 <!-- to show selected files -->
 <script>
-  // $("#selectImages").change(function () {
-  //   console.log(this.files[1])
-  //   $("#selectedImages").html("");
-  //   $("#filesWarning").addClass("alert-warning");
-  //   $("#filesWarning").removeClass("alert-danger");
-  //   $("#addNewsButton").prop('disabled', false);
-  //   if(this.files.length>5){
-  //     // console.log(this.files)
-  //     $("#addNewsButton").prop('disabled', true);
-  //     $("#filesWarning").removeClass("alert-warning");
-  //     $("#filesWarning").addClass("alert-danger");
-  //   }
-  //   for(let i=0; i< this.files.length; i++){
-  //     let x="<li>"+ this.files[i].name + "</li>";
-  //     $("#selectedImages").append(x);
-  //   }
-  // });
   $("#selectImages").change(function () {
     if(this.files.length>5) {
       $("#addNewsButton").prop('disabled', true);

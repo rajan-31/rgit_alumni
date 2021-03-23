@@ -18,3 +18,14 @@
 <script src="../assets/js/adminlte.js"></script>
 
 <script src="../assets/vendor/tableSorter/js/table-sorter.js"></script>
+
+<script>
+    $("#mainForm").on("submit", function() {
+        $("#submit-btn-icon").remove();
+        $("#spinner").addClass("spinner-border spinner-border-sm");
+    });
+
+    $(".btn-action-spinner").on("click", function() {
+        $( this ).html('<span id="spinner" class="spinner-border spinner-border-sm" style="vertical-align: middle;" role="status" aria-hidden="true"></span>')
+    });
+</script>

@@ -1,17 +1,17 @@
 <%- include ('../partials/adminHeader'); -%>
 
-          <li class="nav-item has-treeview menu-open">
-            <a href="#" class="nav-link active">
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
               <i class="nav-icon fas fa-newspaper"></i>
               <p>
                 News Section
                 <i class="fas fa-angle-left right"></i>
-          
+  
               </p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="/admin/news" class="nav-link active">
+                <a href="/admin/news" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>News</p>
                 </a>
@@ -22,18 +22,18 @@
                   <p>Add News</p>
                 </a>
               </li>
-          
+  
             </ul>
           </li>
-          
-          
+  
+  
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-calendar-day"></i>
               <p>
                 Events Section
                 <i class="fas fa-angle-left right"></i>
-          
+  
               </p>
             </a>
             <ul class="nav nav-treeview">
@@ -49,12 +49,12 @@
                   <p>Add Events</p>
                 </a>
               </li>
-          
+  
             </ul>
           </li>
 
-          <li class="nav-item has-treeview">
-            <a href="#" class="nav-link">
+          <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-quote-left"></i>
               <p>
                 Testimonials Section
@@ -70,7 +70,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/admin/addTestimonials" class="nav-link">
+                <a href="/admin/addTestimonials" class="nav-link active">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Add Testimonials</p>
                 </a>
@@ -78,27 +78,27 @@
           
             </ul>
           </li>
-          
+  
           <li class="nav-item">
             <a href="/admin/alumnilist" class="nav-link">
               <i class="nav-icon fas fa-user-tie"></i>
               <p>
                 Alumni
-          
+  
               </p>
             </a>
           </li>
-          
+  
           <li class="nav-item">
             <a href="/admin/studentlist" class="nav-link">
               <i class="nav-icon fas fa-user"></i>
               <p>
                 Students
-          
+  
               </p>
             </a>
           </li>
-        
+
           <li class="nav-item">
             <a href="/admin/adminlist" class="nav-link">
               <i class="nav-icon fas fa-user-cog"></i>
@@ -108,7 +108,7 @@
               </p>
             </a>
           </li>
-         
+  
       </nav>
       <!-- /.sidebar-menu -->
     </div>
@@ -122,41 +122,21 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Dashboard</h1>
+            <h1 class="m-0 text-dark"></h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="/admin">Home</a></li>
-              <li class="breadcrumb-item active">News</li>
+              <li class="breadcrumb-item active">Add Testimonial</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
-    
+
     <!-- Main content -->
     <section class="content">
-
-      <!-- start flash message -->
-      <div id="flashAlert" class="container-fluid">
-        <div class="row">
-          <div class="col-lg-12 col-12">
-            <% if(successMessage && successMessage.length>0 ){ %>
-              <div class="alert alert-success text-center" role="alert">
-                <%= successMessage %>
-              </div>
-            <%}%>
-            <% if(errorMessage && errorMessage.length>0 ){ %>
-              <div class="alert alert-danger text-center" role="alert">
-                <%= errorMessage %>
-              </div>
-            <% } %>
-          </div>
-        </div>
-      </div>
-      <!-- end flash message -->
-
       <div class="container-fluid">
         <!-- Small boxes (Stat box) -->
         <div class="row">
@@ -164,22 +144,10 @@
           <!-- ./col -->
           
           <!-- ./col -->
-          <div class="col-lg-12 col-12">
-            <!-- small box -->
-            <div class="small-box bg-warning">
-              <div class="inner">
-                <h3> <%= countNews %> </h3>
-
-                <h3>News Count</h3>
-              </div>
-              <div class="icon">
-                <i class="ion ion-person-add"></i>
-              </div>
-              
-            </div>
+          <div class="col-lg-12">
+            <center><h1 class="m-0 text-dark">Add Testimonial</h1></center>
           </div>
           <!-- ./col -->
-          
     
           <!-- ./col -->
         </div>
@@ -189,59 +157,89 @@
           <!-- Left col -->
           <section class="col-lg-12"><br>
            
-
           <div>
-            <center><h1 class="m-0 text-dark">News</h1></center><br>
+            <center><h1 class="m-0 text-dark"></h1></center>
           </div>
 
-  <div class="card">
-
-        <div class="card-body table-responsive p-0 .my-table-height">
-          <table  class="table table-head-fixed sortable-table indexed">
-            <thead>
-              <tr class="sorter-header">
-                <!-- <th>ID</th> -->
-                <!-- <th class="no-sort">Index</th> -->
-                <th><center>Title</center></th>
-                <th id="simulate_click" class="is-date keep-whitespace">    Date</th>
-                <th class="no-sort"><center>View</center></th>
-                <th class="no-sort"><center>Edit</center></th>
-                <th class="no-sort"><center>Delete</center></th>
-              </tr>
-            </thead>
-            <tbody>
-              <% for(let i=0; i<countNews; i++) { %>
-                <tr>
-                  <!-- <td> <%# allNews[i]._id %> <%# i+1 %> </td> -->
-                  <td> <%= allNews[i].title %> </td>
-                  <td> <%= allNews[i].date.toGMTString().slice(5, 16) %> </td>
-                  <td>
-                    <a href="/news/<%= allNews[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size btn-action-spinner">View</a><br>
-                  </td>
-                  <td>
-                    <a href="/news/<%= allNews[i]._id %>/edit" class="btn btn-block btn-warning btn-sm btn-fix-size btn-action-spinner">Edit</a><br>
-                  </td>
-                  <td>
-
-                    <form action="/news/<%= allNews[i]._id %>?_method=DELETE" method="POST">
-                      <button type="submit" class="btn btn-block btn-danger btn-sm btn-fix-size btn-action-spinner">Delete</button><br>
-                    </form>
-
-                  </td>
-                </tr>
-              <% } %>
-              
-            </tbody>
-          </table>
+<div>
+  <form action="/admin/testimonials" method="POST" enctype="multipart/form-data" id="mainForm" role="form">
+    <div class="row">
+      <!-- title -->
+      <div class="col-6">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" name="name" placeholder="Name" class="form-control" required="required">
         </div>
-               
-                <!-- /.card-body -->
-              
-  </div>
+      </div>
 
+      <div class="col-6">
+        <div class="form-group">
+          <label for="name">Branch</label>
+          <input type="text" name="branch" placeholder="Branch" class="form-control" required="required">
+        </div>
+      </div>
+    </div>
+  
+    <!-- description -->
+    <div class="row">
+  
+      <div class="col-lg-12 col-12">
+        <div class="card card-outline card-info">
+          <div class="card-header">
+            <h3 class="card-title">
+              Enter Content for Testimonial
+  
+            </h3>
+          </div>
+
+          <div class="card-body pad">
+            <div class="mb-3">
+              <textarea name="content" class="form-control" rows="3" required="required"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+    </div>
+    
+    <!-- image -->
+    <div class="row">
+      <div class="col-lg-12 col-12">
+        
+        <div class="form-group">
+          <div class="custom-file ">
+            <label class="custom-file-label" for="image" style="overflow: hidden;" >Choose a file...</label>
+            <input type="file" id="selectImages" accept=".jpg,.jpeg,.png" name="image" class="custom-file-input" required="required" >
+          </div>
+          
+        </div>
+        <small>
+          <i class="fas fa-exclamation-circle"></i>
+          Max Size: 1 MB | Square Shaped
+        </small>
+        <ul id="selectedImages">
+        
+        </ul>
+
+      </div> <br>
+    </div>
+    <!-- /.card-body -->
+  
+    <div>
+      <button id="addTestimonialButton" type="submit" class="btn btn-block btn-primary btn-lg" form="mainForm">
+        <i id="submit-btn-icon" class="fas fa-plus"></i> 
+        <span id="spinner" style="vertical-align: middle;" role="status" aria-hidden="true"></span>
+        Add Testimonial
+      </button><br>
+    </div>
+  </form>
+
+</div>
           </section>
           <!-- /.Left col -->
+          <!-- right col (We are only adding the ID to make the widgets sortable)-->
           
+          <!-- right col -->
         </div>
         <!-- /.row (main row) -->
       </div><!-- /.container-fluid -->
@@ -250,12 +248,15 @@
   </div>
   <!-- /.content-wrapper -->
   <%- include ('../partials/adminFooter'); -%>
-  <script>
-    $().ready(function(){
-      $('.sortable-table').tableSorter();
-      document.getElementById('simulate_click').click();
-      document.getElementById('simulate_click').click();
-    });
-  </script>
+
+
+<!-- to show selected files -->
+<script>
+  $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+</script>
+
 </body>
 </html>

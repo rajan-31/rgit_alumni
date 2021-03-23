@@ -1,7 +1,7 @@
 <%- include ('../partials/adminHeader'); -%>
 
-          <li class="nav-item has-treeview menu-open">
-            <a href="#" class="nav-link active">
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
               <i class="nav-icon fas fa-newspaper"></i>
               <p>
                 News Section
@@ -11,7 +11,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="/admin/news" class="nav-link active">
+                <a href="/admin/news" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>News</p>
                 </a>
@@ -53,8 +53,8 @@
             </ul>
           </li>
 
-          <li class="nav-item has-treeview">
-            <a href="#" class="nav-link">
+          <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-quote-left"></i>
               <p>
                 Testimonials Section
@@ -64,7 +64,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="/admin/testimonials" class="nav-link">
+                <a href="/admin/testimonials" class="nav-link active">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Testimonials</p>
                 </a>
@@ -127,7 +127,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="/admin">Home</a></li>
-              <li class="breadcrumb-item active">News</li>
+              <li class="breadcrumb-item active">Testimonials</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -168,9 +168,9 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3> <%= countNews %> </h3>
+                <h3> <%= countTestimonials %> </h3>
 
-                <h3>News Count</h3>
+                <h3>Testimonials Count</h3>
               </div>
               <div class="icon">
                 <i class="ion ion-person-add"></i>
@@ -191,7 +191,7 @@
            
 
           <div>
-            <center><h1 class="m-0 text-dark">News</h1></center><br>
+            <center><h1 class="m-0 text-dark">Testimonials</h1></center><br>
           </div>
 
   <div class="card">
@@ -202,28 +202,24 @@
               <tr class="sorter-header">
                 <!-- <th>ID</th> -->
                 <!-- <th class="no-sort">Index</th> -->
-                <th><center>Title</center></th>
-                <th id="simulate_click" class="is-date keep-whitespace">    Date</th>
-                <th class="no-sort"><center>View</center></th>
+                <th id="simulate_click">Name</th>
+                <th class="keep-whitespace">   Branch</th>
                 <th class="no-sort"><center>Edit</center></th>
                 <th class="no-sort"><center>Delete</center></th>
               </tr>
             </thead>
             <tbody>
-              <% for(let i=0; i<countNews; i++) { %>
+              <% for(let i=0; i<countTestimonials; i++) { %>
                 <tr>
-                  <!-- <td> <%# allNews[i]._id %> <%# i+1 %> </td> -->
-                  <td> <%= allNews[i].title %> </td>
-                  <td> <%= allNews[i].date.toGMTString().slice(5, 16) %> </td>
+                  <!-- <td> <%# allTestimonials[i]._id %> <%# i+1 %> </td> -->
+                  <td><%= allTestimonials[i].name %></td>
+                  <td class="pl-4"><%= allTestimonials[i].branch %></td>
                   <td>
-                    <a href="/news/<%= allNews[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size btn-action-spinner">View</a><br>
-                  </td>
-                  <td>
-                    <a href="/news/<%= allNews[i]._id %>/edit" class="btn btn-block btn-warning btn-sm btn-fix-size btn-action-spinner">Edit</a><br>
+                    <a href="/admin/testimonials/<%= allTestimonials[i]._id %>/edit" class="btn btn-block btn-warning btn-sm btn-fix-size btn-action-spinner">Edit</a><br>
                   </td>
                   <td>
 
-                    <form action="/news/<%= allNews[i]._id %>?_method=DELETE" method="POST">
+                    <form action="/admin/testimonials/<%= allTestimonials[i]._id %>?_method=DELETE" method="POST">
                       <button type="submit" class="btn btn-block btn-danger btn-sm btn-fix-size btn-action-spinner">Delete</button><br>
                     </form>
 
@@ -254,7 +250,7 @@
     $().ready(function(){
       $('.sortable-table').tableSorter();
       document.getElementById('simulate_click').click();
-      document.getElementById('simulate_click').click();
+      // document.getElementById('simulate_click').click();
     });
   </script>
 </body>

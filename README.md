@@ -74,7 +74,7 @@ db.admins.insert({
 
 
 /////////////
-- account activation => https://medium.com/@mayumi8713917/sending-activation-code-by-email-with-node-js-42646f260674
+- ~~account activation~~ => https://medium.com/@mayumi8713917/sending-activation-code-by-email-with-node-js-42646f260674
 
 - ~~improve profile & public profile page~~
 - ~~improve communicate page with icons~~
@@ -90,5 +90,12 @@ db.admins.insert({
 - ~~admission n grad yr max options, added work visibility~~
 - ~~select2~~
 
-- testimonials - admin panel, home page
-- reset password
+- ~~testimonials - admin panel, home page~~
+- ~~reset password~~
+
+- ~~thubnail - for event~~
+- ~~loader~~
+
+- ~~limit failed logins~~
+
+password reset, pagination for communicate page, thumbnails, loader after form submit, testimonials, limit failed login attempts

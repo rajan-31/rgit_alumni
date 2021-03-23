@@ -12,23 +12,22 @@ const allMiddlewares = require("../middleware/index.js");
 const allTemplates = require("../services/mail_templates")
 
 router.get("/",function(req, res){
-    News.find({}, { images: { $slice: 1 } }, function (err, allNews) {
+    News.find({}, "-images", function (err, allNews) {
         if (err) {
             console.log(err);
         } else {
-            Event.find({}, { images: { $slice: 1 } }, function (err, allEvents) {
+            Event.find({}, "-images", function (err, allEvents) {
                 if (err) {
                     console.log(err);
                 } else if(req.isAuthenticated()) {
-                    res.render("Home/home", { news: allNews, events: allEvents, dataFromFile: global.static_data });
+                    res.render("Home/home", { news: allNews, events: allEvents, dataFromFile: global.static_data, allTestimonials: global.allTestimonials, countTestimonials: global.allTestimonials.length });
+                    // res.render("Home/home", { news: [], events: [], dataFromFile: global.static_data, allTestimonials: global.allTestimonials, countTestimonials: global.allTestimonials.length });
                 } else {
-                    res.render("Home/guest", { news: allNews, events: allEvents, dataFromFile: global.static_data });
+                    res.render("Home/guest", { news: allNews, events: allEvents, dataFromFile: global.static_data, allTestimonials: global.allTestimonials, countTestimonials: global.allTestimonials.length });
                 }
             }).sort({ date: -1 }).limit(3).lean();
         }
     }).sort({ date: -1 }).limit(3).lean();
-    
-    // res.render("Home/guest", { news: [], events: [], dataFromFile: global.static_data });
 });
 
 /* contribute route*/
@@ -63,7 +62,7 @@ router.post('/signup', function(req, res){
                 crypto.randomBytes(5, async function (err, buf) {
                     const activation_code = user._id + buf.toString('hex');
                     user.activation_code = activation_code;
-                    user.activation_expires = Date.now() + 2 * 24 * 3600 * 1000;    // 48Hrs
+                    user.activation_expires = Date.now() + 172800000;    // 48Hrs
                     const activation_link = 'http://localhost:8080/account/activate/' + activation_code;
 
                     const transporter = nodemailer.createTransport({
@@ -137,14 +136,43 @@ router.get('/login', function(req, res){
     res.render("login");
 });
 
-router.post('/login', passport.authenticate("user",
-    {
-        failureRedirect: "/login",
-        failureFlash: { type: 'errorMessage', message: 'Invalid username or password.' }
-    }), function (req, res) {
-        req.flash("successMessage", `Welcome back, ${req.user.firstName}!`);
-        res.redirect('/profile')
-});
+// router.post('/login', passport.authenticate("user",
+//     {
+//         failureRedirect: "/login",
+//         failureFlash: { type: 'errorMessage', message: 'Invalid username or password.' }
+//     }), function (req, res) {
+//         req.flash("successMessage", `Welcome back, ${req.user.firstName}!`);
+//         res.redirect('/profile')
+// });
+
+router.post('/login', function(req, res, next) {
+    passport.authenticate('user', function(err, user, info) {
+        if (err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please try again.");
+            res.redirect("/login");
+        }
+        if (!user) {
+            if (info && info.name == "TooManyAttemptsError") {
+                req.flash("errorMessage", "Account locked due to too many failed login attempts, contact admin.");
+            } else {
+                req.flash("errorMessage", "Invalid username or password.");
+            }
+            res.redirect('/login');
+        } else {
+            req.logIn(user, function(err) {
+                if (err) { 
+                    console.log(err);
+                    req.flash("errorMessage", "Something went wrong, please try again.");
+                    res.redirect("/login");
+                } else {
+                    req.flash("successMessage", `Welcome back, ${req.user.firstName}!`);
+                    res.redirect('/profile');
+                }
+            });
+        }
+    })(req, res, next);
+  });
 
 /* Google login */
 router.get('/oauth/google',
@@ -201,7 +229,7 @@ router.get('/account/activate/:code', function(req, res) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect("/login");
-        } else {
+        } else if (data) {
             if(data.active == false && data.activation_expires > Date.now()) {
                 User.findByIdAndUpdate(data._id, { active: true}, function(err) {
                     if(err) {
@@ -217,16 +245,19 @@ router.get('/account/activate/:code', function(req, res) {
                 req.flash("successMessage", "Account already activated, login to continue.");
                 res.redirect("/login");
             } else {
-                req.flash("errorMessage", "Account activation code is expired, please generate new one.");
+                req.flash("errorMessage", "Account activation link is expired, please generate new one.");
                 res.redirect("/login");
             }
+        } else {
+            req.flash("errorMessage", "Invalid Account Activation Code.");
+            res.redirect("/login");
         }
     }).lean();
 });
 
 router.post('/account/activate/resend', function(req, res) {
     const resend_to = req.body.username;
-    User.findOne({ username: resend_to}, 'active activation_code firstName lastName', async function(err, data) {
+    User.findOne({ username: resend_to}, 'active activation_code activation_expires firstName lastName', async function(err, data) {
         if (err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
@@ -237,8 +268,11 @@ router.post('/account/activate/resend', function(req, res) {
         } else if (data.active == true) {
             req.flash("successMessage", "Account already activated, login to continue.");
             res.redirect("/login");
+        } else if (data.activation_expires && Math.abs(Date.now() - data.activation_expires + 172800000) < 600000  ) {
+            req.flash("errorMessage", "You need to wait for 10 minutes, before requesting the account activation link again.");
+            res.redirect("/login");
         } else {
-            data.activation_expires = Date.now() + 2 * 24 * 3600 * 1000;
+            data.activation_expires = Date.now() + 172800000; // 48 hrs
             const activation_link = 'http://localhost:8080/account/activate/' + data.activation_code;
             const transporter = nodemailer.createTransport({
                 service: "Gmail",
@@ -251,16 +285,17 @@ router.post('/account/activate/resend', function(req, res) {
                 }
             });
 
-            let sender = process.env.MAIL_USER;
-            let senderName = process.env.MAIL_NAME;
+            const sender = process.env.MAIL_USER;
+            const senderName = process.env.MAIL_NAME;
+            const receiverName = data.firstName + " " + data.lastName;
             try {
-                await transporter.sendMail({
+                await transporter.sendMail({ 
                     from: `${senderName} <${sender}>`, // sender address
-                    to: `${data.firstName} ${data.lastName} <${resend_to}>`, // list of receivers
+                    to: `${receiverName} <${resend_to}>`, // list of receivers
                     replyTo: `Do not reply to this mail. <noreply@apsitskills.com>`,
                     subject: "Email Verification - APSIT Alumni Portal", // Subject line
                     // text: '',
-                    html: allTemplates.activation_mail(activation_link)
+                    html: allTemplates.activation_mail(activation_link, receiverName)
                     
                 });
                 transporter.close();
@@ -288,12 +323,12 @@ router.post('/account/activate/resend', function(req, res) {
 ///////////////////////////////
 // reset password
 router.get("/account/password/reset", function(req, res) {
-    res.render("password_reset");
+    res.render("password_reset_link");
 });
 
 router.post("/account/password/reset", function(req, res) {
     const _username = req.body.username;
-    User.findOne({ username: _username}, function(err, user) {
+    User.findOne({ username: _username}, "username firstName lastName googleId password_reset_expires password_reset_last", function(err, user) {
         if(err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please check your mails and try again!");
@@ -301,15 +336,19 @@ router.post("/account/password/reset", function(req, res) {
         } else if (!user) {
             req.flash("errorMessage", "Invalid Email!");
             res.redirect("/login");
-        } else if(user.googleid) {
+        } else if(user.googleId) {
             req.flash("errorMessage", "Can't change password of account created using Google!");
+            res.redirect("/login");
+        } else if ( ( user.password_reset_expires && Math.abs(Date.now() - user.password_reset_expires + 86400000) < 3600000 ) || 
+                    ( user.password_reset_last && Math.abs(Date.now() - user.password_reset_last) < 3600000 ) ) {
+            req.flash("errorMessage", "You need to wait for 1 hour, before requesting the password reset link again.");
             res.redirect("/login");
         } else {
             crypto.randomBytes(5, async function (err, buf) {
-                const activation_code = user._id + buf.toString('hex');
-                user.activation_code = activation_code;
-                user.activation_expires = Date.now() + 2 * 24 * 3600 * 1000;    // 48Hrs
-                const activation_link = 'http://localhost:8080/account/activate/' + activation_code;
+                const reset_code = user._id + buf.toString('hex');
+                user.password_reset_code = reset_code;
+                user.password_reset_expires = Date.now() + 86400000;    // 24Hrs
+                const reset_link = 'http://localhost:8080/account/password/reset/' + reset_code;
 
                 const transporter = nodemailer.createTransport({
                     service: "Gmail",
@@ -322,16 +361,17 @@ router.post("/account/password/reset", function(req, res) {
                     }
                 });
 
-                let sender = process.env.MAIL_USER;
-                let senderName = process.env.MAIL_NAME;
+                const sender = process.env.MAIL_USER;
+                const senderName = process.env.MAIL_NAME;
+                const receiverName = user.firstName + " " + user.lastName;
                 try {
                     await transporter.sendMail({
                         from: `${senderName} <${sender}>`, // sender address
-                        to: `${user.firstName} ${user.lastName} <${user.username}>`, // list of receivers
+                        to: `${receiverName} <${user.username}>`, // list of receivers
                         replyTo: `Do not reply to this mail. <noreply@apsitskills.com>`,
-                        subject: "Email Verification - APSIT Alumni Portal", // Subject line
+                        subject: "Password Reset - APSIT Alumni Portal", // Subject line
                         // text: '',
-                        html: allTemplates.activation_mail(activation_link)
+                        html: allTemplates.password_reset_mail(reset_link, receiverName)
                         
                     });
                     transporter.close();
@@ -339,24 +379,17 @@ router.post("/account/password/reset", function(req, res) {
                         if(err) {
                             console.log(err);
                             req.flash("errorMessage", "Something went wrong, please try again");
-                            res.redirect("/signup");
+                            res.redirect("/login");
                         } else {
-                            // use loacl strategy
-                            // passport.authenticate("user")(req, res, function(){
-                                // req.flash("successMessage","Account Created Successfully.")
-                                // res.redirect("/profile");
-                                // });
-                                
-                                // res.send('The activation email has been sent to ' + user.username + ', please click the activation link within 48 hours.');
-                                req.flash("successMessage", `Account Created Successfully. To activate your account, the activation email has been sent to ${user.username}, it will expire in 48 hours.`);
-                                res.redirect('/login');
+                            req.flash("successMessage", `The password reset link has been sent to ${user.username}, it will expire in 24 hours.`);
+                            res.redirect('/login');
 
                             }
                         });
                 } catch (err) {
                     console.log(err);
-                    req.flash("errorMessage", 'Something went wrong, please try again. If you get "Email already taken", then check your mail for activation link or generate a new one on login page.');
-                    res.redirect("/signup");
+                    req.flash("errorMessage", 'Something went wrong, please check your mails and try again!');
+                    res.redirect("/login");
                 }
                         
             });
@@ -364,6 +397,45 @@ router.post("/account/password/reset", function(req, res) {
     });
 });
 
+router.get("/account/password/reset/:code", function (req, res) {
+    res.render("password_reset", { code: req.params.code });
+});
+
+router.post("/account/password/reset/:code", function (req, res) {
+    const code = req.params.code;
+    const password = req.body.password;
+    User.findOne({ password_reset_code: code }, "active", function(err, user) {
+        if(err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, please again!");
+            res.redirect("/login");
+        } else if (!user) {
+            req.flash("errorMessage", "Invalid Password Reset Request!");
+            res.redirect("/login");
+        } else if (password.length < 6) {
+            req.flash("errorMessage", "Password length must atleast 6.");
+            res.redirect("/login");
+        } else if (user.active == true) {
+            req.flash("errorMessage", "Activate your account first!");
+            res.redirect("/login");
+        } else {
+            user.password_reset_code = "";
+            user.password_reset_last = Date.now();
+            user.setPassword(password, function() {
+                user.save(function(err) {
+                    if(err) {
+                        console.log(err);
+                        req.flash("errorMessage", "Something went wrong, please again!");
+                        res.redirect("/login");
+                    } else {
+                        req.flash("successMessage", "Password changed, login to continue.");
+                        res.redirect('/login');
+                    } //99755800
+                });
+            });
+        }
+    });
+});
 //////////////////////////////
 
 // email routes

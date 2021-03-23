@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose")
 
 const User  = require("../models/user");
 
@@ -16,7 +17,7 @@ router.get('/chats/:id', allMiddlewares.rejectAdmin, function(req, res) {
 
     /* new chat */
     if (currentUser != receiver && req.user.role != "admin") {
-        User.findById( receiver, 'firstName lastName', function(err, receiverData) {
+        User.findById( mongoose.Types.ObjectId(receiver), 'firstName lastName', function(err, receiverData) {
             if(err) {
                 console.log(err);
                 res.redirect('/communicate');
@@ -43,7 +44,7 @@ router.get('/chats/:id', allMiddlewares.rejectAdmin, function(req, res) {
                         res.redirect('/communicate');
                     }
                     else if (changes != null){
-                        User.findByIdAndUpdate( receiver, {
+                        User.findByIdAndUpdate( mongoose.Types.ObjectId(receiver), {
                             "$push": {
                                 "chats": {
                                         userid: currentUser,

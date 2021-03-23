@@ -104,10 +104,19 @@ const userSchema = new mongoose.Schema({
     },
     activation_code: String,
     activation_expires: Date,
+    password_reset_code: String,
+    password_reset_expires: Date,
+    password_reset_last: Date,
 });
 
 const options = {
     usernameLowerCase: true,
+    limitAttempts: true,
+    maxAttempts: 100,
+    // interval: 1000 * 60 * 0.1,
+    // maxInterval: 1000 * 60 * 0.1,
+    attemptsField: "failedLoginAttempts",
+    lastLoginField: "lastLogin"
 }
 
 userSchema.plugin(passportLocalMongoose, options);

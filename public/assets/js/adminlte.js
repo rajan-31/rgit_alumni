@@ -1863,10 +1863,10 @@
       return Toasts;
     }();
 
-    $(function () {
-      setTimeout(function () { $("#flashAlert").fadeOut(1500); }, 4000)
+    // $(function () {
+    //   setTimeout(function () { $("#flashAlert").fadeOut(1500); }, 4000)
 
-    });
+    // });
     /**
      * jQuery API
      * ====================================================
@@ -1898,4 +1898,3 @@
   Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
-//# sourceMappingURL=adminlte.js.map

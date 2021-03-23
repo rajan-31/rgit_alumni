@@ -21,7 +21,8 @@ const express       = require("express"),
 const User  = require("./models/user"),
       News  = require("./models/news"),
       Event = require("./models/event"),
-      Admin = require("./models/admin");
+      Admin = require("./models/admin"),
+      Testimonial = require("./models/Testimonial");
 
 
 /* Importing all routes */
@@ -67,6 +68,7 @@ app.use(flash());
 /* passport configuration */
 const MongoStore = connectMongo(expressSession);    // for session storage
 const sessionMiddleware = expressSession({
+    name: "sessionId",
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -162,6 +164,14 @@ app.use(function(req, res, next){
 /* using data from data/data.json */
 const rawdata = fs.readFileSync('./data/data.json');
 global.static_data = JSON.parse(rawdata);
+/* testimonials */
+Testimonial.find({}, function(err, data) {
+    if(err) {
+        console.log(err);
+    } else{
+        global.allTestimonials = data;
+    }
+});
 
 /* Socket.io events */
 require("./services/socketio-events.js")(io, User, sessionMiddleware, passport);

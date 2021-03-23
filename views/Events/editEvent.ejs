@@ -116,7 +116,7 @@
                 <div class="portfolio-description">
                     <h4>Edit Event</h4>
                     <div class="form-group">
-                        <form action="/events/<%= event._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+                        <form action="/events/<%= event._id %>?_method=PUT" method="POST" id="mainForm" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label>Title</label>
                                 <input type="text" name="title" placeholder="Title" class="form-control"
@@ -152,7 +152,11 @@
         
                                 </ul>
 
-                                <button id="editButton" type="submit" class="btn btn-block btn-primary btn-lg"><i class="fas fa-upload"></i> Update</button>
+                                <button id="editButton" type="submit" form = "mainForm" class="btn btn-block btn-primary btn-lg">
+                                    <i id="submit-btn-icon" class="fas fa-upload"></i> 
+                                    <span id="spinner" style="vertical-align: middle;" role="status" aria-hidden="true"></span>
+                                    Update
+                                </button>
                         </form>
                     </div>
                 </div>
@@ -263,6 +267,11 @@
             let x = "<li>" + this.files[i].name + "</li>";
             $("#selectedImages").append(x);
           }
+        });
+
+        $("#mainForm").on("submit", function() {
+            $("#submit-btn-icon").remove();
+            $("#spinner").addClass("spinner-border spinner-border-sm");
         });
       </script>
 </body>

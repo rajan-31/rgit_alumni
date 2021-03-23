@@ -8,6 +8,10 @@ const newsSchema = new mongoose.Schema({
         data: Buffer,
         contentType: String
         }],
+    thumbnail: {
+        data: Buffer,
+        contentType: String
+        },
     description: String,
 });
 

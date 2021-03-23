@@ -2,7 +2,7 @@
 
             <li class="nav-item has-treeview">
               <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-copy"></i>
+                <i class="nav-icon fas fa-newspaper"></i>
                 <p>
                   News Section
                   <i class="fas fa-angle-left right"></i>
@@ -29,7 +29,7 @@
     
             <li class="nav-item has-treeview menu-open">
               <a href="#" class="nav-link active">
-                <i class="nav-icon fas fa-copy"></i>
+                <i class="nav-icon fas fa-calendar-day"></i>
                 <p>
                   Events Section
                   <i class="fas fa-angle-left right"></i>
@@ -52,10 +52,36 @@
     
               </ul>
             </li>
+
+            <li class="nav-item has-treeview">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-quote-left"></i>
+                <p>
+                  Testimonials Section
+                  <i class="fas fa-angle-left right"></i>
+            
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="/admin/testimonials" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Testimonials</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/addTestimonials" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Add Testimonials</p>
+                  </a>
+                </li>
+            
+              </ul>
+            </li>
     
             <li class="nav-item">
               <a href="/admin/alumnilist" class="nav-link">
-                <i class="nav-icon fas fa-th"></i>
+                <i class="nav-icon fas fa-user-tie"></i>
                 <p>
                   Alumni
     
@@ -65,7 +91,7 @@
     
             <li class="nav-item">
               <a href="/admin/studentlist" class="nav-link">
-                <i class="nav-icon fas fa-th"></i>
+                <i class="nav-icon fas fa-user"></i>
                 <p>
                   Students
     
@@ -75,7 +101,7 @@
 
             <li class="nav-item">
               <a href="/admin/adminlist" class="nav-link">
-                <i class="nav-icon fas fa-th"></i>
+                <i class="nav-icon fas fa-user-cog"></i>
                 <p>
                   Admins
     
@@ -195,14 +221,14 @@
                           <td> <%= allEvents[i].title %> </td>
                           <td> <%= allEvents[i].date.toGMTString().slice(5, 16) %> </td>
                           <td>
-                            <a href="/events/<%= allEvents[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size">View</a><br>
+                            <a href="/events/<%= allEvents[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size btn-action-spinner">View</a><br>
                           </td>
                           <td>
-                            <a href="/events/<%= allEvents[i]._id %>/edit" class="btn btn-block btn-warning btn-sm btn-fix-size">Edit</a><br>
+                            <a href="/events/<%= allEvents[i]._id %>/edit" class="btn btn-block btn-warning btn-sm btn-fix-size btn-action-spinner">Edit</a><br>
                           </td>
                           <td>
                             <form action="/events/<%= allEvents[i]._id %>?_method=DELETE" method="POST">
-                              <button type="submit" class="btn btn-block btn-danger btn-sm btn-fix-size">Delete</button><br>
+                              <button type="submit" class="btn btn-block btn-danger btn-sm btn-fix-size btn-action-spinner">Delete</button><br>
                             </form>
 
                           </td>

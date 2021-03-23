@@ -1,75 +1,5 @@
 let allTemplates = {};
 
-allTemplates.activation_mail = function(activation_link) {
-    return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <style type="text/css">
-        body {
-            font-family: "Muli", sans-serif;
-          }
-          
-          .act-btn {
-            display: inline-block;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #fff;
-            text-align: center;
-            text-decoration: none;
-            vertical-align: middle;
-            cursor: pointer;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-            background-color: transparent;
-            border: 1px solid transparent;
-            padding: 0.375rem 0.75rem;
-            font-size: 1rem;
-            border-radius: 0.25rem;
-            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-              border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-          }
-          
-          .act-primary {
-            color: #fff;
-            background-color: #0d6efd;
-            border-color: #0d6efd;
-          }
-          
-          .act-primary:hover {
-            color: #fff;
-            background-color: #0b5ed7;
-            border-color: #0a58ca;
-          }
-          
-          .name {
-            color: #ffbe00;
-          }
-        </style>
-    </head>
-    <body>
-        <center>
-        <div class="container">
-        <h1>
-            Welcome to,<br>
-            <span>APSIT Alumni Family</span>
-        </h1>
-        <h4>Hello, <span class="name">Rajan Khade</span></h4>
-        <p>Thank you for joining us!</p>
-    
-        <a href="${activation_link}" class="act-btn act-primary" style="color: white; ">Click to Activate Your Account</a><br><br><br>
-    
-        <p>If button doesn't work, use link given below.</p>
-        <a href="${activation_link}" target="_blank">${activation_link}</a>
-        <p>(If you didn't signup, you can ignore this mail.)</p>
-        </div>
-    </center>
-    </body>
-    </html>
-    `;
-}
-
 allTemplates.home_page_mail = function(name, email, subject, message, original_name, original_user) {
     return `
     <!DOCTYPE html>
@@ -147,6 +77,142 @@ allTemplates.home_page_mail = function(name, email, subject, message, original_n
                 <div class="info">Mail: ${original_user}</div>
             </div>
         </div>
+    </body>
+    </html>
+    `
+}
+
+allTemplates.activation_mail = function(activation_link, name) {
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style type="text/css">
+        body {
+            font-family: "Muli", sans-serif;
+          }
+          
+          .act-btn {
+            display: inline-block;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            vertical-align: middle;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            border-radius: 0.25rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+              border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+          }
+          
+          .act-primary {
+            color: #fff;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+          }
+          
+          .act-primary:hover {
+            color: #fff;
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+          }
+          
+          .name {
+            color: #ffbe00;
+          }
+        </style>
+    </head>
+    <body>
+        <center>
+        <div class="container">
+        <h1>
+            Welcome to,<br>
+            <span>APSIT Alumni Family</span>
+        </h1>
+        <h4>Hello, <span class="name">${name}</span></h4>
+        <p>Thank you for joining us!</p>
+    
+        <a href="${activation_link}" class="act-btn act-primary" style="color: white; ">Click to Activate Your Account</a><br><br><br>
+    
+        <p>If button doesn't work, use link given below.</p>
+        <a href="${activation_link}" target="_blank">${activation_link}</a>
+        <p>(If you didn't signup, you can ignore this mail.)</p>
+        </div>
+    </center>
+    </body>
+    </html>
+    `;
+}
+
+allTemplates.password_reset_mail = function (reset_link, name) {
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style type="text/css">
+        body {
+            font-family: "Muli", sans-serif;
+          }
+          
+          .act-btn {
+            display: inline-block;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            vertical-align: middle;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            border-radius: 0.25rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+              border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+          }
+          
+          .act-primary {
+            color: #fff;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+          }
+          
+          .act-primary:hover {
+            color: #fff;
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+          }
+          
+          .name {
+            color: #ffbe00;
+          }
+        </style>
+    </head>
+    <body>
+        <center>
+        <div class="container">
+        <h1>APSIT Alumni Portal</h1>
+        <h4>Hello, <span class="name">${name}</span></h4>
+        <p>We have received a request to reset your password.</p>
+        <a href="${reset_link}" class="act-btn act-primary" style="color: white; ">Click to Reset Your Password</a><br><br><br>
+    
+        <p>If button doesn't work, use link given below.</p>
+        <a href="${reset_link}" target="_blank">${reset_link}</a>
+        <p>(If you didn't request to reset password, you can ignore this mail.)</p>
+        </div>
+    </center>
     </body>
     </html>
     `
