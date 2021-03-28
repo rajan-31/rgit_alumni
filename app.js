@@ -22,7 +22,7 @@ const User  = require("./models/user"),
       News  = require("./models/news"),
       Event = require("./models/event"),
       Admin = require("./models/admin"),
-      Testimonial = require("./models/Testimonial");
+      Testimonial = require("./models/testimonial");
 
 
 /* Importing all routes */

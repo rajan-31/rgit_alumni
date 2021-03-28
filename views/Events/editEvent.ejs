@@ -177,10 +177,13 @@
                 <div class="col-lg-6">
                     <h4>Join Our Newsletter <i class="fas fa-newspaper"></i></h4>
                     <p>To get the latest updates</p>
-                    <form action="" method="post">
-                        <input type="email" name="email" placeholder="Enter your email...">
-                        <input type="submit" value="Subscribe">
-                    </form>
+                    <form id="newsletter-form">
+              <input type="email" name="email" id="newsletter-email" placeholder="Enter your email..." required="required">
+              <button id="newsletter-submit-btn" type="submit">Subscribe</button>
+            </form>
+            <div class="small text-center text-warning mt-2 newsletter-invalid-email" style="display: none;"><i class="fas fa-exclamation-circle"></i> Invalid Email Address!</div>
+            <div class="small text-center text-danger mt-2 newsletter-request-failed" style="display: none;"><i class="fas fa-exclamation-circle"></i> Request Failed!</div>
+            <div class="small text-center text-warning mt-2 newsletter-email-exists" style="display: none;"><i class="fas fa-exclamation-circle"></i> ALready Subscribed!</div>
                 </div>
             </div>
         </div>

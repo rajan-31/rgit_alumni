@@ -12,7 +12,7 @@ const User  = require("../models/user"),
 
 const allMiddlewares = require("../middleware/index.js");
 const allTemplates = require("../services/mail_templates");
-const Testimonial = require("../models/Testimonial");
+const Testimonial = require("../models/testimonial");
 
 router.get("/",function(req, res){
     News.find({}, "-images", function (err, allNews) {
@@ -524,6 +524,5 @@ router.post('/mail',function(req, res, next) {
     }
 
 });
-
 
 module.exports = router;

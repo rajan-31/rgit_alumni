@@ -12,7 +12,8 @@ const Admin = require("../models/admin"),
         News = require("../models/news"),
         Event = require("../models/event"),
         User = require("../models/user"),
-        Testimonial = require("../models/Testimonial");
+        Testimonial = require("../models/testimonial"),
+        Newsletter = require("../models/newsletter");
 
 const middlewares = require('../middleware/index.js');
 const { json } = require("body-parser");
@@ -467,6 +468,62 @@ router.delete("/admin/testimonials/:id", middlewares.isAdmin, function(req, res)
             res.redirect('/admin/testimonials');
         }
     });
+});
+
+/* ------------
+    Newsletter
+   ------------ */
+router.get("/newsletter", middlewares.isAdmin, function(req, res) {
+    res.render("Admin/newsletterSubscribers");
+});
+
+router.get("/newsletter/all", middlewares.isAdmin, function(req, res) {
+    Newsletter.find({}, function(err, allSubsribers) {
+        if(err) {
+            console.log(err);
+            res.send("Failed")
+        } else if (allSubsribers.length == 0) {
+            res.send("Null")
+        } else {
+            res.json(allSubsribers);
+        }
+    });
+});
+
+router.post("/newsletter", function(req, res) {
+    const email = req.body.email;
+    if(middlewares.isValidEmail(email)) {
+        Newsletter.create({  email: email.toLowerCase() }, function (err) {
+            if(err) {
+                if(err.code == 11000) {
+                    res.send("Exists")
+                } else {
+                    console.log(err);
+                    res.send("Failed");
+                }
+            } else {
+                res.send("Done")
+            }
+        });
+        
+    } else {
+        res.send("Invalid")
+    }
+});
+
+router.delete("/newsletter/:id", function(req, res) {
+    if (req.isAuthenticated() && req.user.role == "admin" ) {
+        Newsletter.findByIdAndDelete(mongoose.Types.ObjectId(req.params.id), function(err) {
+            if(err) {
+                console.log(err);
+                res.send("Failed");
+            } else {
+                res.send("Done")
+            }
+        })
+    } else {
+        res.send("Not authenticated!")
+    }
 });
 
 /* end new routes */

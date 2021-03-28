@@ -98,7 +98,7 @@ db.admins.insert({
 
 - ~~limit failed logins~~
 
-- newsletter
+- ~~newsletter~~
 - ~~firefox chat textarea~~
 - ~~date pickers & month picker~~
 - ~~job xp, array issue for, for present value~~

@@ -295,8 +295,48 @@
     }
   });
 
+    /* cookie notification */
   $("#cookie-btn").on("click", function() {
       $("#cookie-popup").remove();
+  });
+
+  /* newsletter form */
+  $("#newsletter-form").on("submit", function(e) {
+    e.preventDefault();
+    
+    $(".newsletter-invalid-email, .newsletter-request-failed, .newsletter-email-exists").hide();
+    var $submit_btn = $("#newsletter-submit-btn");
+    var submit_btn_width = $submit_btn.width()-16;
+    $submit_btn.html(`<span id="spinner" class="spinner-border spinner-border-sm" style="vertical-align: middle; margin-left: ${submit_btn_width/2}px; margin-right: ${submit_btn_width/2}px" role="status" aria-hidden="true"></span>`)
+
+
+    const email = $("#newsletter-email").val()
+
+    $.ajax({
+      url: "/newsletter",
+      method: "POST",
+      data: { email:  email },
+      
+    }).done(function(response) {
+      $submit_btn.html("Subscribe");
+      if(response == "Done") {
+        $submit_btn
+          .html("Subscribed")
+          .css("background", "#28a761")
+          .prop('disabled', true);
+      } else if(response == "Invalid") {
+        $(".newsletter-invalid-email").show(600);
+      } else if(response == "Failed") {
+        $(".newsletter-request-failed").show(600);
+      } else if(response == "Exists") {
+        $(".newsletter-email-exists").show(600);
+        $submit_btn
+          .html("Subscribed")
+          .css("background", "#28a761")
+          .prop('disabled', true);
+      }
+    });
+
   });
 
 })(jQuery);

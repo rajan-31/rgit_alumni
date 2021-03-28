@@ -78,6 +78,15 @@
           
             </ul>
           </li>
+
+          <li class="nav-item">
+            <a href="/newsletter" class="nav-link">
+              <i class="nav-icon fas fa-mail-bulk"></i>
+              <p>
+                Newsletter Subscribers
+              </p>
+            </a>
+          </li>
           
           <li class="nav-item">
             <a href="/admin/alumnilist" class="nav-link">
@@ -196,7 +205,7 @@
 
   <div class="card">
 
-        <div class="card-body table-responsive p-0 .my-table-height">
+        <div class="card-body table-responsive p-0 my-table-height">
           <table  class="table table-head-fixed sortable-table indexed">
             <thead>
               <tr class="sorter-header">
@@ -253,7 +262,7 @@
   <!-- /.content-wrapper -->
   <%- include ('../partials/adminFooter'); -%>
   <script>
-    $().ready(function(){
+    $(document).ready(function(){
       $('.sortable-table').tableSorter();
       document.getElementById('simulate_click').click();
       document.getElementById('simulate_click').click();

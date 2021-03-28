@@ -1,0 +1,352 @@
+<%- include ('../partials/adminHeader'); -%>
+
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-newspaper"></i>
+            <p>
+                News Section
+                <i class="fas fa-angle-left right"></i>
+
+            </p>
+            </a>
+            <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="/admin/news" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>News</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/admin/addNews" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Add News</p>
+                </a>
+            </li>
+
+            </ul>
+        </li>
+          
+          
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-calendar-day"></i>
+              <p>
+                Events Section
+                <i class="fas fa-angle-left right"></i>
+          
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/events" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Events</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/addEvent" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Add Events</p>
+                </a>
+              </li>
+          
+            </ul>
+          </li>
+
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-quote-left"></i>
+              <p>
+                Testimonials Section
+                <i class="fas fa-angle-left right"></i>
+          
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/admin/testimonials" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Testimonials</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/admin/addTestimonials" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Add Testimonials</p>
+                </a>
+              </li>
+          
+            </ul>
+          </li>
+
+          <li class="nav-item">
+            <a href="/newsletter" class="nav-link active">
+              <i class="nav-icon fas fa-mail-bulk"></i>
+              <p>
+                Newsletter Subscribers
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a href="/admin/alumnilist" class="nav-link">
+              <i class="nav-icon fas fa-user-tie"></i>
+              <p>
+                Alumni
+          
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a href="/admin/studentlist" class="nav-link">
+              <i class="nav-icon fas fa-user"></i>
+              <p>
+                Students
+          
+              </p>
+            </a>
+          </li>
+        
+          <li class="nav-item">
+            <a href="/admin/adminlist" class="nav-link">
+              <i class="nav-icon fas fa-user-cog"></i>
+              <p>
+                Admins
+  
+              </p>
+            </a>
+          </li>
+         
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper"  style="margin-top: 57px;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Dashboard</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+              <li class="breadcrumb-item active">Newsletter Subscribers</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+    
+    <!-- Main content -->
+    <section class="content">
+
+      <!-- start flash message -->
+      <div id="flashAlert" class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12 col-12">
+              <div id="success-alert" class="alert alert-success text-center d-none" role="alert">
+              </div>
+              <div id="failure-alert" class="alert alert-danger text-center d-none" role="alert">
+              </div>
+          </div>
+        </div>
+      </div>
+      <!-- end flash message -->
+
+      <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+         
+          <!-- ./col -->
+          
+          <!-- ./col -->
+          <div class="col-lg-12 col-12">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3 id="fill-count">0</h3>
+
+                <h3>Subscribers Count</h3>
+              </div>
+              <div class="icon">
+                <i class="ion ion-person-add"></i>
+              </div>
+              
+            </div>
+          </div>
+          <!-- ./col -->
+          
+    
+          <!-- ./col -->
+        </div>
+        <!-- /.row -->
+        <!-- Main row -->
+        <div class="row">
+          <!-- Left col -->
+          <section class="col-lg-12"><br>
+           
+
+          <div>
+            <center><h1 class="m-0 text-dark">Newsletter Subscribers</h1></center><br>
+          </div>
+
+          <div class="row">
+            <div class="col-6">
+              <input id="copy-separator" class="form-control ml-auto" type="text" style="width: 125px;" placeholder="Separator...">
+            </div>
+            <div class="col-6">
+              <button id="copy-btn" class="btn btn-info mr-auto" style="width: 125px;"><i class="fas fa-copy"></i> Copy Emails</button>
+            </div>
+          </div>
+
+          <div class="text-center mb-2">
+            <small>
+              <i class="fas fa-exclamation-circle"></i>
+                New Line: \n
+            </small>
+          </div>
+
+  <div class="card">
+
+        <div class="card-body table-responsive p-0 my-table-height">
+          <table  class="table table-head-fixed">
+            <thead>
+              <tr >
+                <th>Email</th>
+                <th><center>Delete</center></th>
+              </tr>
+            </thead>
+            <tbody id="fill-data">
+            
+            </tbody>
+          </table>
+        </div>
+               
+                <!-- /.card-body -->
+              
+  </div>
+
+          </section>
+          <!-- /.Left col -->
+          
+        </div>
+        <!-- /.row (main row) -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <%- include ('../partials/adminFooter'); -%>
+  <script>
+    $(document).ready(function(){
+        /* load data */
+        $.ajax({
+            url: "/newsletter/all",
+            method: "GET",
+            dataType: "Json",
+            cache: false,
+
+        }).done(function(response) {
+            if(response == "Failed") {
+              $("#failure-alert, success-alert").text("Something went wrong, please try again.").removeClass("d-none");
+            } else if (response != "Null") {
+                $("#fill-count").text(response.length);
+                var $place = $("#fill-data");
+                for(var i=0; i<response.length; i++) {
+                    $place.append(`
+                    <tr>
+                        <td class="copy-email">${response[i].email}</td>
+                        <td>
+                            <button data-id=${response[i]._id} class="btn btn-block btn-danger btn-sm btn-fix-size btn-action-spinner">Delete</button>
+                        </td>
+                    </tr>
+                    `);
+                }
+
+                /* delete  */
+                $(".btn-action-spinner").on("click", function() {
+                  $("#failure-alert, #success-alert").addClass("d-none");
+                  var $this = $(this);
+                  $this.html('<span id="spinner" class="spinner-border spinner-border-sm" style="vertical-align: middle;" role="status" aria-hidden="true"></span>');
+                    var id = $this.attr("data-id")
+                    var url = "/newsletter/" + id + "?_method=DELETE";
+                    $.ajax({
+                        url: url,
+                        method: "POST",
+                        
+                        }).done(function(result) {
+                            if(result == "Done") {
+                              $this.closest("tr").hide("600");
+                              $("#success-alert").text("Deleted successfully").removeClass("d-none");
+                            } else if(result == "Failed") {
+                              $("#failure-alert").text("Something went wrong, please try again.").removeClass("d-none");
+                              $this.html("Delete");
+                            }
+                    });
+                });
+            }
+        });
+
+        /* copy comma seperate values to clipboard */
+        $("#copy-btn").on("click", function() {
+          var $this = $(this);
+          $this.prop("disabled", "disabled");
+
+          var copiedData = "";
+          var separator = $("#copy-separator").val();
+          separator = separator.length > 0 ? separator : ", ";
+
+          if(separator == "\\n") {
+            $(".copy-email").each(function() {
+              copiedData += $(this).text() + "\n";
+            });
+          } else {
+            $(".copy-email").each(function() {
+              copiedData += $(this).text() + separator;
+            });
+            copiedData = copiedData.slice(0, -separator.length);
+          }
+
+          copyToClipboard(copiedData);
+
+          var btn_html = $this.html();
+          $this.html("<i class='fas fa-check'></i> Copied");
+
+          setTimeout(function(){
+                $this.html(btn_html);
+                $this.prop("disabled", false);
+            },1500);
+
+        });
+    });
+
+    function copyToClipboard(text) {
+        if (window.clipboardData && window.clipboardData.setData) {
+            // IE specific code path to prevent textarea being shown while dialog is visible.
+            return clipboardData.setData("Text", text); 
+        } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+            var textarea = document.createElement("textarea");
+            textarea.textContent = text;
+            textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                return document.execCommand("copy");  // Security exception may be thrown by some browsers.
+            } catch (ex) {
+                console.warn("Copy to clipboard failed.", ex);
+                return false;
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+    }
+  </script>
+</body>
+</html>

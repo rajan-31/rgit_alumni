@@ -78,6 +78,15 @@
             
               </ul>
             </li>
+
+            <li class="nav-item">
+              <a href="/newsletter" class="nav-link">
+                <i class="nav-icon fas fa-mail-bulk"></i>
+                <p>
+                  Newsletter Subscribers
+                </p>
+              </a>
+            </li>
     
             <li class="nav-item">
               <a href="/admin/alumnilist" class="nav-link">
@@ -246,7 +255,7 @@
               <div class="card">
 
 
-                <div class="card-body table-responsive p-0 .my-table-height">
+                <div class="card-body table-responsive p-0 my-table-height">
                   <table class="table table-head-fixed text-nowrap sortable-table indexed">
                     <thead>
                       <tr class="sorter-header">
@@ -265,7 +274,7 @@
                           <td><%= allAdmins[i].createdBy %></td>
                           <td>
                             <form action="/admin/delete/<%= allAdmins[i]._id %>?_method=DELETE" method="POST">
-                              <button type="submit" class="btn btn-block btn-danger btn-sm btn-fix-size btn-action-spinner">Delete</button><br>
+                              <button type="submit" class="btn btn-block btn-danger btn-sm btn-fix-size btn-action-spinner">Delete</button>
                             </form>
                           </td>
                         </tr>
@@ -291,7 +300,7 @@
     <!-- /.content-wrapper -->
     <%- include ('../partials/adminFooter'); -%>
     <script>
-      $().ready(function(){
+      $(document).ready(function(){
         $('.sortable-table').tableSorter();
         document.getElementById('simulate_click').click();
       });

@@ -80,6 +80,15 @@
             </li>
 
             <li class="nav-item">
+              <a href="/newsletter" class="nav-link">
+                <i class="nav-icon fas fa-mail-bulk"></i>
+                <p>
+                  Newsletter Subscribers
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
               <a href="/admin/alumnilist" class="nav-link">
                 <i class="nav-icon fas fa-user-tie"></i>
                 <p>
@@ -200,7 +209,7 @@
               <div class="card">
 
 
-                <div class="card-body table-responsive p-0 .my-table-height">
+                <div class="card-body table-responsive p-0 my-table-height">
                   <table class="table table-head-fixed text-nowrap sortable-table indexed">
                     <thead>
                       <tr class="sorter-header">
@@ -221,7 +230,7 @@
                           <td> <%= allStudents[i].lastName %> </td>
                           <td>
                             <a href="/profile/<%= allStudents[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size">View
-                              Profile</a><br>
+                              Profile</a>
                           </td>
                         </tr>
                         <% } %>
@@ -249,7 +258,7 @@
     <%- include ('../partials/adminFooter'); -%>
 
     <script>
-      $().ready(function(){
+      $(document).ready(function(){
         $('.sortable-table').tableSorter();
         document.getElementById('simulate_click').click();
       });
