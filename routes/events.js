@@ -96,6 +96,7 @@ router.post("/events/page/:num", middlewares.isLoggedIn, function (req, res) {
                 const pass_lastDate = new Date(allEvents[allEvents.length - 1].date).getTime();
                 res.render("Events/paged_events", { events: allEvents , lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
             } else {
+                req.flash("errorMessage", "NO more Events.")
                 res.redirect("/events");
             }
         }

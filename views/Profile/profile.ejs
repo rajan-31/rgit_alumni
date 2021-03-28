@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="../assets/vendor/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
     <!-- Template Main CSS File -->
     <link href="../assets/css/style.css" rel="stylesheet">
@@ -40,6 +41,22 @@
 
         .select2-container .select2-search--inline .select2-search__field {
             min-height: 24px;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 38px;
+        }
+        
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            padding-top: 5px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            top: 5px;
+        }
+
+        .datepicker {
+            transform: translate(0, 3.9em);
         }
     </style>
 
@@ -200,7 +217,7 @@
                     </div>
                     <div class="form-group">
                         <label for="userType">User Type</label>
-                        <select name="userType" class="form-control" required="required">
+                        <select name="userType" class="form-control select2-simple" required="required">
                             <option value="" >Select User Type</option>
                             <option value="alumni" <% if(userType=="alumni") {%>selected="selected "<%}%> >Alumni</option>
                             <option value="student" <% if(userType=="student") {%>selected="selected "<%}%> >Student</option>
@@ -273,9 +290,8 @@
                         <div class="col-md-6 col-sm-12">
                             <label><strong>Date Of Birth</strong></label>
                             <br>
-                            <!-- safari & internet explorer doesn't support this date picker-->
                             <div id="data-dob" hidden="hidden"><%= profile.dob %></div>
-                            <input id="dob" class="form-control" type="date" name="profile[dob]"  min="1950-12-31" max="2100-12-31">
+                            <input type="text" id="dob-datepicker" class="form-control" name="profile[dob]" readonly="readonly">
                         </div>
                     </div>
                     
@@ -373,7 +389,7 @@
                                 <label for="profile[yearOfAdmission]">Year Of Adminssion</label>
 
                                 <div id="data-year-addmission" hidden="hidden"><%= profile.yearOfAdmission %></div>
-                                <select name="profile[yearOfAdmission]" id="yearOfAdmission" class="form-control">
+                                <select name="profile[yearOfAdmission]" id="yearOfAdmission" class="form-control select2-simple">
                                     <option value="">Select</option>
                                 </select>
                             
@@ -383,7 +399,7 @@
                                 <label for="profile[yearOfGraduation]">Year Of Graduation</label>
 
                                 <div id="data-year-graduation" hidden="hidden"><%= profile.yearOfGraduation %></div>
-                                <select name="profile[yearOfGraduation]" id="yearOfGraduation" class="form-control">
+                                <select name="profile[yearOfGraduation]" id="yearOfGraduation" class="form-control select2-simple">
                                     <option value="">Select</option>
                                 </select>
         
@@ -397,7 +413,7 @@
                                     <label for="profile[branch]">Branch</label>
 
                                     <div id="data-branch" hidden="hidden"><%= profile.branch %></div>
-                                    <select name="profile[branch]" id="branch" class="form-control">
+                                    <select name="profile[branch]" id="branch" class="form-control select2-simple">
                                         <option value="">Select</option>
                                     </select>
                                 </div>
@@ -441,19 +457,19 @@
                                 
                                         <div class="form-group col-sm-12 col-md-6">
                                             <label for="jobFrom">From</label>
-                                            <input type="month" name="profile[workExperience][jobFrom]" class="form-control" value="<%= profile.workExperience.jobFrom[j] %>"
-                                                required="required">
+                                            <input type="text" name="profile[workExperience][jobFrom]" class="form-control month-picker" value="<%= profile.workExperience.jobFrom[j] %>"
+                                                required="required" readonly="readonly">
                                         </div>
 
-                                        <%if(profile.workExperience.jobTill[j]) {%>
+                                        <%if(profile.workExperience.jobTill[j] != "Present") {%>
                                         <div class="form-group col-sm-12 col-md-6">
                                             <label for="jobTill">Till</label>
-                                            <input type="month" name="profile[workExperience][jobTill]" class="form-control" value="<%= profile.workExperience.jobTill[j] %>">
+                                            <input type="text" name="profile[workExperience][jobTill]" class="form-control month-picker" value="<%= profile.workExperience.jobTill[j] %>" readonly="readonly">
                                         </div>
                                         <%} else {%>
                                             <div class="form-group col-sm-12 col-md-6">
                                                 <label >Till</label>
-                                                <input type="text" class="form-control" value="Present" disabled="disabled">
+                                                <input type="text" name="profile[workExperience][jobTill]" class="form-control" value="Present" readonly="readonly">
                                             </div>
                                         <%}%>
                                     </div>
@@ -510,12 +526,14 @@
                                         <div class="form-row">
                                             <div class="form-group col-6">
                                                 <label for="jobFrom">Job From</label>
-                                                <input type="month" id="workModalData-jobFrom"  class="form-control">
+                                                <!-- <input type="month" id="workModalData-jobFrom"  class="form-control"> -->
+                                                <input type="text" id="workModalData-jobFrom"  class="form-control month-picker" readonly="readonly">
                                             </div>
             
                                             <div class="form-group col-6" id="hide-jobTill">
                                                 <label for="jobTill">Job Till</label>
-                                                <input type="month" id="workModalData-jobTill"  class="form-control">
+                                                <!-- <input type="month" id="workModalData-jobTill"  class="form-control"> -->
+                                                <input type="text" id="workModalData-jobTill"  class="form-control month-picker" readonly="readonly">
                                             </div>
                                         </div>
 
@@ -557,6 +575,7 @@
     
     <%- include ('../partials/footer'); -%>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     
     <script>
         // select2 multi
@@ -565,8 +584,12 @@
                 placeholder: "Type to search..",
                 sorter: data => data.sort((a, b) => a.text.localeCompare(b.text))
             });
-        });
 
+            //select2 simple
+            $(".select2-simple").select2({
+                minimumResultsForSearch: Infinity,
+            });
+        });
 
         $(".custom-file-input").on("change", function() {
             var fileName = $(this).val().split("\\").pop();
@@ -590,8 +613,33 @@
         
         // fill dob
         var temp_dob = $("#data-dob").text();
-        if(temp_dob)
-            $("#dob").val(new Date(temp_dob).toISOString().slice(0,10))
+        
+        /* date picker for dob */
+        var startDate = new Date(1991, 1 - 1, 1), endDate = new Date(new Date().getFullYear() - 18, 12 - 1, 31);
+
+        $("#dob-datepicker").datepicker({
+            autoclose: true,
+            disableTouchKeyboard: true,
+            format: "dd MM, yyyy",
+            startDate: startDate,
+            endDate: endDate
+        });
+
+        $("#dob-datepicker").datepicker( "setDate", new Date(temp_dob) );
+
+        /* month picker for job */
+        var endDate = new Date();
+
+        $(".month-picker").datepicker({
+            autoclose: true,
+            disableTouchKeyboard: true,
+            // startDate: startDate,
+            endDate: endDate,
+            format: "M, yyyy",
+            startView: "months",
+            minViewMode: "months"
+        });
+        
 
         // fill admission year
         var temp_year_addmission = $("#data-year-addmission").text();

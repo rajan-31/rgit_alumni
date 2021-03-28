@@ -334,12 +334,12 @@
                                         
                                         <div class="form-group col-6">
                                             <label>From</label>
-                                            <div class="form-control change-format-month"><%= profile.workExperience.jobFrom[j] %></div>
+                                            <div class="form-control"><%= profile.workExperience.jobFrom[j] %></div>
                                         </div>
                                         <%if(profile.workExperience.jobTill[j]) {%>
                                         <div class="form-group col-6">
                                             <label>Till</label>
-                                            <div class="form-control change-format-month"><%= profile.workExperience.jobTill[j] %></div>
+                                            <div class="form-control"><%= profile.workExperience.jobTill[j] %></div>
                                         </div>
                                         <%} else {%>
                                             <div class="form-group col-6">
@@ -374,15 +374,9 @@
         // $(".toast").toast('show');
 
         // show dob in format
-        var temp = new Date($("#dob").text()).toGMTString().slice(5,16);
-        $("#dob").text(temp)
-
-        // change date format to month
-        $(".change-format-month").each(function() {
-            var $this = $( this );
-            var temp = new Date($this.text()).toGMTString().slice(8,16);
-            $this.text(temp)
-        });
+        const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var temp_dob = new Date($("#dob").text());
+        $("#dob").text(`${("0" + temp_dob.getDate()).slice(-2)}, ${months[temp_dob.getMonth()]} ${temp_dob.getFullYear()}`);
 
         // remove social link
         $(".visit_url").each(function() {

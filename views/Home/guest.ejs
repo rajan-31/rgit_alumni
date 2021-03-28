@@ -99,6 +99,26 @@
     </div>
   <% } %>
   <!-- end flash message -->
+
+  <div id="cookie-popup" class="cookie-popup">
+  
+    <div class="d-flex">
+        <div class="cookie-icon align-self-center">
+            <img class="cookie-img" src="/assets/img/cookie-icon.png" alt="">
+        </div>
+
+        <div class="cookie-message">
+            Hey! Just letting you know that we use cookies to ensure you have the best experience possible.
+        </div>
+
+        <div class="div-cookie-btn">
+            <button class="cookie-btn" id="cookie-btn">
+            <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    
+  </div>
   
   <main id="main">
 
@@ -320,7 +340,11 @@
         </div>
         
         <div class="row">
-          <% news.forEach(function(item){ %>
+          <% let tempDate; 
+          const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+              days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+              news.forEach(function(item){ 
+                tempDate = item.date %>
           
           <div class="col-xl-4 col-md-6 mx-auto d-flex align-items-stretch my-2 " data-aos="zoom-in" data-aos-delay="100">
             <div class="icon-box keep-width">
@@ -336,7 +360,7 @@
           
               <center>
                 <i class="far fa-calendar-alt"></i>
-                <%= item.date.toGMTString().slice(0,16) %>
+                <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %>
               </center>
               <br>
           
@@ -372,7 +396,8 @@
         </div>
         
         <div class="row">
-          <% events.forEach(function(item){ %>
+          <% events.forEach(function(item){ 
+            tempDate = item.date %>
           
           <div class="col-xl-4 col-md-6 mx-auto d-flex align-items-stretch my-2" data-aos="zoom-in" data-aos-delay="100">
             <div class="icon-box keep-width">
@@ -388,7 +413,7 @@
           
               <center>
                 <i class="far fa-calendar-alt"></i>
-                <%= item.date.toGMTString().slice(0,16) %>
+                <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %>
               </center>
               <br>
           

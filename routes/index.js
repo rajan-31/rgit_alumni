@@ -3,13 +3,16 @@ const router = express.Router();
 const passport = require("passport");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 
 const User  = require("../models/user"),
       News  = require("../models/news"),
       Event = require("../models/event");
 
 const allMiddlewares = require("../middleware/index.js");
-const allTemplates = require("../services/mail_templates")
+const allTemplates = require("../services/mail_templates");
+const Testimonial = require("../models/Testimonial");
 
 router.get("/",function(req, res){
     News.find({}, "-images", function (err, allNews) {
@@ -20,10 +23,23 @@ router.get("/",function(req, res){
                 if (err) {
                     console.log(err);
                 } else if(req.isAuthenticated()) {
-                    res.render("Home/home", { news: allNews, events: allEvents, dataFromFile: global.static_data, allTestimonials: global.allTestimonials, countTestimonials: global.allTestimonials.length });
-                    // res.render("Home/home", { news: [], events: [], dataFromFile: global.static_data, allTestimonials: global.allTestimonials, countTestimonials: global.allTestimonials.length });
+                    // res.render("Home/home", { news: allNews, events: allEvents, dataFromFile: global.static_data, allTestimonials: global.allTestimonials, countTestimonials: global.allTestimonials.length });
+                    ///////////////
+                    Testimonial.find({}, function(err, allTestimonials) {
+                        const raw_data = fs.readFileSync(path.join(__dirname, "..", "data/data.json"));
+                        const dataFromFile = JSON.parse(raw_data);
+                        res.render("Home/home", { news: allNews, events: allEvents, dataFromFile: dataFromFile, allTestimonials: allTestimonials, countTestimonials: allTestimonials.length });
+                    });
+                    /////////////////
                 } else {
-                    res.render("Home/guest", { news: allNews, events: allEvents, dataFromFile: global.static_data, allTestimonials: global.allTestimonials, countTestimonials: global.allTestimonials.length });
+                    // res.render("Home/guest", { news: allNews, events: allEvents, dataFromFile: global.static_data, allTestimonials: global.allTestimonials, countTestimonials: global.allTestimonials.length });
+                    ///////////////
+                    Testimonial.find({}, function(err, allTestimonials) {
+                        const raw_data = fs.readFileSync(path.join(__dirname, "..", "data/data.json"));
+                        const dataFromFile = JSON.parse(raw_data);
+                        res.render("Home/guest", { news: allNews, events: allEvents, dataFromFile: dataFromFile, allTestimonials: allTestimonials, countTestimonials: allTestimonials.length });
+                    });
+                    //////////////
                 }
             }).sort({ date: -1 }).limit(3).lean();
         }
@@ -47,7 +63,14 @@ router.post('/signup', function(req, res){
     const allUserTypes = ["alumni", "student"];
     const receivedData = req.body;
 
-    if (allMiddlewares.isValidEmail(receivedData.username) && receivedData.password.length>=6 && receivedData.password==receivedData.confirmPassword && allUserTypes.includes(receivedData.userType)) {
+    if ( 
+        allMiddlewares.isValidEmail(receivedData.username) && 
+        receivedData.password.length>=6 && 
+        receivedData.password==receivedData.confirmPassword && 
+        allUserTypes.includes(receivedData.userType) &&
+        receivedData.firstName && 
+        receivedData.lastName
+        ) {
         User.register(new User({firstName:receivedData.firstName, lastName: receivedData.lastName, username: receivedData.username, userType :receivedData.userType}), receivedData.password, function(err, user){
             if(err){
                 if (err.name == "UserExistsError") {

@@ -218,12 +218,12 @@
     if (employer && jobTitle && jobDomain && jobFrom){
       let present_job = `<div class="form-group col-sm-12 col-md-6">
                             <label >Till</label>
-                            <input type="text" class="form-control" value="Present" disabled="disabled">
+                            <input type="text" name="profile[workExperience][jobTill]" class="form-control" value="Present" readonly="readonly">
                         </div>`;
       if (jobTill) {
         present_job = `<div class="form-group col-sm-12 col-md-6">
                           <label for="jobTill">Till</label>
-                          <input type="month" name="profile[workExperience][jobTill]" class="form-control" value="${jobTill}">
+                          <input type="text" name="profile[workExperience][jobTill]" class="form-control month-picker" value="${jobTill}">
                       </div>`
       }
       
@@ -252,7 +252,7 @@
                                 
                 <div class="form-group col-sm-12 col-md-6">
                     <label for="jobFrom">From</label>
-                    <input type="month" name="profile[workExperience][jobFrom]" class="form-control" value="${jobFrom}" required="required">
+                    <input type="text" name="profile[workExperience][jobFrom]" class="form-control month-picker" value="${jobFrom}" required="required">
                 </div>
                 
                 ${present_job}
@@ -293,6 +293,10 @@
         items: 2
       }
     }
+  });
+
+  $("#cookie-btn").on("click", function() {
+      $("#cookie-popup").remove();
   });
 
 })(jQuery);

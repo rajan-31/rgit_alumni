@@ -38,7 +38,7 @@ db.admins.insert({
 - check browser support for things likr "forEach" loop
 - make cookies http only
 - custom error handler
-- Cookie pop up
+- Cookie pop up = Hey! Just letting you know that we use cookies to ensure you have the best experience possible on Devfolio. For more information, please read our privacy policy.
 
 
 
@@ -85,7 +85,7 @@ db.admins.insert({
 - change render to sendFile for static templates & also remove flash
 - don't use lean where save is used
 
-- check for objectid error (profile/wrong_id)
+- ~~check for objectid error (profile/wrong_id)~~
 
 - ~~admission n grad yr max options, added work visibility~~
 - ~~select2~~
@@ -98,4 +98,13 @@ db.admins.insert({
 
 - ~~limit failed logins~~
 
-password reset, pagination for communicate page, thumbnails, loader after form submit, testimonials, limit failed login attempts
+- newsletter
+- ~~firefox chat textarea~~
+- ~~date pickers & month picker~~
+- ~~job xp, array issue for, for present value~~
+
+- ~~date in gmt is a problem~~
+
+- ~~no more flash for pagination - events, news, comm~~
+- global vars issue
+- images not to mongo

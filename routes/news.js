@@ -96,6 +96,7 @@ router.post("/news/page/:num", middlewares.isLoggedIn, function (req, res) {
                 const pass_lastDate = new Date(allNews[allNews.length - 1].date).getTime();
                 res.render("News/paged_news", { news: allNews , lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
             } else {
+                req.flash("errorMessage", "No more News.")
                 res.redirect("/news");
             }
         }

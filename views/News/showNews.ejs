@@ -100,7 +100,11 @@
               <img src="data:image/<%=item.contentType%>;base64, 
               <%=item.data.toString('base64')%>">
               
-              <% }) %>
+              <% }) 
+                const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                tempDate = news.date;
+              %>
 
           </div>
 
@@ -108,7 +112,7 @@
             <h3>News information</h3>
             <ul>
               <!-- <li><strong>Branch</strong>: All</li> -->
-              <li><strong>Date</strong>: <%= news.date.toGMTString().slice(0,16) %></li>
+              <li><strong>Date</strong>: <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %></li>
             </ul>
           </div>
 

@@ -84,18 +84,24 @@ router.post('/admin/signup', middlewares.isAdmin, function (req, res) {
     });
 });
 
+
+
 router.post('/admin/externalData', middlewares.isAdmin, function(req, res){
     const data = JSON.stringify(req.body);
-    fs.writeFile(path.join(__dirname, '..' + '/data/data.json'), data, function(err){
-        if(err){
-            console.log(err);
-            req.flash("errorMessage", "Something went wrong, please try again.");
-            res.redirect('/admin');
-        } else {
-            global.static_data = data;
-            res.redirect('/');
-        }
-    });
+
+    // global.static_data = data;
+    // res.redirect('/admin');
+    
+    // fs.writeFile(path.join(__dirname, '..' + '/data/data.json'), data, function(err){
+    //     if(err){
+    //         console.log(err);
+    //         req.flash("errorMessage", "Something went wrong, please try again.");
+    //     }
+    //     res.redirect('/admin');
+    // });
+
+    fs.writeFileSync(path.join(__dirname, '..' + '/data/data.json'), data);
+    res.redirect('/admin');
 });
 
 /* new routes */
@@ -115,7 +121,12 @@ router.get("/admin", middlewares.isAdmin, function (req, res) {
                     res.redirect('/');
                 } else {
                     // global variable used: global.static_data
-                    res.render('Admin/index', { alumniCount: alumniCount, studentCount: studentCount, dataFromFile: global.static_data });
+                    // res.render('Admin/index', { alumniCount: alumniCount, studentCount: studentCount, dataFromFile: global.static_data });
+                    /////////////////
+                    const raw_data = fs.readFileSync(path.join(__dirname, "..", "data/data.json"));
+                    const dataFromFile = JSON.parse(raw_data);
+                    res.render('Admin/index', { alumniCount: alumniCount, studentCount: studentCount, dataFromFile: dataFromFile });
+                    ////////////////
                 }
             });
         }
@@ -297,17 +308,20 @@ router.post("/admin/testimonials", middlewares.isAdmin, function(req, res) {
                         req.flash("errorMessage","Something went wrong, please try again.");
                         res.redirect("/admin/testimonials");
                     } else {
-                        Testimonial.find({}, function(err, allTestimonials) {
-                            if(err) {
-                                console.log(err);
-                                req.flash("errorMessage","Something went wrong, please try again.");
-                                res.redirect("/admin/testimonials");
-                            } else{
-                                global.allTestimonials = allTestimonials;
-                                req.flash("successMessage", "Added new testimonial successfully.");
-                                res.redirect('/admin/testimonials');
-                            }
-                        });
+                        // Testimonial.find({}, function(err, allTestimonials) {
+                        //     if(err) {
+                        //         console.log(err);
+                        //         req.flash("errorMessage","Something went wrong, please try again.");
+                        //         res.redirect("/admin/testimonials");
+                        //     } else{
+                        //         global.allTestimonials = allTestimonials;
+                        //         req.flash("successMessage", "Added new testimonial successfully.");
+                        //         res.redirect('/admin/testimonials');
+                        //     }
+                        // });
+
+                        req.flash("successMessage", "Added new testimonial successfully.");
+                        res.redirect('/admin/testimonials');
                     }
                 });
             })(temp, pathToFile);
@@ -384,17 +398,20 @@ router.put("/admin/testimonials/:id", middlewares.isAdmin, function(req, res) {
                         req.flash("errorMessage","Something went wrong, please try again.");
                         res.redirect("/admin/testimonials");
                     } else {
-                        Testimonial.find({}, function(err, allTestimonials) {
-                            if(err) {
-                                console.log(err);
-                                req.flash("errorMessage","Something went wrong, please try again.");
-                                res.redirect("/admin/testimonials");
-                            } else{
-                                global.allTestimonials = allTestimonials;
-                                req.flash("successMessage", "Updated testimonial successfully.");
-                                res.redirect('/admin/testimonials');
-                            }
-                        });
+                        // Testimonial.find({}, function(err, allTestimonials) {
+                        //     if(err) {
+                        //         console.log(err);
+                        //         req.flash("errorMessage","Something went wrong, please try again.");
+                        //         res.redirect("/admin/testimonials");
+                        //     } else{
+                        //         global.allTestimonials = allTestimonials;
+                        //         req.flash("successMessage", "Updated testimonial successfully.");
+                        //         res.redirect('/admin/testimonials');
+                        //     }
+                        // });
+
+                        req.flash("successMessage", "Updated testimonial successfully.");
+                        res.redirect('/admin/testimonials');
                     }
                 });
             })(temp, pathToFile);
@@ -408,17 +425,19 @@ router.put("/admin/testimonials/:id", middlewares.isAdmin, function(req, res) {
                     req.flash("errorMessage","Something went wrong, please try again.");
                     res.redirect("/admin/testimonials");
                 } else {
-                    Testimonial.find({}, function(err, allTestimonials) {
-                        if(err) {
-                            console.log(err);
-                            req.flash("errorMessage","Something went wrong, please try again.");
-                            res.redirect("/admin/testimonials");
-                        } else{
-                            global.allTestimonials = allTestimonials;
-                            req.flash("successMessage", "Updated testimonial successfully.");
-                            res.redirect('/admin/testimonials');
-                        }
-                    });
+                //     Testimonial.find({}, function(err, allTestimonials) {
+                //         if(err) {
+                //             console.log(err);
+                //             req.flash("errorMessage","Something went wrong, please try again.");
+                //             res.redirect("/admin/testimonials");
+                //         } else{
+                //             global.allTestimonials = allTestimonials;
+                //             req.flash("successMessage", "Updated testimonial successfully.");
+                //             res.redirect('/admin/testimonials');
+                //         }
+                //     });
+                    req.flash("successMessage", "Updated testimonial successfully.");
+                    res.redirect('/admin/testimonials');
                 }
             });
         }
@@ -432,17 +451,20 @@ router.delete("/admin/testimonials/:id", middlewares.isAdmin, function(req, res)
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect('/admin/testimonials');
         } else {
-            Testimonial.find({}, function(err, allTestimonials) {
-                    if(err) {
-                        console.log(err);
-                        req.flash("errorMessage", "Something went wrong, please try again.");
-                        res.redirect('/admin/testimonials');
-                    } else{
-                        global.allTestimonials = allTestimonials;
-                        req.flash("successMessage", "Deleted testimonial successfully.");
-                        res.redirect('/admin/testimonials');
-                    }
-            });
+            // Testimonial.find({}, function(err, allTestimonials) {
+            //         if(err) {
+            //             console.log(err);
+            //             req.flash("errorMessage", "Something went wrong, please try again.");
+            //             res.redirect('/admin/testimonials');
+            //         } else{
+            //             global.allTestimonials = allTestimonials;
+            //             req.flash("successMessage", "Deleted testimonial successfully.");
+            //             res.redirect('/admin/testimonials');
+            //         }
+            // });
+
+            req.flash("successMessage", "Deleted testimonial successfully.");
+            res.redirect('/admin/testimonials');
         }
     });
 });

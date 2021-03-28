@@ -154,6 +154,7 @@
 
 #send-message {
     resize: none;
+    height: 38px;
 }
 
 /* misc */

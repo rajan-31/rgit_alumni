@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
     <link href="../../assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
     <link href="../../assets/vendor/aos/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
     <!-- Template Main CSS File -->
     <link href="../../assets/css/style.css" rel="stylesheet">
@@ -100,7 +101,11 @@
                     <div class="owl-carousel portfolio-details-carousel">
                         <% event.images.forEach(function(item){ %>
                         <img src="data:image/<%=item.contentType%>;base64, <%=item.data.toString('base64')%>">
-                        <%})%>
+                        <%})
+                            const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                            days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                            tempDate = event.date;
+                        %>
 
                     </div>
 
@@ -108,7 +113,7 @@
                         <h3>Event information</h3>
                         <ul>
                             <!-- <li><strong>Branch</strong>: All</li> -->
-                            <li><strong>Date</strong>: <%= event.date.toGMTString().slice(0,16) %></li>
+                            <li><strong>Date</strong>: <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %></li>
                         </ul>
                     </div>
 
@@ -125,10 +130,8 @@
                                 <br>
                                 <div class="form-group">
                                     <label>Date </label>
-                                    <!-- safari & internet explorer doesn't support this date picker-->
-                                    <input type="date" id="" name="date"
-                                        value=<%= event.date.toISOString().slice(0,10) %> min="2010-01-01"
-                                        max="2100-12-31">
+                                    <div id="data-date" hidden="hidden"><%= event.date %></div>
+                                    <input type="text" name="date" id="datepicker" class="form-control" required="required" readonly="readonly" placeholder="Pick Date">
                                 </div>
                                 <div class="form-group">
                                     <label>Description</label>
@@ -251,9 +254,11 @@
     <script src="../../assets/vendor/owl.carousel/owl.carousel.min.js"></script>
     <script src="../../assets/vendor/venobox.min.js"></script>
     <script src="../../assets/vendor/aos/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
     <!-- Template Main JS File -->
     <script src="../../assets/js/main.js"></script>
+
 
     <script>
         $("#selectImages").change(function () {
@@ -273,6 +278,18 @@
             $("#submit-btn-icon").remove();
             $("#spinner").addClass("spinner-border spinner-border-sm");
         });
+
+        // fill date
+        var temp_date = $("#data-date").text();
+
+        $("#datepicker").datepicker({
+            autoclose: true,
+            disableTouchKeyboard: true,
+            format: "dd MM, yyyy",
+        });
+
+        $("#datepicker").datepicker( "setDate", new Date(temp_date) );
+        console.log(temp_date)
       </script>
 </body>
 

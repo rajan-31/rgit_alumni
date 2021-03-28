@@ -17,6 +17,12 @@ const adminSchema = new mogoose.Schema({
 
 const options = {
     usernameLowerCase: true,
+    limitAttempts: true,
+    maxAttempts: 100,
+    // interval: 1000 * 60 * 0.1,
+    // maxInterval: 1000 * 60 * 0.1,
+    attemptsField: "failedLoginAttempts",
+    lastLoginField: "lastLogin"
 }
 
 adminSchema.plugin(passportLocalMongoose, options);

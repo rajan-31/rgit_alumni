@@ -55,12 +55,12 @@ mongoose.connection.on('connected', function () {
 });
 
 
-app.use(express.urlencoded({extended: true}));
-app.use(express.json());
-app.set("view engine", "ejs");      // required to use ejs
 app.use(express.static(path.join(__dirname, "public"), {
     // maxAge: 1000 * 60,
 }));     // public directory to serve
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
+app.set("view engine", "ejs");      // required to use ejs
 app.use(methodOverride("_method"));
 app.use(flash());
 
@@ -162,16 +162,16 @@ app.use(function(req, res, next){
 
 
 /* using data from data/data.json */
-const rawdata = fs.readFileSync('./data/data.json');
-global.static_data = JSON.parse(rawdata);
+// const rawdata = fs.readFileSync('./data/data.json');
+// global.static_data = JSON.parse(rawdata);
 /* testimonials */
-Testimonial.find({}, function(err, data) {
-    if(err) {
-        console.log(err);
-    } else{
-        global.allTestimonials = data;
-    }
-});
+// Testimonial.find({}, function(err, data) {
+//     if(err) {
+//         console.log(err);
+//     } else{
+//         global.allTestimonials = data;
+//     }
+// });
 
 /* Socket.io events */
 require("./services/socketio-events.js")(io, User, sessionMiddleware, passport);

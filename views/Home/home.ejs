@@ -333,7 +333,11 @@
         </div>
         
         <div class="row">
-          <% news.forEach(function(item){ %>
+          <% let tempDate; 
+          const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+              days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+              news.forEach(function(item){ 
+                tempDate = item.date %>
           
           <div class="col-xl-4 col-md-6 mx-auto col-12 d-flex align-items-stretch my-2 " data-aos="zoom-in" data-aos-delay="100">
             <div class="icon-box keep-width">
@@ -349,7 +353,7 @@
           
               <center>
                 <i class="far fa-calendar-alt"></i>
-                <%= item.date.toGMTString().slice(0,16) %>
+                <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %>
               </center>
               <br>
           
@@ -385,7 +389,8 @@
         </div>
         
         <div class="row">
-          <% events.forEach(function(item){ %>
+          <% events.forEach(function(item){ 
+            tempDate = item.date %>
           
           <div class="col-xl-4 col-md-6 mx-auto d-flex align-items-stretch my-2" data-aos="zoom-in" data-aos-delay="100">
             <div class="icon-box keep-width">
@@ -401,7 +406,7 @@
           
               <center>
                 <i class="far fa-calendar-alt"></i>
-                <%= item.date.toGMTString().slice(0,16) %>
+                <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %>
               </center>
               <br>
           

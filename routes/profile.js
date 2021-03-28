@@ -58,6 +58,7 @@ router.get('/profile', middlewares.rejectAdmin, function(req, res){
 
 router.post('/profile', middlewares.isLoggedIn, function(req, res){
     const receivedData = req.body;
+    receivedData.profile.dob = new Date(receivedData.profile.dob);
     if(!receivedData.username && !receivedData.firstName && !receivedData.salt)
     User.findByIdAndUpdate(req.user._id, receivedData, function(err, data){
         if(err){
@@ -209,6 +210,7 @@ router.post("/communicate/page/:num", middlewares.isLoggedIn, function (req, res
             const lastId = users[users.length - 1]._id;
             res.render('paged_communicate', { alumni: users, lastId: lastId, lastPage: lastPage });
         } else {
+            req.flash("errorMessage", "No more Users.")
             res.redirect("/communicate");
         }
     }).sort({ _id: 1 }).limit(12).lean();

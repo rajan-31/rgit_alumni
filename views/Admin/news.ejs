@@ -210,11 +210,13 @@
               </tr>
             </thead>
             <tbody>
-              <% for(let i=0; i<countNews; i++) { %>
+              <% let tempDate; const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; 
+              for(let i=0; i<countNews; i++) { 
+                tempDate = allNews[i].date %>
                 <tr>
                   <!-- <td> <%# allNews[i]._id %> <%# i+1 %> </td> -->
                   <td> <%= allNews[i].title %> </td>
-                  <td> <%= allNews[i].date.toGMTString().slice(5, 16) %> </td>
+                  <td> <%= `${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %> </td>
                   <td>
                     <a href="/news/<%= allNews[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size btn-action-spinner">View</a><br>
                   </td>

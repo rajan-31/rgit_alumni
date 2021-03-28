@@ -97,7 +97,10 @@
                 </div>
                 <div id="original" class="row">
 
-                <% events.forEach(function(item){ %>
+                <% const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    events.forEach(function(item){ 
+                        tempDate = item.date %>
 
                     <div  class="col-xl-4 col-md-6 d-flex align-items-stretch mb-3" data-aos="zoom-in"
                         data-aos-delay="100">
@@ -114,7 +117,7 @@
 
                             <center>
                                 <i class="far fa-calendar-alt"></i>
-                                <%= item.date.toGMTString().slice(0,16) %>
+                                <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %>
                             </center>
                             <br>
 
