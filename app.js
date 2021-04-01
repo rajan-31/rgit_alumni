@@ -55,9 +55,32 @@ mongoose.connection.on('connected', function () {
 });
 
 
-app.use(express.static(path.join(__dirname, "public"), {
-    // maxAge: 1000 * 60,
-}));     // public directory to serve
+
+app.use("/assets/css", express.static(path.join(__dirname, "public", "assets", "css"), {
+    etag: false,
+    // maxAge: 1000 * 60 * 2,
+}));
+app.use("/assets/fonts", express.static(path.join(__dirname, "public", "assets", "fonts"), {
+    etag: false,
+    // maxAge: 1000 * 60 * 3,
+}));
+app.use("/assets/img", express.static(path.join(__dirname, "public", "assets", "img"), {
+    etag: false,
+    // maxAge: 1000 * 60 * 3,
+}));
+app.use("/assets/js", express.static(path.join(__dirname, "public", "assets", "js"), {
+    etag: false,
+    // maxAge: 1000 * 60 * 1,
+}));
+app.use("/assets/vendor", express.static(path.join(__dirname, "public", "assets", "vendor"), {
+    etag: false,
+    // maxAge: 1000 * 60 * 2,
+}));
+app.use("/images", express.static(path.join(__dirname, "uploads", "images"), {
+    etag: false,
+    // maxAge: 1000 * 60 * 1,
+}));
+
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.set("view engine", "ejs");      // required to use ejs

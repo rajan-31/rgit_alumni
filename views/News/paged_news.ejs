@@ -97,19 +97,24 @@
               <% let tempDate; 
               const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                   days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-                  news.forEach(function(item){ 
-                    tempDate = item.date %>
+                  for(let i=0; i<countNews; i++) { 
+                    tempDate = news[i].date %>
     
                 <div  class="col-xl-4 col-md-6 d-flex align-items-stretch mb-3" data-aos="zoom-in" data-aos-delay="100">
                   <div class="icon-box keep-width">
                 
                     <div>
-                      <center><img style="border-radius: 20px" src="data:image/<%=item.thumbnail.contentType%>;base64, 
-                      <%=item.thumbnail.data.toString('base64')%>" width="300" height="200"></center>
+                      <center>
+                        <% if(i<=5) { %>
+                          <img src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.jpg';" />
+                        <% } else { %>
+                          <img class="lazyload" src="/assets/img/image-placeholder-300x200.jpg" data-src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.jpg';" />
+                        <% } %>
+                      </center>
                     </div>
                     <hr>
                     <center>
-                      <h4><a href="/news/<%= item._id %>"><%= item.title %></a></h4>
+                      <h4><a href="/news/<%= news[i]._id %>"><%= news[i].title %></a></h4>
                     </center>
                 
                     <center>
@@ -118,22 +123,22 @@
                     </center>
                     <br>
                 
-                  <% if(item.description && item.description.length>213){%>
-                    <p><%= item.description.slice(0,210)+"..." %></p>
+                  <% if(news[i].description && news[i].description.length>213){%>
+                    <p><%= news[i].description.slice(0,210)+"..." %></p>
                   <% }else{ %>
-                    <p><%= item.description %>
-                      <span class="show-whitespaces"><%="  ".repeat(200-item.description.length) %></span>
+                    <p><%= news[i].description %>
+                      <span class="show-whitespaces"><%="  ".repeat(200-news[i].description.length) %></span>
                     </p>
                   <% } %>
     
                     <hr><br>
                     <center >
-                      <h4 ><a  href="/news/<%= item._id %> "><i class="fas fa-info-circle"></i> More Info</a></h4>
+                      <h4 ><a  href="/news/<%= news[i]._id %> "><i class="fas fa-info-circle"></i> More Info</a></h4>
                     </center>
                 
                   </div>
                 </div>
-            <% }); %>
+            <% }; %>
     
             </div>
 
@@ -241,6 +246,7 @@
   <script src="../../assets/vendor/owl.carousel/owl.carousel.min.js"></script>
   <script src="../../assets/vendor/aos/aos.js"></script>
   <script src="../../assets/vendor/venobox.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js" crossorigin="anonymous"></script>
 
 
   <!-- Template Main JS File -->

@@ -83,7 +83,7 @@ db.admins.insert({
 - ~~account activation mail template & check other routes' results~~
 
 - change render to sendFile for static templates & also remove flash
-- don't use lean where save is used
+- ~~don't use lean where save is used~~
 
 - ~~check for objectid error (profile/wrong_id)~~
 
@@ -106,5 +106,14 @@ db.admins.insert({
 - ~~date in gmt is a problem~~
 
 - ~~no more flash for pagination - events, news, comm~~
-- global vars issue
-- images not to mongo
+- ~~global vars issue~~
+- ~~images not to mongo~~
+- ~~edit(unlink , update) and delete route(unlink)~~
+- ~~err (unlink)~~
+
+images to file system, removed global vars, lazy loading, static serving seperated
+
+------------
+
+- ~~git filename case sensitivity err~~
+    change name -> stage commit -> change name -> stage commit -> commit

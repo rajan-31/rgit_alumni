@@ -843,7 +843,7 @@ section {
 --------------------------------------------------------------*/
 .services .icon-box {
   box-shadow: 0px 0 25px 0 rgba(0, 0, 0, 0.1);
-  padding: 50px 10px;
+  padding: 25px 10px;
   transition: all ease-in-out 0.4s;
   background: #fff;
 }
@@ -1131,7 +1131,7 @@ section {
 
 .portfolio-details .portfolio-details-carousel .owl-nav, .portfolio-details .portfolio-details-carousel .owl-dots {
   margin-top: 5px;
-  text-align: left;
+  text-align: center;
 }
 
 .portfolio-details .portfolio-details-carousel .owl-dot {
@@ -1140,7 +1140,7 @@ section {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background-color: #ddd !important;
+  background-color: rgb(182 182 182) !important;
 }
 
 .portfolio-details .portfolio-details-carousel .owl-dot.active {
@@ -1510,7 +1510,7 @@ section {
     right: 10px;
     bottom: 10px;
     padding: 10px 20px;
-    background-color: #898a8a;
+    background-color: #545b62;
     border-radius: 20px;
     z-index: 9999;
   }
@@ -1563,7 +1563,7 @@ transition: color .15s ease-in-out,background-color .15s ease-in-out,border-colo
     /* right: auto; */
     bottom: 0px;
     padding: 10px 20px;
-    background-color: #898a8a;
+    background-color: #545b62;
     border-radius: 20px;
     z-index: 9999;
   }
@@ -1572,4 +1572,15 @@ transition: color .15s ease-in-out,background-color .15s ease-in-out,border-colo
 /* date picker fix */
 .datepicker {
   transform: translate(0, 3.9em);
+}
+
+/* custom file input */ 
+.custom-file-label {
+  overflow: hidden;
+}
+
+/* img fit */
+.icon-box img {
+  object-fit: cover;
+  border-radius: 20px;
 }

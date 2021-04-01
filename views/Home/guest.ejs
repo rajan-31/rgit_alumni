@@ -6,15 +6,15 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
   <title>Guest | APSIT Alumini</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+  <meta name="description" content="Web portal for students and alumni for latest upadte about institute and communication.">
+  <meta name="keywords" content="">
 
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon">
   <link href="assets/img/logo.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="assets/vendor/bootstrap.min.css" rel="stylesheet">
@@ -350,8 +350,7 @@
             <div class="icon-box keep-width">
           
               <div>
-                <center><img style="border-radius: 20px" src="data:image/<%=item.thumbnail.contentType%>;base64, 
-                      <%=item.thumbnail.data.toString('base64')%>" width="300" height="200"></center>
+                <center><img class="lazyload" src="/assets/img/image-placeholder-300x200.jpg" data-src="<%= item.thumbnail %>" width="300" height="200" alt="Not Found" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.jpg';" /></center>
               </div>
               <hr>
               <center>
@@ -403,8 +402,7 @@
             <div class="icon-box keep-width">
           
               <div>
-                <center><img style="border-radius: 20px" src="data:image/<%=item.thumbnail.contentType%>;base64, 
-                      <%=item.thumbnail.data.toString('base64')%>" width="300" height="200"></center>
+                <center><img class="lazyload" src="/assets/img/image-placeholder-300x200.jpg" data-src="<%= item.thumbnail %>" width="300" height="200" alt="Not Found" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.jpg';" /></center>
               </div>
               <hr>
               <center>
@@ -454,7 +452,7 @@
               <% for(let i = 0; i < countTestimonials; i++) {%>
                 <div class="testimonial item">
                   <div class="testi-img d-flex justify-content-center">
-                    <img src="data:image/<%= allTestimonials[i].image.contentType%>;base64, <%=allTestimonials[i].image.data.toString('base64')%>" alt="Student">
+                    <img class="lazyload" src="/assets/img/user-placeholder-100x100.jpg" data-src="<%= allTestimonials[i].image %>" alt="Student" onerror="this.onerror=null;this.src='/assets/img/user-placeholder-100x100.jpg';">
                   </div>
               
                   <div class="testi-header text-center">
@@ -531,7 +529,7 @@ Thane, Maharashtra 400615</p>
                 <p>+91 9022147199</p>
               </div>
 
-              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3766.331402134628!2d72.96481011473286!3d19.26794928697808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7bba2e15f6c7b%3A0x20e1357d640bef7e!2sA.%20P.%20Shah%20Institute%20of%20Technology!5e0!3m2!1sen!2sin!4v1604586840168!5m2!1sen!2sin" frameborder="0" style="border:0; width: 100%; height: 290px;" allowfullscreen></iframe>
+              <iframe class="lazyload" title="Google Maps" data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3766.331402134628!2d72.96481011473286!3d19.26794928697808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7bba2e15f6c7b%3A0x20e1357d640bef7e!2sA.%20P.%20Shah%20Institute%20of%20Technology!5e0!3m2!1sen!2sin!4v1604586840168!5m2!1sen!2sin" frameborder="0" style="border:0; width: 100%; height: 290px;" allowfullscreen></iframe>
             </div>
 
           </div>

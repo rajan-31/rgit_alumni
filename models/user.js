@@ -47,11 +47,9 @@ const userSchema = new mongoose.Schema({
     password: String,
     userType: String,
     receiveMsg: Boolean,
-    profileImage: {
-        data: Buffer,
-        contentType: String
-    },
+    profileImage: String,
     profile: {
+        _id: false,
         type: profileSchema,
         default: {
             gender: "",

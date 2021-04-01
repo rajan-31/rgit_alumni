@@ -99,8 +99,7 @@
                     <div class="owl-carousel portfolio-details-carousel">
                         <% event.images.forEach(function(item){ %>
 
-                        <img src="data:image/<%=item.contentType%>;base64, 
-              <%=item.data.toString('base64')%>">
+                        <img src="<%= item %>">
 
                         <% }) 
                             const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],

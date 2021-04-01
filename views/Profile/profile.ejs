@@ -29,6 +29,8 @@
             object-fit: cover;
             width:200px;
             height:200px;
+            border-radius: 20px;
+            box-shadow: 0px 0px 10px #000;
         }
 
         input[type=checkbox] {
@@ -167,12 +169,10 @@
                 </div>
                     
                     <div id="profile-image" class="d-flex justify-content-center">
-                        <% if( profileImage.data ) { %>
-                            <img style="border-radius: 20px"
-                                src="data:image/<%=profileImage.contentType%>;base64, <%=profileImage.data.toString('base64')%>"
-                            id="profile-img">
+                        <% if( profileImage ) { %>
+                            <img src="<%=profileImage%>" id="profile-img">
                         <% } else { %>
-                            <i class="fas fa-user" style="font-size: 200px;"></i>
+                            <i id="profile-image-placeholder" class="fas fa-user" style="font-size: 200px;"></i>
                         <% } %>
                     </div>
                     <div class="small my-1 text-center" role="alert">
@@ -185,7 +185,7 @@
                             <div class="form-group">
                                 <div class="custom-file ">
                                     <label class="custom-file-label" for="images" style="overflow: hidden;">Choose file up to size 1 MB...</label>
-                                    <input type="file" accept=".jpg,.jpeg,.png" name="profileImage" class="custom-file-input" required="required">
+                                    <input type="file" accept=".jpg,.jpeg,.png" id="profileImage" name="profileImage" class="custom-file-input" required="required">
                                   </div>
                             </div>
                         </form>
@@ -194,7 +194,7 @@
                     <div class="d-flex justify-content-center">
                         <button type="submit" form="profileImageForm" class="btn btn-primary rounded-pill mx-1"><i class="fas fa-upload"></i> Update</button> <!-- this button is for form above -->
             
-                        <% if( profileImage.data ) { %>
+                        <% if( profileImage ) { %>
                             <button type="submit" form="deleteProfileImage" class="btn btn-danger rounded-pill mx-1"><i class="fas fa-trash"></i> Remove</button> <!-- this button is for form below -->
                             <form id="deleteProfileImage" action="/profile/image?_method=DELETE" method="POST"></form>
                         <% }%>
@@ -291,7 +291,7 @@
                             <label><strong>Date Of Birth</strong></label>
                             <br>
                             <div id="data-dob" hidden="hidden"><%= profile.dob %></div>
-                            <input type="text" id="dob-datepicker" class="form-control" name="profile[dob]" readonly="readonly">
+                            <input type="text" id="dob-datepicker" class="form-control" name="profile[dob]" readonly="readonly"> autocomplete="off"
                         </div>
                     </div>
                     
@@ -458,13 +458,13 @@
                                         <div class="form-group col-sm-12 col-md-6">
                                             <label for="jobFrom">From</label>
                                             <input type="text" name="profile[workExperience][jobFrom]" class="form-control month-picker" value="<%= profile.workExperience.jobFrom[j] %>"
-                                                required="required" readonly="readonly">
+                                                required="required" readonly="readonly" autocomplete="off">
                                         </div>
 
                                         <%if(profile.workExperience.jobTill[j] != "Present") {%>
                                         <div class="form-group col-sm-12 col-md-6">
                                             <label for="jobTill">Till</label>
-                                            <input type="text" name="profile[workExperience][jobTill]" class="form-control month-picker" value="<%= profile.workExperience.jobTill[j] %>" readonly="readonly">
+                                            <input type="text" name="profile[workExperience][jobTill]" class="form-control month-picker" value="<%= profile.workExperience.jobTill[j] %>" readonly="readonly" autocomplete="off">
                                         </div>
                                         <%} else {%>
                                             <div class="form-group col-sm-12 col-md-6">
@@ -527,13 +527,13 @@
                                             <div class="form-group col-6">
                                                 <label for="jobFrom">Job From</label>
                                                 <!-- <input type="month" id="workModalData-jobFrom"  class="form-control"> -->
-                                                <input type="text" id="workModalData-jobFrom"  class="form-control month-picker" readonly="readonly">
+                                                <input type="text" id="workModalData-jobFrom"  class="form-control month-picker" readonly="readonly" autocomplete="off">
                                             </div>
             
                                             <div class="form-group col-6" id="hide-jobTill">
                                                 <label for="jobTill">Job Till</label>
                                                 <!-- <input type="month" id="workModalData-jobTill"  class="form-control"> -->
-                                                <input type="text" id="workModalData-jobTill"  class="form-control month-picker" readonly="readonly">
+                                                <input type="text" id="workModalData-jobTill"  class="form-control month-picker" readonly="readonly" autocomplete="off">
                                             </div>
                                         </div>
 
@@ -591,9 +591,17 @@
             });
         });
 
+        /* show selected file name */
         $(".custom-file-input").on("change", function() {
-            var fileName = $(this).val().split("\\").pop();
-            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+            var $this = $(this);
+
+            var fileName = $this.val().split("\\").pop();
+            $this.siblings(".custom-file-label").addClass("selected").html(fileName);
+
+            /* preview */
+            URL.revokeObjectURL($("#profile-image img").attr("src"));
+            $("#profile-image").html('<img src="" id="profile-img">');
+            $("#profile-image img").attr("src", window.URL.createObjectURL($this[0].files[0]));
         });
 
         $(".toast").toast('show');

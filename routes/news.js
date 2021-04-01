@@ -15,14 +15,14 @@ const fs = require('fs'),
     multer = require('multer');
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads')
+        cb(null, 'uploads/images/news')
     },
     filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname.slice((file.originalname.lastIndexOf(".") - 1 >>> 0) + 2) )
+        cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname.slice((file.originalname.lastIndexOf(".") - 1 >>> 0) + 2))
     }
 });
 const limits = {
-    files: 5,
+    files: 6,
     fileSize: 1024 * 1024 * 5, // 5 MB (max file size)
 }
 const fileFilter = function (req, file, cb) {
@@ -42,35 +42,26 @@ const upload = multer({
     limits: limits,
     fileFilter: fileFilter
 });
-let uploadNewsImages = upload.array('images', 5);
+let uploadNewsImages = upload.fields([{ name: "images", maxCount: 5}, { name: "thumbnail", maxCount: 1}]);
 /* end multer config */
 
 
-// router.get("/news", middlewares.isLoggedIn, function(req, res){
-//     News.find({}, { images: { $slice: 1 } }, function(err, allNews){
-//         if(err) {
-//             console.log(err);
-//             req.flash("errorMessage", "Something went wrong, please try again.")
-//             res.redirect("/")
-//         } else {
-//             res.render("News/news", {news: allNews});
-//         }
-//     }).sort({ date: -1 }).lean();
-// });
-
-//////////////////////////////
+/////////////////////////////////
 router.get("/news", middlewares.isLoggedIn, function (req, res) {
     News.find({}, "-images", function (err, allNews) {
         if (err) {
             console.log(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
             res.redirect("/")
-        } else {
+        } else if (allNews.length > 0) {
             const lastId = allNews[allNews.length - 1]._id;
             const lastDate = new Date(allNews[allNews.length - 1].date).getTime();
-            res.render("News/news", { news: allNews, lastId: lastId, lastDate: lastDate, lastPage: 1});
+            res.render("News/news", { news: allNews, countNews: allNews.length, lastId: lastId, lastDate: lastDate, lastPage: 1});
+        } else {
+            req.flash("errorMessage", "No news found!")
+            res.redirect("/");
         }
-    }).sort({ date: -1, _id: 1 }).limit(6).lean();
+    }).sort({ date: -1, _id: 1 }).limit(12).lean();
 });
 
 router.post("/news/page/:num", middlewares.isLoggedIn, function (req, res) {
@@ -94,13 +85,13 @@ router.post("/news/page/:num", middlewares.isLoggedIn, function (req, res) {
             if(allNews.length > 0) {
                 const pass_lastId = allNews[allNews.length - 1]._id;
                 const pass_lastDate = new Date(allNews[allNews.length - 1].date).getTime();
-                res.render("News/paged_news", { news: allNews , lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
+                res.render("News/paged_news", { news: allNews, countNews: allNews.length, lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
             } else {
                 req.flash("errorMessage", "No more News.")
                 res.redirect("/news");
             }
         }
-    }).sort({ date: -1, _id: 1 }).limit(6).lean();
+    }).sort({ date: -1, _id: 1 }).limit(12).lean();
 });
 //////////////////////////////
 
@@ -128,50 +119,35 @@ router.post("/news", middlewares.isAdmin, function(req, res){
                 req.flash("errorMessage", "Something went wrong, please try again.");
                 res.redirect('/admin/news');
             }
-        } else if(req.files){
+        } else if (req.files && req.files["images"] && req.files["thumbnail"]) {
             const title = req.body.title;
             const date = req.body.date;
             const desc = req.body.desc;
             let images = [];
+            let thumbnail;
         
-            const pathToFile = path.join(__dirname, '..' + '/uploads/');
-            req.files.forEach(function(item){
-                const image = {
-                    data: fs.readFileSync(pathToFile + item.filename),
-                    contentType: item.mimetype
-                };
-                images.push(image);
-            });
+            for(let i=req.files["images"].length-1; i>=0; i--) {
+                images.push( "/images/news/" + req.files["images"][i].filename);
+            }
             
-            const temp = [ 'uploads/' + req.files[0].filename ];
+            const temp = [ 'uploads/images/news/' + req.files["thumbnail"][0].filename ];
             let quality;
-            if(req.files[0].size > 2621440) quality = 15;
-            else if(req.files[0].size < 419430) quality = 90;
+            if(req.files["thumbnail"][0].size > 2621440) quality = 15;
+            else if(req.files["thumbnail"][0].size < 419430) quality = 90;
             else quality = 20;
 
             imagemin( temp, {
-                destination: 'uploads/',
+                destination: 'uploads/images/news',
                 plugins: [
                     imageminMozjpeg({quality: quality}),
                     imageminPngquant({quality: quality})
                 ]
-            }).then((files) => {
-                const thumbnail = {
-                    data: files[0].data,
-                    contentType: req.files[0].mimetype
-                }
+            }).then(() => {
+                thumbnail = "/images/news/" + req.files["thumbnail"][0].filename;
+
                 const newNews = { title: title, date: new Date(date), images: images, description: desc, thumbnail: thumbnail };
 
-                req.files.forEach(function (item) {
-                    fs.unlink(pathToFile + item.filename, function (err) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        return;
-                    });
-                });
-
-                News.create(newNews, function(err, newlyCreated){
+                News.create(newNews, function(err){
                     if(err){
                         console.log(err);
                         req.flash("errorMessage", "Something went wrong, please try again.");
@@ -182,6 +158,9 @@ router.post("/news", middlewares.isAdmin, function(req, res){
                     }
                 });
             });
+        } else {
+            req.flash("errorMessage", "Some fields are missing from form.");
+            res.redirect('/admin/news');
         }
     });
 });
@@ -203,13 +182,33 @@ router.get("/news/:id", middlewares.isLoggedIn, function(req, res){
 });
 
 router.delete("/news/:id", middlewares.isAdmin, function(req, res){
-    News.findByIdAndRemove(mongoose.Types.ObjectId(req.params.id), function (err) {
-        if (err) {
-            req.flash("errorMessage", "Something went wrong, please try again.");
+    // delete old images
+    News.findById(mongoose.Types.ObjectId(req.params.id),"images thumbnail", function(err, data) {
+        data.images.push(data.thumbnail);
+        const pathToFile = path.join(__dirname, '..' + '/uploads');
+        if(err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, while deleting old images.");
             res.redirect('/admin/news');
         } else {
-            req.flash("successMessage", "Deleted news successfully.");
-            res.redirect('/admin/news');
+            data.images.forEach(function (item) {
+                fs.unlink(pathToFile + item, function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    return;
+                });
+            });
+
+            News.findByIdAndRemove(mongoose.Types.ObjectId(req.params.id), function (err) {
+                if (err) {
+                    req.flash("errorMessage", "Something went wrong, please try again.");
+                    res.redirect('/admin/news');
+                } else {
+                    req.flash("successMessage", "Deleted news successfully.");
+                    res.redirect('/admin/news');
+                }
+            });
         }
     });
 });
@@ -238,45 +237,93 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
             const title = req.body.title;
             const date = req.body.date;
             const desc = req.body.desc;
-        
-            if (req.files && req.files.length > 0){
+
+            if (req.files && Object.keys(req.files).length > 0) {
                 let images = [];
-                const pathToFile = path.join(__dirname, '..' + '/uploads/');
-                req.files.forEach(function (item) {
-                    const image = {
-                        data: fs.readFileSync(pathToFile + item.filename),
-                        contentType: item.mimetype
-                    };
-                    images.push(image)
-                });
+                let thumbnail;
 
-                const temp = [ 'uploads/' + req.files[0].filename ];
-                let quality;
-                if(req.files[0].size > 2621440) quality = 15;
-                else if(req.files[0].size < 419430) quality = 90;
-                else quality = 20;
+                const pathToFile = path.join(__dirname, '..' + '/uploads');
 
-                imagemin( temp, {
-                    destination: 'uploads/',
-                    plugins: [
-                        imageminMozjpeg({quality: quality}),
-                        imageminPngquant({quality: quality})
-                    ]
-                }).then((files) => {
-                    const thumbnail = {
-                        data: files[0].data,
-                        contentType: req.files[0].mimetype
-                    }
-                    const newsData = { title: title, date: new Date(date), images: images, description: desc, thumbnail: thumbnail };
-                    req.files.forEach(function (item) {
-                        fs.unlink(pathToFile + item.filename, function (err) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            return;
-                        });
+                if ( req.files["images"] && req.files["thumbnail"]) {
+                    // both
+                    // delete old images
+                    News.findById(mongoose.Types.ObjectId(req.params.id),"images thumbnail", function(err, data) {
+                        data.images.push(data.thumbnail);
+                        if(err) {
+                            console.log(err);
+                            req.flash("errorMessage", "Something went wrong, while deleting old images. ");
+                        } else {
+                            data.images.forEach(function (item) {
+                                fs.unlink(pathToFile + item, function (err) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                    return;
+                                });
+                            });
+                        }
                     });
 
+                    for(let i=req.files["images"].length-1; i>=0; i--) {
+                        images.push( "/images/news/" + req.files["images"][i].filename);
+                    }
+
+                    const temp = [ 'uploads/images/news' + req.files["thumbnail"][0].filename ];
+                    let quality;
+
+                    if(req.files["thumbnail"][0].size > 2621440) quality = 15;
+                    else if(req.files["thumbnail"][0].size < 419430) quality = 90;
+                    else quality = 20;
+
+                    imagemin( temp, {
+                        destination: 'uploads/images/news',
+                        plugins: [
+                            imageminMozjpeg({quality: quality}),
+                            imageminPngquant({quality: quality})
+                        ]
+                    }).then((files) => {
+                        thumbnail = "/images/news/" + req.files["thumbnail"][0].filename;
+        
+                        const newsData = { title: title, date: new Date(date), images: images, description: desc, thumbnail: thumbnail };
+        
+                        News.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), newsData, function (err) {
+                            if (err) {
+                                console.log(err);
+                                req.flash("errorMessage", "Something went wrong, please try again.");
+                                res.redirect("/admin/news");
+                            } else {
+                                req.flash("successMessage", "News updated successfully.");
+                                res.redirect("/admin/news");
+                            }
+                        });
+                        
+                    });
+
+                } else if ( req.files["images"] && !req.files["thumbnail"] ) {
+                    // only images
+                    // delete old images
+                    News.findById(mongoose.Types.ObjectId(req.params.id),"images", function(err, data) {
+                        if(err) {
+                            console.log(err);
+                            req.flash("errorMessage", "Something went wrong, while deleting old images. ");
+                        } else {
+                            data.images.forEach(function (item) {
+                                fs.unlink(pathToFile + item, function (err) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                    return;
+                                });
+                            });
+                        }
+                    });
+
+                    for(let i=req.files["images"].length-1; i>=0; i--) {
+                        images.push( "/images/news/" + req.files["images"][i].filename);
+                    }
+
+                    const newsData = { title: title, date: new Date(date), images: images, description: desc };
+        
                     News.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), newsData, function (err) {
                         if (err) {
                             console.log(err);
@@ -287,16 +334,65 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
                             res.redirect("/admin/news");
                         }
                     });
-                });
 
-            } else{
+                } else {
+                    // only thumbnail
+                    // delete old thumbnail
+                    News.findById(mongoose.Types.ObjectId(req.params.id),"thumbnail", function(err, data) {
+                        if(err) {
+                            console.log(err);
+                            req.flash("errorMessage", "Something went wrong, while deleting old images. ");
+                        } else {
+                            fs.unlink(pathToFile + data.thumbnail, function (err) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                                return;
+                            });
+                        }
+                    });
+
+                    const temp = [ 'uploads/images/news/' + req.files["thumbnail"][0].filename ];
+                    let quality;
+
+                    if(req.files["thumbnail"][0].size > 2621440) quality = 15;
+                    else if(req.files["thumbnail"][0].size < 419430) quality = 90;
+                    else quality = 20;
+
+                    imagemin( temp, {
+                        destination: 'uploads/images/news',
+                        plugins: [
+                            imageminMozjpeg({quality: quality}),
+                            imageminPngquant({quality: quality})
+                        ]
+                    }).then((files) => {
+                        thumbnail = "/images/news/" + req.files["thumbnail"][0].filename;
+        
+                        const newsData = { title: title, date: new Date(date), description: desc, thumbnail: thumbnail };
+        
+                        News.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), newsData, function (err) {
+                            if (err) {
+                                console.log(err);
+                                req.flash("errorMessage", "Something went wrong, please try again.");
+                                res.redirect("/admin/news");
+                            } else {
+                                req.flash("successMessage", "News updated successfully.");
+                                res.redirect("/admin/news");
+                            }
+                        });
+                        
+                    });
+                }
+
+            } else {
+                // no images
                 const newsData = { title: title, date: new Date(date), description: desc };
 
                 News.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), newsData, function (err) {
                     if (err) {
                         console.log(err);
                         req.flash("errorMessage", "Something went wrong, please try again.");
-                        res.redirect("/admin/news");
+                        res.redirect("/admin");
                     } else {
                         req.flash("successMessage", "News updated successfully.");
                         res.redirect("/admin/news");

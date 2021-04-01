@@ -4,14 +4,8 @@ const mongoose = require("mongoose");
 const eventSchema = new mongoose.Schema({
     title: String,
     date: Date,
-    images: [{
-        data: Buffer,
-        contentType: String
-    }],
-    thumbnail: {
-        data: Buffer,
-        contentType: String
-        },
+    images: [String],
+    thumbnail: String,
     description: String,
 });
 

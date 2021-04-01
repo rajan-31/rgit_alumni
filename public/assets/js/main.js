@@ -174,7 +174,8 @@
     autoplay: true,
     dots: true,
     loop: true,
-    items: 1
+    items: 1,
+    center: true,
   });
 
   // Init AOS
@@ -218,12 +219,12 @@
     if (employer && jobTitle && jobDomain && jobFrom){
       let present_job = `<div class="form-group col-sm-12 col-md-6">
                             <label >Till</label>
-                            <input type="text" name="profile[workExperience][jobTill]" class="form-control" value="Present" readonly="readonly">
+                            <input type="text" name="profile[workExperience][jobTill]" class="form-control" value="Present" readonly="readonly" autocomplete="off">
                         </div>`;
       if (jobTill) {
         present_job = `<div class="form-group col-sm-12 col-md-6">
                           <label for="jobTill">Till</label>
-                          <input type="text" name="profile[workExperience][jobTill]" class="form-control month-picker" value="${jobTill}">
+                          <input type="text" name="profile[workExperience][jobTill]" class="form-control month-picker" value="${jobTill}" autocomplete="off">
                       </div>`
       }
       

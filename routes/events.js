@@ -15,14 +15,14 @@ const fs = require('fs'),
     multer = require('multer');
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads')
+        cb(null, 'uploads/images/events')
     },
     filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname.slice((file.originalname.lastIndexOf(".") - 1 >>> 0) + 2))
+        cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname.slice((file.originalname.lastIndexOf(".") - 1 >>> 0) + 2));
     }
 });
 const limits = {
-    files: 5,
+    files: 6,
     fileSize: 1024 * 1024 * 5, // 5 MB (max file size)
 }
 const fileFilter = function (req, file, cb) {
@@ -42,35 +42,26 @@ const upload = multer({
     limits: limits,
     fileFilter: fileFilter
 });
-let uploadEventImages = upload.array('images', 5);
+let uploadEventImages = upload.fields([{ name: "images", maxCount: 5}, { name: "thumbnail", maxCount: 1}]);
 /* end multer config */
 
 
-// router.get("/events", middlewares.isLoggedIn, function (req, res) {
-//     Event.find({}, { images: { $slice: 1 } }, function (err, allEvents) {
-//         if (err) {
-//             console.log(err);
-//             req.flash("errorMessage", "Something went wrong, please try again.")
-//             res.redirect("/")
-//         } else {
-//             res.render("Events/events", { events: allEvents });
-//         }
-//     }).sort({ date: -1 }).lean();
-// });
-
 /////////////////////////////////
 router.get("/events", middlewares.isLoggedIn, function (req, res) {
-        Event.find({}, "-images", function (err, allEvents) {
+    Event.find({}, "-images", function (err, allEvents) {
             if (err) {
                 console.log(err);
                 req.flash("errorMessage", "Something went wrong, please try again.")
                 res.redirect("/")
-            } else {
+            } else if(allEvents.length > 0){
                 const lastId = allEvents[allEvents.length - 1]._id;
                 const lastDate = new Date(allEvents[allEvents.length - 1].date).getTime();
-                res.render("Events/events", { events: allEvents, lastId: lastId, lastDate: lastDate, lastPage: 1});
+                res.render("Events/events", { events: allEvents, countEvents: allEvents.length, lastId: lastId, lastDate: lastDate, lastPage: 1});
+            } else {
+                req.flash("errorMessage", "No events found!")
+                res.redirect("/");
             }
-        }).sort({ date: -1, _id: 1 }).limit(6).lean();
+        }).sort({ date: -1, _id: 1 }).limit(12).lean();
     });
 
 router.post("/events/page/:num", middlewares.isLoggedIn, function (req, res) {
@@ -94,13 +85,13 @@ router.post("/events/page/:num", middlewares.isLoggedIn, function (req, res) {
             if(allEvents.length > 0) {
                 const pass_lastId = allEvents[allEvents.length - 1]._id;
                 const pass_lastDate = new Date(allEvents[allEvents.length - 1].date).getTime();
-                res.render("Events/paged_events", { events: allEvents , lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
+                res.render("Events/paged_events", { events: allEvents, countEvents: allEvents.length, lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
             } else {
-                req.flash("errorMessage", "NO more Events.")
+                req.flash("errorMessage", "No more Events.")
                 res.redirect("/events");
             }
         }
-    }).sort({ date: -1, _id: 1 }).limit(6).lean();
+    }).sort({ date: -1, _id: 1 }).limit(12).lean();
 });
 /////////////////////////////////
 
@@ -128,51 +119,35 @@ router.post("/events", middlewares.isAdmin, function (req, res) {
                 req.flash("errorMessage", "Something went wrong, please try again.");
                 res.redirect('/admin/events');
             }
-        } else if (req.files) {
+        } else if (req.files && req.files["images"] && req.files["thumbnail"]) {
             const title = req.body.title;
             const date = req.body.date;
             const desc = req.body.desc;
             let images = [];
+            let thumbnail;
 
-            const pathToFile = path.join(__dirname, '..' + '/uploads/');
-            req.files.forEach(function (item) {
-                const image = {
-                    data: fs.readFileSync(pathToFile + item.filename),
-                    contentType: item.mimetype
-                };
-                images.push(image);
-            });
+            for(let i=req.files["images"].length-1; i>=0; i--) {
+                images.push( "/images/events/" + req.files["images"][i].filename);
+            }
             
-            const temp = [ 'uploads/' + req.files[0].filename ];
+            const temp = [ 'uploads/images/events/' + req.files["thumbnail"][0].filename ];
             let quality;
-                if(req.files[0].size > 2621440) quality = 15;
-                else if(req.files[0].size < 419430) quality = 90;
-                else quality = 20;
+            if(req.files["thumbnail"][0].size > 2621440) quality = 15;
+            else if(req.files["thumbnail"][0].size < 419430) quality = 90;
+            else quality = 20;
 
             imagemin( temp, {
-                destination: 'uploads/',
+                destination: 'uploads/images/events',
                 plugins: [
                     imageminMozjpeg({quality: quality}),
                     imageminPngquant({quality: quality})
                 ]
-            }).then((files) => {
-                const thumbnail = {
-                    data: files[0].data,
-                    contentType: req.files[0].mimetype
-                }
+            }).then(() => {
+                thumbnail = "/images/events/" + req.files["thumbnail"][0].filename;
 
                 const newEvent = { title: title, date: new Date(date), images: images, description: desc, thumbnail: thumbnail };
 
-                req.files.forEach(function (item) {
-                    fs.unlink(pathToFile + item.filename, function (err) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        return;
-                    });
-                });
-
-                Event.create(newEvent, function (err, newlyCreated) {
+                Event.create(newEvent, function (err) {
                     if (err) {
                         console.log(err);
                         req.flash("errorMessage", "Something went wrong, please try again.");
@@ -182,8 +157,10 @@ router.post("/events", middlewares.isAdmin, function (req, res) {
                         res.redirect('/admin/events');
                     }
                 });
-                
             });
+        } else {
+            req.flash("errorMessage", "Some fields are missing from form.");
+            res.redirect('/admin/events');
         }
     });
 });
@@ -205,13 +182,33 @@ router.get("/events/:id", middlewares.isLoggedIn, function (req, res) {
 });
 
 router.delete("/events/:id", middlewares.isAdmin, function (req, res) {
-    Event.findByIdAndRemove(mongoose.Types.ObjectId(req.params.id), function (err) {
-        if (err) {
-            req.flash("errorMessage", "Something went wrong, please try again.");
+    // delete old images
+    Event.findById(mongoose.Types.ObjectId(req.params.id),"images thumbnail", function(err, data) {
+        data.images.push(data.thumbnail);
+        const pathToFile = path.join(__dirname, '..' + '/uploads');
+        if(err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, while deleting old images.");
             res.redirect('/admin/events');
         } else {
-            req.flash("successMessage", "Deleted event successfully.");
-            res.redirect('/admin/events');
+            data.images.forEach(function (item) {
+                fs.unlink(pathToFile + item, function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    return;
+                });
+            });
+
+            Event.findByIdAndRemove(mongoose.Types.ObjectId(req.params.id), function (err) {
+                if (err) {
+                    req.flash("errorMessage", "Something went wrong, please try again.");
+                    res.redirect('/admin/events');
+                } else {
+                    req.flash("successMessage", "Deleted event successfully.");
+                    res.redirect('/admin/events');
+                }
+            });
         }
     });
 });
@@ -236,65 +233,159 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
                 req.flash("errorMessage", "Something went wrong, please try again.");
                 res.redirect('/admin/events');
             }
-            res.redirect('/admin/events');
         } else {
             const title = req.body.title;
             const date = req.body.date;
             const desc = req.body.desc;
 
-            if (req.files && req.files.length > 0) {
+            if (req.files && Object.keys(req.files).length > 0) {
                 let images = [];
-                const pathToFile = path.join(__dirname, '..' + '/uploads/');
-                req.files.forEach(function (item) {
-                    const image = {
-                        data: fs.readFileSync(pathToFile + item.filename),
-                        contentType: item.mimetype
-                    };
-                    images.push(image)
-                });
+                let thumbnail;
 
-                const temp = [ 'uploads/' + req.files[0].filename ];
-                let quality;
-                if(req.files[0].size > 2621440) quality = 15;
-                else if(req.files[0].size < 419430) quality = 90;
-                else quality = 20;
+                const pathToFile = path.join(__dirname, '..' + '/uploads');
 
-                imagemin( temp, {
-                    destination: 'uploads/',
-                    plugins: [
-                        imageminMozjpeg({quality: quality}),
-                        imageminPngquant({quality: quality})
-                    ]
-                }).then((files) => {
-                    const thumbnail = {
-                        data: files[0].data,
-                        contentType: req.files[0].mimetype
-                    }
-
-                    const eventData = { title: title, date: new Date(date), images: images, description: desc, thumbnail: thumbnail };
-                    req.files.forEach(function (item) {
-                        fs.unlink(pathToFile + item.filename, function (err) {
-                            if (err) {
-                                console.log(err);
-                            }
-                            return;
-                        });
+                if ( req.files["images"] && req.files["thumbnail"]) {
+                    // both
+                    // delete old images
+                    Event.findById(mongoose.Types.ObjectId(req.params.id),"images thumbnail", function(err, data) {
+                        data.images.push(data.thumbnail);
+                        if(err) {
+                            console.log(err);
+                            req.flash("errorMessage", "Something went wrong, while deleting old images. ");
+                        } else {
+                            data.images.forEach(function (item) {
+                                fs.unlink(pathToFile + item, function (err) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                    return;
+                                });
+                            });
+                        }
                     });
 
+                    for(let i=req.files["images"].length-1; i>=0; i--) {
+                        images.push( "/images/events/" + req.files["images"][i].filename);
+                    }
+
+                    const temp = [ 'uploads/images/events/' + req.files["thumbnail"][0].filename ];
+                    let quality;
+
+                    if(req.files["thumbnail"][0].size > 2621440) quality = 15;
+                    else if(req.files["thumbnail"][0].size < 419430) quality = 90;
+                    else quality = 20;
+
+                    imagemin( temp, {
+                        destination: 'uploads/images/events',
+                        plugins: [
+                            imageminMozjpeg({quality: quality}),
+                            imageminPngquant({quality: quality})
+                        ]
+                    }).then((files) => {
+                        thumbnail = "/images/events/" + req.files["thumbnail"][0].filename;
+        
+                        const eventData = { title: title, date: new Date(date), images: images, description: desc, thumbnail: thumbnail };
+        
+                        Event.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), eventData, function (err) {
+                            if (err) {
+                                console.log(err);
+                                req.flash("errorMessage", "Something went wrong, please try again.");
+                                res.redirect("/admin/events");
+                            } else {
+                                req.flash("successMessage", "Event updated successfully.");
+                                res.redirect("/admin/events");
+                            }
+                        });
+                        
+                    });
+
+                } else if ( req.files["images"] && !req.files["thumbnail"] ) {
+                    // only images
+                    // delete old images
+                    Event.findById(mongoose.Types.ObjectId(req.params.id),"images", function(err, data) {
+                        if(err) {
+                            console.log(err);
+                            req.flash("errorMessage", "Something went wrong, while deleting old images. ");
+                        } else {
+                            data.images.forEach(function (item) {
+                                fs.unlink(pathToFile + item, function (err) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                    return;
+                                });
+                            });
+                        }
+                    });
+
+                    for(let i=req.files["images"].length-1; i>=0; i--) {
+                        images.push( "/images/events/" + req.files["images"][i].filename);
+                    }
+
+                    const eventData = { title: title, date: new Date(date), images: images, description: desc };
+        
                     Event.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), eventData, function (err) {
                         if (err) {
                             console.log(err);
                             req.flash("errorMessage", "Something went wrong, please try again.");
-                            res.redirect("/admin");
+                            res.redirect("/admin/events");
                         } else {
                             req.flash("successMessage", "Event updated successfully.");
                             res.redirect("/admin/events");
                         }
                     });
 
-                });
+                } else {
+                    // only thumbnail
+                    // delete old thumbnail
+                    Event.findById(mongoose.Types.ObjectId(req.params.id),"thumbnail", function(err, data) {
+                        if(err) {
+                            console.log(err);
+                            req.flash("errorMessage", "Something went wrong, while deleting old images. ");
+                        } else {
+                            fs.unlink(pathToFile + data.thumbnail, function (err) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                                return;
+                            });
+                        }
+                    });
+
+                    const temp = [ 'uploads/images/events/' + req.files["thumbnail"][0].filename ];
+                    let quality;
+
+                    if(req.files["thumbnail"][0].size > 2621440) quality = 15;
+                    else if(req.files["thumbnail"][0].size < 419430) quality = 90;
+                    else quality = 20;
+
+                    imagemin( temp, {
+                        destination: 'uploads/images/events',
+                        plugins: [
+                            imageminMozjpeg({quality: quality}),
+                            imageminPngquant({quality: quality})
+                        ]
+                    }).then((files) => {
+                        thumbnail = "/images/events/" + req.files["thumbnail"][0].filename;
+        
+                        const eventData = { title: title, date: new Date(date), description: desc, thumbnail: thumbnail };
+        
+                        Event.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), eventData, function (err) {
+                            if (err) {
+                                console.log(err);
+                                req.flash("errorMessage", "Something went wrong, please try again.");
+                                res.redirect("/admin/events");
+                            } else {
+                                req.flash("successMessage", "Event updated successfully.");
+                                res.redirect("/admin/events");
+                            }
+                        });
+                        
+                    });
+                }
 
             } else {
+                // no images
                 const eventData = { title: title, date: new Date(date), description: desc };
 
                 Event.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), eventData, function (err) {

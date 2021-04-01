@@ -16,17 +16,16 @@ const Admin = require("../models/admin"),
         Newsletter = require("../models/newsletter");
 
 const middlewares = require('../middleware/index.js');
-const { json } = require("body-parser");
-const { render } = require("ejs");
 
 /* Multer config */
 const multer = require('multer');
+const e = require("express");
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads')
+        cb(null, 'uploads/images/testimonials')
     },
     filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname.split('.').pop())
+        cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname.slice((file.originalname.lastIndexOf(".") - 1 >>> 0) + 2));
     }
 });
 const limits = {
@@ -241,7 +240,7 @@ router.delete("/admin/delete/:id", middlewares.isAdmin, function (req, res) {
 
 /* testimonials */
 router.get("/admin/testimonials", middlewares.isAdmin, function(req, res) {
-    Testimonial.find({}, function(err, allTestimonials) {
+    Testimonial.find({}, "-image", function(err, allTestimonials) {
         if(err) {
             console.log(err);
             req.flash("errorMessage","Something went wrong, please try again.");
@@ -278,54 +277,28 @@ router.post("/admin/testimonials", middlewares.isAdmin, function(req, res) {
                 res.redirect('/admin/testimonials');
             }
         } else if(req.file){
-            const pathToFile = path.join(__dirname, '..' + '/uploads/' + req.file.filename);
-            const temp = ['uploads/' + req.file.filename];
-            (async () => {
-                const file = await imagemin( temp, {
-                    destination: 'uploads/',
-                    plugins: [
-                        imageminMozjpeg({quality: 40}),
-                        imageminPngquant({quality: 40})
-                    ]
-                })
+            const temp = ['uploads/images/testimonials/' + req.file.filename];
+            imagemin( temp, {
+                destination: 'uploads/images/testimonials',
+                plugins: [
+                    imageminMozjpeg({quality: 40}),
+                    imageminPngquant({quality: 40})
+                ]
+            }).then(() => {
+                const image = '/images/testimonials/' + req.file.filename;
 
-                const image = {
-                    data: file[0].data,
-                    contentType: req.file.mimetype
-    
-                };
-
-                fs.unlink(pathToFile, function(err) {
-                    if (err) {
-                        console.log(err);
-                        return;
-                    }
-                });
-    
                 const newTestinmonial = { name: req.body.name, branch: req.body.branch, content: req.body.content, image: image };
-                Testimonial.create(newTestinmonial, function(err, data) {
+                Testimonial.create(newTestinmonial, function(err) {
                     if(err) {
                         console.log(err);
                         req.flash("errorMessage","Something went wrong, please try again.");
                         res.redirect("/admin/testimonials");
                     } else {
-                        // Testimonial.find({}, function(err, allTestimonials) {
-                        //     if(err) {
-                        //         console.log(err);
-                        //         req.flash("errorMessage","Something went wrong, please try again.");
-                        //         res.redirect("/admin/testimonials");
-                        //     } else{
-                        //         global.allTestimonials = allTestimonials;
-                        //         req.flash("successMessage", "Added new testimonial successfully.");
-                        //         res.redirect('/admin/testimonials');
-                        //     }
-                        // });
-
                         req.flash("successMessage", "Added new testimonial successfully.");
                         res.redirect('/admin/testimonials');
                     }
                 });
-            })(temp, pathToFile);
+            });
         } else {
             req.flash("errorMessage","A image is needed.");
             res.redirect('/admin/testimonials')
@@ -367,76 +340,53 @@ router.put("/admin/testimonials/:id", middlewares.isAdmin, function(req, res) {
                 res.redirect('/admin/testimonials');
             }
         } else if (req.file){
-            const pathToFile = path.join(__dirname, '..' + '/uploads/' + req.file.filename);
-
-            const temp = ['uploads/' + req.file.filename];
-            (async () => {
-                const file = await imagemin( temp, {
-                    destination: 'uploads/',
-                    plugins: [
-                        imageminMozjpeg({quality: 40}),
-                        imageminPngquant({quality: 40})
-                    ]
-                })
-
-                const image = {
-                    data: file[0].data,
-                    contentType: req.file.mimetype
-    
-                };
-
-                fs.unlink(pathToFile, function(err) {
-                    if (err) {
-                        console.log(err);
+            Testimonial.findById(mongoose.Types.ObjectId(req.params.id), "image", function(err, data) {
+                if(err) {
+                    console.log(err);
+                    req.flash("errorMessage", "Something went wrong, while deleting old image.");
+                } else {
+                    const pathToFile = path.join(__dirname, '..' + '/uploads');
+                    fs.unlink(pathToFile + data.image, function (err) {
+                        if (err) {
+                            console.log(err);
+                        }
                         return;
-                    }
-                });
-    
-                const newTestinmonial = { name: req.body.name, branch: req.body.branch, content: req.body.content, image: image };
-                Testimonial.findByIdAndUpdate( mongoose.Types.ObjectId(req.params.id), newTestinmonial, function(err, data) {
+                    });
+                }
+            });
+
+            const temp = ['uploads/images/testimonials/' + req.file.filename];
+            imagemin( temp, {
+                destination: 'uploads/images/testimonials',
+                plugins: [
+                    imageminMozjpeg({quality: 40}),
+                    imageminPngquant({quality: 40})
+                ]
+            }).then(() => {
+                const image = '/images/testimonials/' + req.file.filename;
+
+                const testinmonialData = { name: req.body.name, branch: req.body.branch, content: req.body.content, image: image };
+                Testimonial.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), testinmonialData, function(err) {
                     if(err) {
                         console.log(err);
                         req.flash("errorMessage","Something went wrong, please try again.");
                         res.redirect("/admin/testimonials");
                     } else {
-                        // Testimonial.find({}, function(err, allTestimonials) {
-                        //     if(err) {
-                        //         console.log(err);
-                        //         req.flash("errorMessage","Something went wrong, please try again.");
-                        //         res.redirect("/admin/testimonials");
-                        //     } else{
-                        //         global.allTestimonials = allTestimonials;
-                        //         req.flash("successMessage", "Updated testimonial successfully.");
-                        //         res.redirect('/admin/testimonials');
-                        //     }
-                        // });
-
-                        req.flash("successMessage", "Updated testimonial successfully.");
+                        req.flash("successMessage", "Testimonial updated successfully.");
                         res.redirect('/admin/testimonials');
                     }
                 });
-            })(temp, pathToFile);
+            });
 
         } else {
-            const newTestinmonial = { name: req.body.name, branch: req.body.branch, content: req.body.content };
+            const testinmonialData = { name: req.body.name, branch: req.body.branch, content: req.body.content };
 
-            Testimonial.findByIdAndUpdate( mongoose.Types.ObjectId(req.params.id), newTestinmonial, function(err, data) {
+            Testimonial.findByIdAndUpdate( mongoose.Types.ObjectId(req.params.id), testinmonialData, function(err) {
                 if(err) {
                     console.log(err);
                     req.flash("errorMessage","Something went wrong, please try again.");
                     res.redirect("/admin/testimonials");
                 } else {
-                //     Testimonial.find({}, function(err, allTestimonials) {
-                //         if(err) {
-                //             console.log(err);
-                //             req.flash("errorMessage","Something went wrong, please try again.");
-                //             res.redirect("/admin/testimonials");
-                //         } else{
-                //             global.allTestimonials = allTestimonials;
-                //             req.flash("successMessage", "Updated testimonial successfully.");
-                //             res.redirect('/admin/testimonials');
-                //         }
-                //     });
                     req.flash("successMessage", "Updated testimonial successfully.");
                     res.redirect('/admin/testimonials');
                 }
@@ -447,25 +397,29 @@ router.put("/admin/testimonials/:id", middlewares.isAdmin, function(req, res) {
 });
 
 router.delete("/admin/testimonials/:id", middlewares.isAdmin, function(req, res){
-    Testimonial.findByIdAndRemove(mongoose.Types.ObjectId(req.params.id), function (err, data) {
-        if (err) {
-            req.flash("errorMessage", "Something went wrong, please try again.");
+    Testimonial.findById(mongoose.Types.ObjectId(req.params.id), "image", function(err, data) {
+        if(err) {
+            console.log(err);
+            req.flash("errorMessage", "Something went wrong, while deleting old image.");
             res.redirect('/admin/testimonials');
         } else {
-            // Testimonial.find({}, function(err, allTestimonials) {
-            //         if(err) {
-            //             console.log(err);
-            //             req.flash("errorMessage", "Something went wrong, please try again.");
-            //             res.redirect('/admin/testimonials');
-            //         } else{
-            //             global.allTestimonials = allTestimonials;
-            //             req.flash("successMessage", "Deleted testimonial successfully.");
-            //             res.redirect('/admin/testimonials');
-            //         }
-            // });
+            const pathToFile = path.join(__dirname, '..' + '/uploads');
+            fs.unlink(pathToFile + data.image, function (err) {
+                if (err) {
+                    console.log(err);
+                }
+                return;
+            });
 
-            req.flash("successMessage", "Deleted testimonial successfully.");
-            res.redirect('/admin/testimonials');
+            Testimonial.findByIdAndRemove(mongoose.Types.ObjectId(req.params.id), function (err) {
+                if (err) {
+                    req.flash("errorMessage", "Something went wrong, please try again.");
+                    res.redirect('/admin/testimonials');
+                } else {
+                    req.flash("successMessage", "Deleted testimonial successfully.");
+                    res.redirect('/admin/testimonials');
+                }
+            });
         }
     });
 });
