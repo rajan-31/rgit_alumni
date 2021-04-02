@@ -111,7 +111,8 @@ db.admins.insert({
 - ~~edit(unlink , update) and delete route(unlink)~~
 - ~~err (unlink)~~
 
-images to file system, removed global vars, lazy loading, static serving seperated
+- script to create dummy data _herokru
+- resize images using "sharp"
 
 ------------
 

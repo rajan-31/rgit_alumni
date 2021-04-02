@@ -97,7 +97,7 @@
           <div class="owl-carousel portfolio-details-carousel">
             <% news.images.forEach(function(item){ %>
 
-              <img src="<%=item %>">
+              <img src="/assets/img/image-placeholder-300x200.gif" class="lazyload" data-src="<%= item %>" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.gif';">
               
               <% }) 
                 const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -131,6 +131,7 @@
 
 
   <%- include ('../partials/footer'); -%>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js" crossorigin="anonymous"></script>
 
 </body>
 

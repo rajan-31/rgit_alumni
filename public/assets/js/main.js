@@ -176,6 +176,9 @@
     loop: true,
     items: 1,
     center: true,
+    // lazyLoad: true,
+    margin: 10,
+    infinite: false
   });
 
   // Init AOS
