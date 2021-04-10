@@ -11,10 +11,10 @@
   src: url('../fonts/oswald/Oswald-Medium.ttf'); 
 }
 
-@font-face {
+/* @font-face {
   font-family: Oswald-Bold;
   src: url('../fonts/oswald/Oswald-Bold.ttf'); 
-}
+} */
 
 
 
@@ -29,11 +29,11 @@
 
 body, html {
 	height: 100%;
-	font-family: Oswald-Regular, sans-serif;
+	font-family: Open Sans, sans-serif;
 }
 
 /*---------------------------------------------*/
-a {
+.container-login100 a {
 	font-family: Oswald-Regular;
 	font-size: 14px;
 	line-height: 1.7;
@@ -45,21 +45,21 @@ a {
   -moz-transition: all 0.4s;
 }
 
-a:focus {
+.container-login100 a:focus {
 	outline: none !important;
 }
 
-a:hover {
+.container-login100 a:hover {
 	text-decoration: none;
   color: #111111;
 }
 
 /*---------------------------------------------*/
-h1,h2,h3,h4,h5,h6 {
+/* .container-login100 h1,h2,h3,h4,h5,h6 {
 	margin: 0px;
-}
+} */
 
-p {
+.container-login100 p {
 	font-family: Oswald-Regular;
 	font-size: 14px;
 	line-height: 1.7;
@@ -67,7 +67,7 @@ p {
 	margin: 0px;
 }
 
-ul, li {
+.container-login100 ul, .container-login100 li {
 	margin: 0px;
 	list-style-type: none;
 }
@@ -111,13 +111,13 @@ textarea::-moz-placeholder { color: #43383e;}
 textarea:-ms-input-placeholder { color: #43383e;}
 
 /*---------------------------------------------*/
-button {
+.container-login100 button {
 	outline: none !important;
 	border: none;
 	background: transparent;
 }
 
-button:hover {
+.container-login100 button:hover {
 	cursor: pointer;
 }
 
@@ -128,7 +128,7 @@ iframe {
 /*//////////////////////////////////////////////////////////////////
 [ Utility ]*/
 .txt1 {
-  font-family: Oswald-Bold;
+  /* font-family: Oswald-Bold; */
   font-size: 20px;
   color: #333333;
   line-height: 1.2;
@@ -169,7 +169,7 @@ iframe {
 
 .container-login100 {
   width: 100%;  
-  min-height: 100vh;
+  /* min-height: 100vh; */
   display: -webkit-box;
   display: -webkit-flex;
   display: -moz-box;
@@ -180,7 +180,7 @@ iframe {
   align-items: center;
   padding: 15px;
   position: relative;
-  background-color: #e6e6e6;
+  /* background-color: #e6e6e6; */
 }
 
 .wrap-login100 {
@@ -199,7 +199,7 @@ iframe {
 }
 
 .login100-form-title {
-  font-family: Oswald-Medium;
+  /* font-family: Oswald-Medium; */
   font-size: 30px;
   color: #43383e;
   line-height: 1.2;
@@ -490,4 +490,13 @@ iframe {
 
 .google:hover:before {
   background-color: #dd3d28;
+}
+
+.toast {
+  width: auto;
+  max-width: none;
+}
+
+.toast .toast-body {
+  font-size: 1rem;
 }

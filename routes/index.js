@@ -8,38 +8,56 @@ const path = require("path");
 
 const User  = require("../models/user"),
       News  = require("../models/news"),
-      Event = require("../models/event");
+      Event = require("../models/event"),
+      Testimonial = require("../models/testimonial");
 
 const allMiddlewares = require("../middleware/index.js");
-const allTemplates = require("../services/mail_templates");
-const Testimonial = require("../models/testimonial");
+const allTemplates = require("../configs/mail_templates");
+const logger = require("../configs/winston_config");
 
 router.get("/",function(req, res){
     News.find({}, "-images", function (err, allNews) {
         if (err) {
-            console.log(err);
+            logger.error(err);
         } else {
             Event.find({}, "-images", function (err, allEvents) {
+                /* using cache */
+                let miscData = cacheData.get("home_page_data");
+                if(!miscData) {
+                    Data.findOne({key: "home_page_data"}, function(err, _data) {
+                        if(err) logger.error(err);
+                        else if (_data) {
+                            miscData = _data.value;
+
+                            const success = cacheData.set("home_page_data", miscData);
+                            if(success) {
+                                logger.info("Home page data retrived from Database and cached successfully (in fallback).");
+                            } else {
+                                logger.error("Home page data retrived from Database and but caching failed (in fallback).")
+                            }
+                        } else {
+                            logger.error("Home page data not available in cache as well as database.")
+                            miscData = {
+                                youtubeURL:"https://www.youtube.com/watch?v=rF9cCAQXGgU",
+                                students:"300",
+                                studentsProgress:"40",
+                                alumni:"1000",
+                                alumniProgress:"70"
+                            }
+                        }
+                    });
+                }
+                /*  */
                 if (err) {
-                    console.log(err);
+                    logger.error(err);
                 } else if(req.isAuthenticated()) {
-                    // res.render("Home/home", { news: allNews, events: allEvents, dataFromFile: global.static_data, allTestimonials: global.allTestimonials, countTestimonials: global.allTestimonials.length });
-                    ///////////////
                     Testimonial.find({}, function(err, allTestimonials) {
-                        const raw_data = fs.readFileSync(path.join(__dirname, "..", "data/data.json"));
-                        const dataFromFile = JSON.parse(raw_data);
-                        res.render("Home/home", { news: allNews, events: allEvents, dataFromFile: dataFromFile, allTestimonials: allTestimonials, countTestimonials: allTestimonials.length });
+                        res.render("Home/home", { news: allNews, events: allEvents, miscData: miscData, allTestimonials: allTestimonials, countTestimonials: allTestimonials.length });
                     });
-                    /////////////////
                 } else {
-                    // res.render("Home/guest", { news: allNews, events: allEvents, dataFromFile: global.static_data, allTestimonials: global.allTestimonials, countTestimonials: global.allTestimonials.length });
-                    ///////////////
                     Testimonial.find({}, function(err, allTestimonials) {
-                        const raw_data = fs.readFileSync(path.join(__dirname, "..", "data/data.json"));
-                        const dataFromFile = JSON.parse(raw_data);
-                        res.render("Home/guest", { news: allNews, events: allEvents, dataFromFile: dataFromFile, allTestimonials: allTestimonials, countTestimonials: allTestimonials.length });
+                        res.render("Home/guest", { news: allNews, events: allEvents, miscData: miscData, allTestimonials: allTestimonials, countTestimonials: allTestimonials.length });
                     });
-                    //////////////
                 }
             }).sort({ date: -1 }).limit(3).lean();
         }
@@ -60,25 +78,24 @@ router.get('/signup', function(req, res){
 });
 
 router.post('/signup', function(req, res){
-    const allUserTypes = ["alumni", "student"];
     const receivedData = req.body;
 
-    if ( 
-        allMiddlewares.isValidEmail(receivedData.username) && 
-        receivedData.password.length>=6 && 
-        receivedData.password==receivedData.confirmPassword && 
-        allUserTypes.includes(receivedData.userType) &&
-        receivedData.firstName && 
-        receivedData.lastName
-        ) {
-        User.register(new User({firstName:receivedData.firstName, lastName: receivedData.lastName, username: receivedData.username, userType :receivedData.userType}), receivedData.password, function(err, user){
+    const validEmail = receivedData.username && allMiddlewares.isValidEmail(receivedData.username);
+    const correctPasswordLength = receivedData.password && receivedData.password.length>=6;
+    const matchedPasswords = receivedData.password==receivedData.confirmPassword;
+    const validUserType = ["alumni", "student"].includes(receivedData.userType);
+    const validFirstName = receivedData.firstName && receivedData.firstName.length>0;
+    const validLastName = receivedData.lastName && receivedData.lastName.length>0;
+
+    if ( validEmail && correctPasswordLength && matchedPasswords && validUserType && validFirstName && validLastName ) {
+        User.register(new User({ firstName:receivedData.firstName, lastName: receivedData.lastName, username: receivedData.username, userType :receivedData.userType}), receivedData.password, function(err, user){
             if(err){
                 if (err.name == "UserExistsError") {
                     req.flash("errorMessage", "Email already taken, please try different Email.");
                     res.redirect("/signup");
                 } else{
-                    console.log(err);
-                    req.flash("errorMessage", "Something went wrong, please try again");
+                    logger.error(err);
+                    req.flash("errorMessage", err);
                     res.redirect("/signup");
                 }
             } else{
@@ -114,7 +131,7 @@ router.post('/signup', function(req, res){
                         transporter.close();
                         user.save(function(err, user){
                             if(err) {
-                                console.log(err);
+                                logger.error(err);
                                 req.flash("errorMessage", "Something went wrong, please try again");
                                 res.redirect("/signup");
                             } else {
@@ -131,7 +148,7 @@ router.post('/signup', function(req, res){
                                 }
                             });
                     } catch (err) {
-                        console.log(err);
+                        logger.error(err);
                         req.flash("errorMessage", 'Something went wrong, please try again. If you get "Email already taken", then check your mail for activation link or generate a new one on login page.');
                         res.redirect("/signup");
                     }
@@ -139,13 +156,13 @@ router.post('/signup', function(req, res){
                 });
             }
         });
-    } else if (!allMiddlewares.isValidEmail(receivedData.username)){
+    } else if (!validEmail){
         req.flash("errorMessage", "Invalid email address format!");
         res.redirect("/signup")
-    } else if (receivedData.password.length < 6){
+    } else if (!correctPasswordLength){
         req.flash("errorMessage", "Password must be 6 characters long!");
         res.redirect("/signup")
-    } else if (receivedData.password != receivedData.confirmPassword){
+    } else if (!matchedPasswords){
         req.flash("errorMessage", "Password Mismatch");
         res.redirect("/signup");
     } else {
@@ -171,7 +188,7 @@ router.get('/login', function(req, res){
 router.post('/login', function(req, res, next) {
     passport.authenticate('user', function(err, user, info) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect("/login");
         }
@@ -185,7 +202,7 @@ router.post('/login', function(req, res, next) {
         } else {
             req.logIn(user, function(err) {
                 if (err) { 
-                    console.log(err);
+                    logger.error(err);
                     req.flash("errorMessage", "Something went wrong, please try again.");
                     res.redirect("/login");
                 } else {
@@ -229,7 +246,7 @@ router.get('/logout', function(req, res){
 
     req.session.destroy(function(err) {
         if(err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect('/'); // will always fire after session is destroyed
         } else {
@@ -249,14 +266,14 @@ router.get('/account/activate/:code', function(req, res) {
     const activation_code =  req.params.code
     User.findOne({ activation_code: activation_code} ,'active activation_expires', function(err, data) {
         if(err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect("/login");
         } else if (data) {
             if(data.active == false && data.activation_expires > Date.now()) {
                 User.findByIdAndUpdate(data._id, { active: true}, function(err) {
                     if(err) {
-                        console.log(err);
+                        logger.error(err);
                         req.flash("errorMessage", "Something went wrong, please try again.");
                         res.redirect("/login");
                     } else {
@@ -282,7 +299,7 @@ router.post('/account/activate/resend', function(req, res) {
     const resend_to = req.body.username;
     User.findOne({ username: resend_to}, 'active activation_code activation_expires firstName lastName', async function(err, data) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect("/login");
         } else if(!data) {
@@ -324,7 +341,7 @@ router.post('/account/activate/resend', function(req, res) {
                 transporter.close();
                 data.save(function(err, data){
                     if(err) {
-                        console.log(err);
+                        logger.error(err);
                         req.flash("errorMessage", "Something went wrong, please try again");
                         res.redirect("/login");
                     } else {
@@ -334,7 +351,7 @@ router.post('/account/activate/resend', function(req, res) {
                 });
 
             } catch (err) {
-                console.log(err);
+                logger.error(err);
                 req.flash("errorMessage", "Something went wrong, please check your mails and try again!");
                 res.redirect("/login");
             }
@@ -353,7 +370,7 @@ router.post("/account/password/reset", function(req, res) {
     const _username = req.body.username;
     User.findOne({ username: _username}, "username firstName lastName googleId password_reset_expires password_reset_last", function(err, user) {
         if(err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please check your mails and try again!");
             res.redirect("/login");
         } else if (!user) {
@@ -400,7 +417,7 @@ router.post("/account/password/reset", function(req, res) {
                     transporter.close();
                     user.save(function(err, user){
                         if(err) {
-                            console.log(err);
+                            logger.error(err);
                             req.flash("errorMessage", "Something went wrong, please try again");
                             res.redirect("/login");
                         } else {
@@ -410,7 +427,7 @@ router.post("/account/password/reset", function(req, res) {
                             }
                         });
                 } catch (err) {
-                    console.log(err);
+                    logger.error(err);
                     req.flash("errorMessage", 'Something went wrong, please check your mails and try again!');
                     res.redirect("/login");
                 }
@@ -427,17 +444,18 @@ router.get("/account/password/reset/:code", function (req, res) {
 router.post("/account/password/reset/:code", function (req, res) {
     const code = req.params.code;
     const password = req.body.password;
+    const redirect_back = "/account/password/reset/" + code;
     User.findOne({ password_reset_code: code }, "active", function(err, user) {
         if(err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please again!");
-            res.redirect("/login");
+            res.redirect(redirect_back);
         } else if (!user) {
             req.flash("errorMessage", "Invalid Password Reset Request!");
             res.redirect("/login");
         } else if (password.length < 6) {
             req.flash("errorMessage", "Password length must atleast 6.");
-            res.redirect("/login");
+            res.redirect(redirect_back);
         } else if (user.active == true) {
             req.flash("errorMessage", "Activate your account first!");
             res.redirect("/login");
@@ -447,7 +465,7 @@ router.post("/account/password/reset/:code", function (req, res) {
             user.setPassword(password, function() {
                 user.save(function(err) {
                     if(err) {
-                        console.log(err);
+                        logger.error(err);
                         req.flash("errorMessage", "Something went wrong, please again!");
                         res.redirect("/login");
                     } else {
@@ -516,7 +534,7 @@ router.post('/mail',function(req, res, next) {
               transporter.close();
               res.send("OK")
         } catch (err) {
-            console.log(err);
+            logger.error(err);
             res.send("Something went wrong!!!");
         }
     } else {

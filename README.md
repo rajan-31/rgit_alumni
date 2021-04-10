@@ -33,12 +33,12 @@ db.admins.insert({
 ## **NOTES**
 - ~~check that after expiration of session records gets removed or not~~
 - ~~check that is it requied to add "maxAge" to cookies~~
-- may be use babel
-- may be use webpack
-- check browser support for things likr "forEach" loop
-- make cookies http only
+- ~~may be use babel~~
+- ~~may be use webpack~~
+- ~~check browser support for things likr "forEach" loop~~
+- ~~make cookies http only~~
 - custom error handler
-- Cookie pop up = Hey! Just letting you know that we use cookies to ensure you have the best experience possible on Devfolio. For more information, please read our privacy policy.
+- ~~Cookie pop up = Hey! Just letting you know that we use cookies to ensure you have the best experience possible on Devfolio. For more information, please read our privacy policy.~~
 
 
 
@@ -47,27 +47,29 @@ db.admins.insert({
 - [advanced goals-2](https://www.sitepoint.com/10-tips-make-node-js-web-app-faster/)
 
 ## IMP
-- environment variables: port, ip, google client id & secret, database secret
-- add npm scrpits
-- change titles and links of views
-- user specific middlewares.isLoggedIn middleware
-- mongoose operatins without geting updated data
-- sanitize / validate form data
-- ajax calls for forms
-- email, first name, last name validation
+- ~~environment variables: port, ip, google client id & secret, database secret~~
+- ~~add npm scrpits~~
+- ~~change titles and links of views~~
+- ~~user specific middlewares.isLoggedIn middleware~~
+- ~~mongoose operatins without geting updated data~~
+- //sanitize / validate form data
+- //ajax calls for forms
+- ~~email, first name, last name validation~~
 <!-- - "Sort operation used more than the maximum 33554432 bytes of RAM. Add an index, or specify a smaller limit." (create indexes for collection is a option) -->
 - compatibility on all browsers
 
 
-## PRODUCTION CAHNGES
+## PRODUCTION CHANGES
+- process manager
+- change connectsrc to real domain in helmet content security policy (app.js)
 - activation code URL (it's localhost currently)
 - mail templates
 - mongo url
 - google oauth strategy redirect url
 - env ip
 - env port
-- try to use cdns of scripts/ stylesheets
-- multer ==> In case you need to handle a text-only multipart form, you should use the .none() method
+- ~~try to use cdns of scripts/ stylesheets~~
+- //multer ==> In case you need to handle a text-only multipart form, you should use the .none() method
 - ask about max file size 
 - set maxage for static content
 
@@ -82,7 +84,7 @@ db.admins.insert({
 
 - ~~account activation mail template & check other routes' results~~
 
-- change render to sendFile for static templates & also remove flash
+- //change render to sendFile for static templates & also remove flash
 - ~~don't use lean where save is used~~
 
 - ~~check for objectid error (profile/wrong_id)~~
@@ -112,9 +114,38 @@ db.admins.insert({
 - ~~err (unlink)~~
 
 - script to create dummy data _herokru
-- resize images using "sharp"
+- ~~resize images using "sharp"~~
+- ~~uninstall imagemin~~
+
+- ~~may be onerror not needed~~
+
+- ~~lazy loading admin panel~~
+
+- security
+- ~~helmet~~
+- ~~headers~~
+- env vars
+- ~~clean all templates (css, js)~~
+- ~~minify~~
+
+- ~~toasts~~
+- ~~login pages nav~~
+
+- 
+    css
+    js
+    - vendor
+        contact-email-form/validate.js
+        tableSorter/css/table-sorter.css
+        tableSorter/js/table-sorter.js
+
+- ~~logging~~
+- ~~caching~~
+        
 
 ------------
 
 - ~~git filename case sensitivity err~~
     change name -> stage commit -> change name -> stage commit -> commit
+
+- use shimmer instead of loading spinner

@@ -212,7 +212,7 @@
                 <!-- <th>ID</th> -->
                 <!-- <th class="no-sort">Index</th> -->
                 <th id="simulate_click">Name</th>
-                <th class="keep-whitespace">   Branch</th>
+                <th><center>Branch</center></th>
                 <th class="no-sort"><center>Edit</center></th>
                 <th class="no-sort"><center>Delete</center></th>
               </tr>
@@ -222,7 +222,7 @@
                 <tr>
                   <!-- <td> <%# allTestimonials[i]._id %> <%# i+1 %> </td> -->
                   <td><%= allTestimonials[i].name %></td>
-                  <td class="pl-4"><%= allTestimonials[i].branch %></td>
+                  <td class="text-center"><%= allTestimonials[i].branch %></td>
                   <td>
                     <a href="/admin/testimonials/<%= allTestimonials[i]._id %>/edit" class="btn btn-block btn-warning btn-sm btn-fix-size btn-action-spinner">Edit</a>
                   </td>

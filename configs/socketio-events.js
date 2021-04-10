@@ -17,7 +17,7 @@ module.exports = function (io, User, sessionMiddleware, passport) {
         /* send chats */
         User.findById( socket.request.user._id, 'chats unread', function(err, userData){
             if(err){
-                console.log(err);
+                logger.error(err);
             } else {
                 socket.username = socket.request.user.fullName;
                 socket.emit("my chats", userData.chats, userData.unread);
@@ -47,7 +47,7 @@ module.exports = function (io, User, sessionMiddleware, passport) {
             },
             function(err){
                 if (err)
-                    console.log(err)
+                    logger.error(err)
                 else {
                     User.findByIdAndUpdate( to, {
                         "$push": {
@@ -64,7 +64,7 @@ module.exports = function (io, User, sessionMiddleware, passport) {
                     },
                     function(err){
                         if (err)
-                            console.log(err)
+                            logger.error(err)
                         else {
                             // send to receiver
                             socket.to(to).emit("private message", {
@@ -86,7 +86,7 @@ module.exports = function (io, User, sessionMiddleware, passport) {
                                     },
                                     function(err) {
                                         if(err) {
-                                            console.log(err)
+                                            logger.error(err)
                                         }
                                     });
                                 }
@@ -107,7 +107,7 @@ module.exports = function (io, User, sessionMiddleware, passport) {
                 },
                 function(err) {
                     if(err) {
-                        console.log(err)
+                        logger.error(err)
                     }
                 });
         });

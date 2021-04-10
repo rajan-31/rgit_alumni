@@ -25,10 +25,32 @@
     <style>
         #profile-img {
             object-fit: cover;
-            width:200px;
-            height:200px;
-            border-radius: 20px;
-            box-shadow: 0px 0px 10px #000;
+            /* width:200px;
+            height:200px; */
+            border-radius: 50%;
+            /* box-shadow: 1px 1px 10px #000; */
+            margin-bottom: 10px;
+        }
+
+        #profile-img-container {
+            width: 300px;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: rgba(255, 255, 255);
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        }
+
+        #profile-img-container:hover {
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+
+        .profile-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: rgb(105, 105, 105);
+            text-align: center;
         }
 
         input[type=checkbox] {
@@ -39,7 +61,19 @@
             height: auto;
             min-height: 38px;
             max-height: 6em; 
-            overflow: auto;
+            overflow-y: auto;
+            /* overflow-x: hidden; */
+        }
+        
+        .custom-show-- {
+            /* height: auto;
+            min- */
+            height: 38px;
+            /* max-height: 6em;  */
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            /* word-break: break-word; */
         }
 
         .custom-show-skills {
@@ -62,20 +96,18 @@
             margin-left: 5px;
             margin-top: 5px;
             position: relative;
-            max-width: 100%;
+            max-width: fit-content;
             overflow: hidden;
             text-overflow: ellipsis;
             vertical-align: bottom;
             white-space: nowrap;
         }
     </style>
-
+px
     <!-- Jquery with fallback -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-  <script>
-     window.jQuery || document.write('<script src="../../assets/vendor/jquery.min.js"><\/script>');
-  </script>
+  <script>window.jQuery || document.write('<script src="../../assets/vendor/jquery.min.js"><\/script>');</script>
 
 </head>
 <body>
@@ -142,24 +174,19 @@
                     <h2>Profile</h2>
                 </div>
                     
-                    <div id="profile-image" class="d-flex justify-content-center">
-                        
-                            <i class="fas fa-user" style="font-size: 200px;"></i>
+                    <div id="profile-img-container">
+                        <center>
+                            <% if( profileImage ) { %>
+                                <img src="<%=profileImage%>" id="profile-img" height="200" width="200">
+                            <% } else { %>
+                                <i class="fas fa-user" style="font-size: 200px;"></i>
+                            <% } %>
+                        </center>
+                        <div class="profile-name"><%= firstName  %> <%= lastName  %></div>
                     </div>
                 
                 
                 <div class="mt-5">
-                    <!-- first & last name -->
-                    <div class="row text-center">
-                        <div class="col-6">
-                            <label>First Name</label>
-                            <div class="form-control"><%= firstName  %></div>
-                        </div>
-                        <div class="col-6">
-                            <label>Last Name</label>
-                            <div class="form-control"><%= lastName  %></div>
-                        </div>
-                    </div><br>
                     <div class="form-group">
                         <div class="text-center pb-1"><strong>Education At Our Institute</strong> </div>
                         <div class="row text-center">
@@ -205,13 +232,13 @@
 
                     <div class="form-group row">
                         <!-- gender -->
-                        <div class="col-md-6 col-sm-12">
+                        <div class="col-6">
                             <label><strong>Gender</strong></label><br>
                             <div class="form-control text-capitalize"><%= profile.gender  %></div>
                         </div>
 
                         <!-- dob -->
-                        <div class="col-md-6 col-sm-12">
+                        <div class="col-6">
                             <label><strong>Date Of Birth</strong></label>
                             <div id="dob" class="form-control"><%= profile.dob  %></div>
                         </div>
@@ -231,7 +258,7 @@
                             </div>
                             
                             <div class="col-6 form-group">
-                                <div class="form-control"><%= profile.address.homeAddress.country %></div>
+                                <div class="form-control custom-show--"><%= profile.address.homeAddress.country %></div>
                             </div>
                             <div class="col-6 form-group">
                                 <div class="form-control"><%= profile.address.homeAddress.zipcode %></div>
@@ -250,7 +277,7 @@
                                 <div class="form-control custom-show"><%= profile.address.businessAddress.addressLine1 %></div>
                             </div>
                             <div class="col-6 form-group">
-                                <div class="form-control"><%= profile.address.businessAddress.country %></div>
+                                <div class="form-control custom-show--"><%= profile.address.businessAddress.country %></div>
                             </div>
                             <div class="col-6 form-group">
                                 <div class="form-control"><%= profile.address.businessAddress.zipcode %></div>
@@ -388,7 +415,6 @@
         if($("#data-skills-public").text() != "") {
             temp_skills = $("#data-skills-public").text().split("|");
             for(var i = temp_skills.length-1; i>=0; i--) {
-                console.log(temp_skills.length)
                 $("#skills-public").append("<span class='skill-item'>"+temp_skills[i]+"</span>");
             }
         }

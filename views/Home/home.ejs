@@ -29,9 +29,7 @@
   <!-- Jquery with fallback -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-  <script>
-     window.jQuery || document.write('<script src="assets/vendor/jquery.min.js"><\/script>');
-  </script>
+  <script>window.jQuery || document.write('<script src="assets/vendor/jquery.min.js"><\/script>');</script>
 
 </head>
 
@@ -86,7 +84,7 @@
           <h2>We believe in the Possibilities.</h2>
           <div class="d-lg-flex">
             <a href="#about" class="btn-get-started scrollto">Get Started</a>
-            <a id="youtuneVideoURL" href="<%= dataFromFile.youtubeURL %>" class="venobox btn-watch-video" data-vbtype="video" data-autoplay="true"> Watch Video <i class="far fa-play-circle"></i></a>
+            <a id="youtuneVideoURL" href="<%= miscData.youtubeURL %>" class="venobox btn-watch-video" data-vbtype="video" data-autoplay="true"> Watch Video <i class="far fa-play-circle"></i></a>
           </div>
         </div>
         <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-in" data-aos-delay="200">
@@ -99,13 +97,13 @@
 
   <!-- start flash message -->
   <% if(successMessage && successMessage.length>0 ){ %>
-    <div class="alert alert-success mb-0" role="alert">
+    <div class="alert mb-0" role="alert" style="border: 2px solid rgb(188 188 188); border-radius: 0;">
       <div class="container text-center">
         <%= successMessage %>
       </div>
     </div>
-  <% } else if(errorMessage && errorMessage.length>0 ){ %>
-    <div class="alert alert-danger mb-0" role="alert">
+  <% } else if (errorMessage && errorMessage.length>0 ){ %>
+    <div class="alert alert-danger mb-0" role="alert" style="border: none; color: #000000;">
       <div class="container text-center">
         <%= errorMessage %>
       </div>
@@ -122,51 +120,51 @@
         <div class="row" data-aos="zoom-in" id="loadClients">
 
           <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/infosys.png" class="img-fluid" alt=""> 
+            <img src="assets/img/clients/client-1.png" class="img-fluid" alt=""> 
           </div>
 
           <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/amazon_PNG6.png" class="img-fluid" alt="">
+            <img src="assets/img/clients/client-2.png" class="img-fluid" alt="">
           </div>
 
           <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/hewlett-packard-logo-png-transparent.png" class="img-fluid" alt="">
+            <img src="assets/img/clients/client-3.png" class="img-fluid" alt="">
           </div>
 
           <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/capgemini-logo-png.png" class="img-fluid" alt="">
+            <img src="assets/img/clients/client-4.png" class="img-fluid" alt="">
           </div>
 
           <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/TCS-logo.png" class="img-fluid" alt="">
+            <img src="assets/img/clients/client-5.png" class="img-fluid" alt="">
           </div>
 
           <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/accenture-logo-png-transparent.png" class="img-fluid" alt="">
+            <img src="assets/img/clients/client-6.png" class="img-fluid" alt="">
           </div>
 
           <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/Cognizant-Logo.wine.png" class="img-fluid" alt="">
+            <img src="assets/img/clients/client-7.png" class="img-fluid" alt="">
           </div>
 
           <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/lt.png" class="img-fluid" alt="">
+            <img src="assets/img/clients/client-8.png" class="img-fluid" alt="">
           </div>
 
           <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/pngegg.png" class="img-fluid" alt="">
+            <img src="assets/img/clients/client-9.png" class="img-fluid" alt="">
           </div>
 
           <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/pngeggh.png" class="img-fluid" alt="">
+            <img src="assets/img/clients/client-10.png" class="img-fluid" alt="">
           </div>
 
           <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/pngeggr.png" class="img-fluid" alt="">
+            <img src="assets/img/clients/client-11.png" class="img-fluid" alt="">
           </div>
 
           <div class="col-lg-2 col-md-4 col-6 d-flex align-items-center justify-content-center">
-            <img src="assets/img/clients/pngeggb.png" class="img-fluid" alt="">
+            <img src="assets/img/clients/client-12.png" class="img-fluid" alt="">
           </div>
          
 
@@ -237,10 +235,10 @@
             <div class="accordion-list">
               <ul>
                 <li>
-                  <a data-toggle="collapse" class="collapse" href="#accordion-list-1"><span>01</span>Vision & Mission<i class="fas fa-angle-down icon-show"></i><i class="fas fa-angle-up icon-close"></i></a>
+                  <a data-toggle="collapse" class="collapse" href="#accordion-list-1"><span class="number-bullet">01</span>Vision & Mission<i class="fas fa-angle-down icon-show"></i><i class="fas fa-angle-up icon-close"></i></a>
                   <div id="accordion-list-1" class="collapse show" data-parent=".accordion-list">
                     <p>
-                      Training and Placement department is dedicated towards proper placement of students .It advices students on career options and provides the latest information on training & employment opportunities. <br>&nbsp;&nbsp;
+                      Training and Placement department is dedicated towards proper placement of students. It advices students on career options and provides the latest information on training & employment opportunities. <br>&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;Focus areas are providing guidance, counseling and bringing students and potential employers together to achive the best possible placement depending on the market conditions .The department looks after the interest of the students and the employers by providing them the necessary platform.
                     </p>
                   </div>
@@ -249,28 +247,28 @@
                 
 
                 <li>
-                  <a data-toggle="collapse" href="#accordion-list-3" class="collapsed"><span>02</span>Objectives<i class="fas fa-angle-down icon-show"></i><i class="fas fa-angle-up icon-close"></i></a>
+                  <a data-toggle="collapse" href="#accordion-list-3" class="collapsed"><span class="number-bullet">02</span>Objectives<i class="fas fa-angle-down icon-show"></i><i class="fas fa-angle-up icon-close"></i></a>
                   <div id="accordion-list-3" class="collapse" data-parent=".accordion-list">
                     <p>
-                      <ul>
-                        <li>To organize campus recruitment for final year students in reputed companies.</li>
+                      <ul class="points">
+                        <li><span class="fas fa-circle circle-bullet"></span>To organize campus recruitment for final year students in reputed companies.</li>
 
-                        <li>To facilitate companies for recruiting candidates as per their requirements.</li>
+                        <li><span class="fas fa-circle circle-bullet"></span>To facilitate companies for recruiting candidates as per their requirements.</li>
 
-                        <li>Creating awareness amongst the students regarding various career options.</li>
+                        <li><span class="fas fa-circle circle-bullet"></span>Creating awareness amongst the students regarding various career options.</li>
 
-                        <li>To enhance students employability by providing training in Aptitude & soft skills.</li>
+                        <li><span class="fas fa-circle circle-bullet"></span>To enhance students employability by providing training in Aptitude & soft skills.</li>
 
-                        <li>Helping students for summer training/internship programme.</li>
+                        <li><span class="fas fa-circle circle-bullet"></span>Helping students for summer training/internship programme.</li>
 
-                        <li><ul>Bridging gap between Industry and Academia through:
-                        <li>Seminars, Guest Lectures, Conferences, Corporate Meets & Industrial Visits etc.</li>
+                        <li>
+                          <ul><span class="fas fa-circle circle-bullet"></span>Bridging gap between Industry and Academia through:
+                            <li><span class="far fa-circle circle-bullet"></span>Seminars, Guest Lectures, Conferences, Corporate Meets & Industrial Visits etc.</li>
 
-                        <li>Coordinating with various departments for imparting value added industry skills.</li></ul></li>
-
-
-
-                      </ul>
+                            <li><span class="far fa-circle circle-bullet"></span>Coordinating with various departments for imparting value added industry skills.</li>
+                          </ul>
+                        </li>
+                      </ul> 
                     </p>
                   </div>
                 </li>
@@ -295,7 +293,7 @@
             <img src="assets/img/skills.png" class="img-fluid" alt="">
           </div>
           <div class="col-lg-6 pt-4 pt-lg-0 content" data-aos="fade-left" data-aos-delay="100">
-            <h3 class="text-center">We Have More Than <%= dataFromFile.students %>+ Students And <%= dataFromFile.alumni %>+ Alumni Registered<br>Thank You For Joining Us!</h3>
+            <h3 class="text-center">We Have More Than <%= miscData.students %>+ Students And <%= miscData.alumni %>+ Alumni Registered<br>Thank You For Joining Us!</h3>
             <p class="font-italic">
              
             </p>
@@ -303,16 +301,16 @@
             <div class="skills-content">
 
               <div class="progress">
-                <span class="skill">STUDENTS<i id="studentProgressBarText" class="val"><%= dataFromFile.students %></i></span>
+                <span class="skill">STUDENTS<i id="studentProgressBarText" class="val"><%= miscData.students %></i></span>
                 <div class="progress-bar-wrap">
-                  <div id="studentProgressBarFill" class="progress-bar" role="progressbar" aria-valuenow="<%= dataFromFile.studentsProgress %>" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div id="studentProgressBarFill" class="progress-bar" role="progressbar" aria-valuenow="<%= miscData.studentsProgress %>" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
 
               <div class="progress">
-                <span class="skill">Alumni<i id="alumniProgressBarText" class="val"><%= dataFromFile.alumni %></i></span>
+                <span class="skill">Alumni<i id="alumniProgressBarText" class="val"><%= miscData.alumni %></i></span>
                 <div class="progress-bar-wrap">
-                  <div id="alumniProgressBarFill" class="progress-bar" role="progressbar" aria-valuenow="<%= dataFromFile.alumniProgress %>" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div id="alumniProgressBarFill" class="progress-bar" role="progressbar" aria-valuenow="<%= miscData.alumniProgress %>" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
 
@@ -343,7 +341,7 @@
             <div class="icon-box keep-width">
           
               <div>
-                <center><img class="lazyload" src="/assets/img/image-placeholder-300x200.gif"  data-src="<%= item.thumbnail %>%>" width="300" height="200" alt="Not Found" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.gif';" /></center>
+                <center><img class="lazyload" src="/assets/img/image-placeholder-300x200.gif"  data-src="<%= item.thumbnail %>%>" width="300" height="200" alt="Not Found" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" /></center>
               </div>
               <hr>
               <center>
@@ -395,7 +393,7 @@
             <div class="icon-box keep-width">
           
               <div>
-                <center><img class="lazyload" src="/assets/img/image-placeholder-300x200.gif" data-src="<%= item.thumbnail %>" width="300" height="200" alt="Not Found" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.gif';" /></center>
+                <center><img class="lazyload" src="/assets/img/image-placeholder-300x200.gif" data-src="<%= item.thumbnail %>" width="300" height="200" alt="Not Found" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" /></center>
               </div>
               <hr>
               <center>
@@ -432,7 +430,7 @@
     <!-- ====== End EVENTS ====== -->
     <!-- ======= Testimonials ========= -->
 
-    <section id="testimonials" class="services portfolio-details">
+    <section id="testimonials" class="services portfolio-details section-bg">
     <div class="container" data-aos="fade-up">
     
         <div class="section-title">
@@ -442,20 +440,18 @@
           <div class="owl-carousel testimonials-slider">
 
             <% for(let i = 0; i < countTestimonials; i++) {%>
-              <div class="testimonial item">
-                <div class="testi-img d-flex justify-content-center">
-                  <img class="lazyload" src="/assets/img/user-placeholder-100x100.jpg" data-src="<%= allTestimonials[i].image %>" alt="Student" onerror="this.onerror=null;this.src='/assets/img/user-placeholder-100x100.jpg';">
+              <div class="testi-main">
+                <div class="testi-container-img d-flex justify-content-center">
+                  <img width="100" height="100" class="lazyload testi-img" src="/assets/img/user-placeholder-100x100.jpg" data-src="<%= allTestimonials[i].image %>" alt="Student" onerror="this.onerror=null;this.src='/assets/img/user-placeholder-100x100.jpg';">
                 </div>
-            
-                <div class="testi-header text-center">
-                  <span class="testi-name"><%= allTestimonials[i].name %>,</span>
-                  <span class="testi-branch"><%= allTestimonials[i].branch %></span>
-                </div>
-            
-                <div class="testi-content-container">
+                <div class="testi-container-content">
                   <i class="fas fa-quote-left"></i>
-                  <span class="testi-content text-center"> <%= allTestimonials[i].content %> </span>
+                  <%= allTestimonials[i].content %>
                   <i class="fas fa-quote-right"></i>
+                </div>
+                <div class="testi-container-info">
+                  <div class="testi-name"><%= allTestimonials[i].name %></div>
+                  <div class="testi-branch"><%= allTestimonials[i].branch %></div>
                 </div>
               </div>
             <% } %>

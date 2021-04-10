@@ -1,10 +1,13 @@
 const express = require("express"),
 router = express.Router(),
-mongoose = require("mongoose");
+mongoose = require("mongoose"),
+sharp = require("sharp");
+sharp.cache = false;
 
 const User = require("../models/user");
 
 const middlewares = require('../middleware/index.js');
+const logger = require("../configs/winston_config");
 
 /* Multer config */
 const fs = require('fs'),
@@ -45,7 +48,9 @@ let profileImageUpload = upload.single('profileImage')
 
 /* profile route */
 router.get('/profile', middlewares.rejectAdmin, function(req, res){
-    User.findById( req.user._id, '-username', function(err, userData){
+    try {
+        const id = mongoose.Types.ObjectId(req.user._id);
+        User.findById( id, '-username', function(err, userData){
         if(err){
             req.flash("errorMessage","Something went wrong, please try again.");
             res.render("/")
@@ -54,15 +59,22 @@ router.get('/profile', middlewares.rejectAdmin, function(req, res){
             res.render("Profile/profile", userData);
         }
     });
+    } catch (error) {
+        logger.error("Invalid Profile ID in request object.");
+        req.flash("errorMessage","Can't find your profile, please try again.");
+        res.redirect('/');
+    }
 });
 
 router.post('/profile', middlewares.isLoggedIn, function(req, res){
     const receivedData = req.body;
+    
+    if(receivedData && receivedData.profile)
     receivedData.profile.dob = new Date(receivedData.profile.dob);
-    if(!receivedData.username && !receivedData.firstName && !receivedData.salt)
-    User.findByIdAndUpdate(req.user._id, receivedData, function(err, data){
+
+    User.findByIdAndUpdate(mongoose.Types.ObjectId(req.user._id), { profile: receivedData.profile }, function(err, data){
         if(err){
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
             res.redirect("/profile");
         } else {
@@ -70,17 +82,25 @@ router.post('/profile', middlewares.isLoggedIn, function(req, res){
             res.redirect("/profile");
         }
     });
-    // res.redirect('/profile');
 });
 
 router.post('/profile/accountData', middlewares.isLoggedIn, function (req, res) {
     const receivedData = req.body;
-    if (!receivedData.receiveMsg) receivedData.receiveMsg="false";
 
-    if (receivedData.userType && ["student", "alumni"].includes(receivedData.userType) && receivedData.firstName != "" && !receivedData.username && !receivedData.hash) {
-        User.findByIdAndUpdate(req.user._id, receivedData, function (err, data) {
+    if (!receivedData.receiveMsg) receivedData.receiveMsg="false";
+    console.log(receivedData)
+
+    if (receivedData.userType && ["student", "alumni"].includes(receivedData.userType) && 
+        receivedData.firstName && receivedData.firstName.length>0) {
+        const newData = {
+            firstName: receivedData.firstName,
+            lastName: receivedData.lastName,
+            userType: receivedData.userType,
+            receiveMsg: receivedData.receiveMsg
+        }
+        User.findByIdAndUpdate(mongoose.Types.ObjectId(req.user._id), newData, function (err, data) {
             if (err) {
-                console.log(err);
+                logger.error(err);
                 req.flash("errorMessage", "Something went wrong, please try again.")
                 res.redirect("/profile");
             } else if (receivedData.firstName && receivedData.firstName != req.user.firstName) {
@@ -109,7 +129,7 @@ router.post('/profile/image', middlewares.isLoggedIn, function(req, res){
                     req.flash("errorMessage","Please choose a file of type JPG or JPEG or PNG");
                     res.redirect('/profile');
                 } else {
-                    console.log(err);
+                    logger.error(err);
                     req.flash("errorMessage","Something went wrong with file upload.");
                     res.redirect('/profile');
                 }
@@ -120,31 +140,46 @@ router.post('/profile/image', middlewares.isLoggedIn, function(req, res){
             }
         } else if(req.file){
             const pathToFile = path.join(__dirname, '..' + '/uploads');
-
-            User.findById(mongoose.Types.ObjectId(req.user._id), "profileImage", function(err, data) {
+            let id = mongoose.Types.ObjectId(req.user._id);
+            
+            User.findById(id, "profileImage", function(err, data) {
                 if(err) {
-                    console.log(err);
+                    logger.error(err);
                     req.flash("errorMessage", "Something went wrong, while deleting old profile image. ");
                 } else if (data.profileImage) {
                     fs.unlink(pathToFile + data.profileImage, function(err) {
                         if (err) {
-                            console.log(err);
+                            logger.error(err);
                         }
                         return;
                     });
                 }
             });
 
-            const image = "/images/users/" + req.file.filename;
-            User.findByIdAndUpdate(mongoose.Types.ObjectId(req.user._id), { profileImage: image }, function (err) {
-                if (err) {
-                    console.log(err);
-                    req.flash("errorMessage", "Something went wrong, please try again.");
-                    res.redirect('/profile')
-                } else {
-                    req.flash("successMessage", "Updated profile image successfully.");
-                    res.redirect('/profile')
-                }
+            const temp = path.join(__dirname, '..' + '/uploads/images/users/', req.file.filename);
+
+            sharp(temp).resize(400, 400, {
+                fit: "cover"
+            })
+            .toBuffer()
+            .then((buffer) => {
+                sharp(buffer).toFile(temp);
+                const image = "/images/users/" + req.file.filename;
+                User.findByIdAndUpdate(id, { profileImage: image }, function (err) {
+                    if (err) {
+                        logger.error(err);
+                        req.flash("errorMessage", "Something went wrong, please try again.");
+                        res.redirect('/profile')
+                    } else {
+                        req.flash("successMessage", "Updated profile image successfully.");
+                        res.redirect('/profile')
+                    }
+                });
+                
+            }).catch((err) => {
+                logger.error(err)
+                req.flash("errorMessage", "Something went wrong, please try again.");
+                res.redirect('/profile');
             });
 
         } else {
@@ -156,24 +191,25 @@ router.post('/profile/image', middlewares.isLoggedIn, function(req, res){
 
 router.delete('/profile/image', middlewares.isLoggedIn, function(req, res){
     const pathToFile = path.join(__dirname, '..' + '/uploads');
-    
-    User.findById(mongoose.Types.ObjectId(req.user._id), "profileImage", function(err, data) {
+    const id = mongoose.Types.ObjectId(req.user._id);
+
+    User.findById(id, "profileImage", function(err, data) {
         if(err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, while deleting old profile image. ");
         } else if (data.profileImage) {
             fs.unlink(pathToFile + data.profileImage, function(err) {
                 if (err) {
-                    console.log(err);
+                    logger.error(err);
                 }
                 return;
             });
         }
     });
 
-    User.findByIdAndUpdate(mongoose.Types.ObjectId(req.user._id), { profileImage: "" }, function(err, userData){
+    User.findByIdAndUpdate(id, { profileImage: "" }, function(err, userData){
         if(err){
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect('/profile')
         } else {
@@ -184,16 +220,25 @@ router.delete('/profile/image', middlewares.isLoggedIn, function(req, res){
 });
 
 router.get('/profile/:id', function(req, res){
-    User.findById(mongoose.Types.ObjectId(req.params.id), function(err, userData){
-        if(err){
-            console.log(err);
-        } else if(userData){
-            res.render('Profile/publicProfileView', userData );
-        } else {
-            req.flash("errorMessage", "Something went wrong, please try again later.");
-            res.redirect('/communicate');
-        }
-    })
+    try {
+        const id = mongoose.Types.ObjectId(req.params.id);
+        User.findById(id, function(err, userData){
+            if(err){
+                logger.error(err);
+                req.flash("errorMessage", "Something went wrong, please try again later.");
+                res.redirect('/communicate');
+            } else if(userData){
+                res.render('Profile/publicProfileView', userData );
+            } else {
+                req.flash("errorMessage", "User Data not found.");
+                res.redirect('/communicate');
+            }
+        });
+    } catch (error) {
+        logger.error("Invalid Profile ID");
+        req.flash("errorMessage", "Invalid profile ID, please try again.");
+        res.redirect('/communicate');
+    }
 });
 
 /* end profile routes */
@@ -203,7 +248,7 @@ router.get('/profile/:id', function(req, res){
 router.get('/communicate', middlewares.isLoggedIn, function(req, res){
     User.find({ userType: "alumni", receiveMsg: true }, "firstName lastName profileImage profile.bio", function(err, users) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
             res.redirect("/");
         } else if (users.length > 0) {
@@ -221,12 +266,13 @@ router.post("/communicate/page/:num", middlewares.isLoggedIn, function (req, res
     const lastPage = req.params.num;
     User.find({ _id: { $gt: mongoose.Types.ObjectId(lastId) } }, "firstName lastName profileImage profile.bio", function (err, users) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
-            res.redirect("/");
+            res.redirect("/communicate");
         } else if (users.length > 0) {
+            console.log("in")
             const lastId = users[users.length - 1]._id;
-            res.render('paged_communicate', { alumni: users, countAlumni: users.length, lastId: lastId, lastPage: lastPage });
+            res.render('communicate', { alumni: users, countAlumni: users.length, lastId: lastId, lastPage: lastPage });
         } else {
             req.flash("errorMessage", "No more Users.")
             res.redirect("/communicate");

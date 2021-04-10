@@ -12,24 +12,24 @@
   <link href="../assets/img/favicon.png" rel="icon">
   <link href="../assets/img/logo.png" rel="apple-touch-icon">
 
-    <!-- Ionicons -->
-    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    
-    <!-- overlayScrollbars -->   
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
-    
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  
+  <!-- overlayScrollbars -->   
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
+  
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
-    <!-- Theme style -->
-    <link rel="stylesheet" href="../assets/css/adminlte.min.css">
+  <link href="assets/vendor/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Jquery with fallback -->
+  <!-- Theme style -->
+  <link rel="stylesheet" href="../assets/css/adminlte.css">
+  
+  <!-- Jquery with fallback -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-  <script>
-     window.jQuery || document.write('<script src="../assets/vendor/jquery.min.js"><\/script>');
-  </script>
+  <script>window.jQuery || document.write('<script src="../assets/vendor/jquery.min.js"><\/script>');</script>
   </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -60,7 +60,7 @@
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo main-->
             <a href="/" class="brand-link">
-                <img src="assets/img/logo.png" alt="APSIT" class="brand-image img-circle elevation-3"
+                <img src="../assets/img/logo.png" alt="APSIT" class="brand-image img-circle elevation-3"
                     style="opacity: .8">
                 <span class="brand-text font-weight-light">APSIT Alumni Portal</span>
             </a>
@@ -314,7 +314,7 @@
             <div class="col-12">
               <div class="form-group">
                 <label for="">Youtube Video URL</label>
-                <input type="text" name="youtubeURL" value="<%= dataFromFile.youtubeURL %>" class="form-control" required="required">
+                <input type="text" name="youtubeURL" value="<%= miscData.youtubeURL %>" class="form-control" required="required">
               </div>
             </div>
 
@@ -325,7 +325,7 @@
             <div class="col-6 col-lg-3">
               <div class="form-group">
                 <label for="">Student Count</label>
-                <input type="number" min="0" max="" name="students" value="<%= dataFromFile.students %>" class="form-control"
+                <input type="number" min="0" max="" name="students" value="<%= miscData.students %>" class="form-control"
                   required="required">
               </div>
             </div>
@@ -333,7 +333,7 @@
             <div class="col-6 col-lg-3">
               <div class="form-group">
                   <label for="">Student Progress (%)</label>
-                  <input type="number" min="0" max="100" name="studentsProgress" value="<%= dataFromFile.studentsProgress %>"
+                  <input type="number" min="0" max="100" name="studentsProgress" value="<%= miscData.studentsProgress %>"
                     class="form-control" required="required">
               </div>
             </div>
@@ -343,7 +343,7 @@
             <div class="col-6 col-lg-3">
               <div class="form-group">
                 <label for="">Alumni Count</label>
-                <input type="number" min="0" max="" name="alumni" value="<%= dataFromFile.alumni %>" class="form-control"
+                <input type="number" min="0" max="" name="alumni" value="<%= miscData.alumni %>" class="form-control"
                   required="required">
               </div>
             </div>
@@ -351,7 +351,7 @@
             <div class="col-6 col-lg-3">
               <div class="form-group">
                   <label for="">Alumni Progress (%)</label>
-                  <input type="number" min="0" max="100" name="alumniProgress" value="<%= dataFromFile.alumniProgress %>"
+                  <input type="number" min="0" max="100" name="alumniProgress" value="<%= miscData.alumniProgress %>"
                     class="form-control" required="required">
               </div>
             </div>
@@ -369,9 +369,52 @@
         </div>
     </form>
 
-    </div>
-    </section>
+    </div><hr>
 
+    <div class="col-lg-12 mb-3"><br>
+
+      <div>
+      <center><h1 class="m-0 text-dark">Change Recruiters</h1></center><br>
+      </div>
+
+      <div class="small text-center">
+        <i class="fas fa-exclamation-circle"></i>
+        Strictly PNG | If changes are not reflected, then clear cache & reload or see home page in incognito window. 
+      </div>
+  
+      <div class="row">
+
+        <% for(let c=1; c<=12; c++) { %>
+          <div class="col-lg-4 col-md-4 col-sm-12 recruiter-container">
+  
+            <div class="font-weight-bold text-dark text-center">Recruiter <%= c %></div>
+  
+            <div class="d-flex justify-content-center">
+              <img data-src="../assets/img/clients/client-<%= c %>.png" width="90" class="lazyload justify-content-center" alt="Not found">
+            </div>
+    
+            <div class="form-row">
+              <div class="custom-file col">
+                <form action="/admin/recruiters" id="recruiter-<%= c %>" method="POST" enctype="multipart/form-data">
+                  <label class="custom-file-label">Choose image...</label>
+                  <input type="file" accept=".jpg,.jpeg,.png" name="client-<%= c %>" class="custom-file-input" required="required">
+                </form>
+              </div>
+              <div class="col-md-auto col-lg-auto col-sm-auto col-xs-auto text-center">
+                <button type="submit" form="recruiter-<%= c %>" class="btn btn-primary"><i class="fas fa-upload"></i> Update</button>
+              </div>
+            </div>
+            
+          </div>
+          
+        <% } %>
+
+      
+      </div>
+  
+    </div>
+
+    </section>
     
     <!-- /.Left col -->
     <!-- right col (We are only adding the ID to make the widgets sortable)-->
@@ -385,5 +428,7 @@
     </div>
     <!-- /.content-wrapper -->
 <%- include ('../partials/adminFooter'); -%>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js" crossorigin="anonymous"></script>
+
 </body>
 </html>

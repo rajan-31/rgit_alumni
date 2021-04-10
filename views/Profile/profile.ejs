@@ -27,10 +27,24 @@
     <style>
         #profile-img {
             object-fit: cover;
-            width:200px;
-            height:200px;
-            border-radius: 20px;
-            box-shadow: 0px 0px 10px #000;
+            /* width:200px;
+            height:200px; */
+            border-radius: 50%;
+            /* box-shadow: 3px 3px 15px 1px #000; */
+        }
+
+        #profile-img-container {
+            width: fit-content;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: rgba(255, 255, 255);
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        }
+
+        #profile-img-container:hover {
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
         }
 
         input[type=checkbox] {
@@ -60,14 +74,21 @@
         .datepicker {
             transform: translate(0, 3.9em);
         }
+
+        .toast {
+            width: auto;
+            max-width: none;
+        }
+
+        .toast .toast-body {
+            font-size: 1rem;
+        }
     </style>
 
     <!-- Jquery with fallback -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-  <script>
-     window.jQuery || document.write('<script src="../assets/vendor/jquery.min.js"><\/script>');
-  </script>
+  <script>window.jQuery || document.write('<script src="../assets/vendor/jquery.min.js"><\/script>');</script>
 
 </head>
 <body>
@@ -117,7 +138,7 @@
                     <% if(successMessage && successMessage.length>0 ){ %>
                         <div class="col-lg-6 col-md-12">
                             <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 100px;">
-                                <div class="toast border border-success" data-delay="5000" style="position: absolute; top: 0; right: 0;">
+                                <div class="toast border border-success" data-autohide="false" style="position: absolute; top: 0; right: 0;">
                                     <div class="toast-header">
                                         <i class="far fa-check-circle text-success"></i>
                                         <strong class="mr-auto">&nbsp;Success.</strong>
@@ -135,7 +156,7 @@
                     <% } else if(errorMessage && errorMessage.length>0 ){ %>
                         <div class="col-lg-6 col-md-12">
                             <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 100px;">
-                                <div class="toast border border-warning" data-delay="5000" style="position: absolute; top: 0; right: 0;">
+                                <div class="toast border border-warning" data-autohide="false" style="position: absolute; top: 0; right: 0;">
                                     <div class="toast-header">
                                         <i class="fas fa-exclamation-circle text-warning"></i>
                                         <strong class="mr-auto">&nbsp;Failed.</strong>
@@ -168,12 +189,14 @@
                     <h2>Mandatory Info</h2>
                 </div>
                     
-                    <div id="profile-image" class="d-flex justify-content-center">
-                        <% if( profileImage ) { %>
-                            <img src="<%=profileImage%>" id="profile-img">
-                        <% } else { %>
-                            <i id="profile-image-placeholder" class="fas fa-user" style="font-size: 200px;"></i>
-                        <% } %>
+                    <div id="profile-img-container">
+                        <center>
+                            <% if( profileImage ) { %>
+                                <img src="<%=profileImage%>" id="profile-img" width="200" height="200">
+                            <% } else { %>
+                                <i class="fas fa-user" style="font-size: 200px;"></i>
+                            <% } %>
+                        </center>
                     </div>
                     <div class="small my-1 text-center" role="alert">
                         <i class="fas fa-exclamation-circle"></i> Square shaped image recommended.
@@ -291,7 +314,7 @@
                             <label><strong>Date Of Birth</strong></label>
                             <br>
                             <div id="data-dob" hidden="hidden"><%= profile.dob %></div>
-                            <input type="text" id="dob-datepicker" class="form-control" name="profile[dob]" readonly="readonly"> autocomplete="off"
+                            <input type="text" id="dob-datepicker" class="form-control" name="profile[dob]" readonly="readonly" autocomplete="off">
                         </div>
                     </div>
                     
@@ -599,12 +622,10 @@
             $this.siblings(".custom-file-label").addClass("selected").html(fileName);
 
             /* preview */
-            URL.revokeObjectURL($("#profile-image img").attr("src"));
-            $("#profile-image").html('<img src="" id="profile-img">');
-            $("#profile-image img").attr("src", window.URL.createObjectURL($this[0].files[0]));
+            URL.revokeObjectURL($("#profile-img-container img").attr("src"));
+            $("#profile-img-container").html('<img src="" id="profile-img" width="200" height="200">');
+            $("#profile-img-container img").attr("src", window.URL.createObjectURL($this[0].files[0]));
         });
-
-        $(".toast").toast('show');
 
         $("#customSwitch1").on("click", function() {
             $("#hide-jobTill").toggle();

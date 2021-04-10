@@ -31,9 +31,7 @@
     <!-- Jquery with fallback -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-  <script>
-     window.jQuery || document.write('<script src="../../assets/vendor/jquery.min.js"><\/script>');
-  </script>
+  <script>window.jQuery || document.write('<script src="../../assets/vendor/jquery.min.js"><\/script>');</script>
 
 </head>
 
@@ -100,7 +98,7 @@
 
                     <div class="owl-carousel portfolio-details-carousel">
                         <% event.images.forEach(function(item){ %>
-                            <img src="/assets/img/image-placeholder-300x200.gif" class="lazyload" data-src="<%= item %>" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.gif';">
+                            <img src="/assets/img/image-placeholder-300x200.gif" class="lazyload" data-src="<%= item %>" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';">
                         <%})
                             const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                             days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
@@ -152,7 +150,7 @@
                                     </div>
                                     <small>
                                     <i class="fas fa-exclamation-circle"></i>
-                                    Recommended Size: 200kb
+                                    Recommended ratio - 3:2 (width:height), for proper look
                                     </small>
                                 </div>
 
@@ -163,7 +161,7 @@
                                     </div>
                                     <small>
                                         <i class="fas fa-exclamation-circle"></i>
-                                    Max Count: 5 | Max Size: 5MB/Image
+                                    Max Count: 5 | Max Size: 2MB/Image | Recommended - same width & height for all images
                                     </small>
                                 </div>
                                 <!-- //////////// -->
@@ -310,6 +308,7 @@
         });
 
         $("#datepicker").datepicker( "setDate", new Date(temp_date) );
+        
         $("#thumbnail-input").on("change", function() {
             var fileName = $(this).val().split("\\").pop();
             $(this).siblings(".custom-file-label").addClass("selected").html(fileName);

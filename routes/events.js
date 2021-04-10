@@ -1,13 +1,13 @@
 const express = require("express"),
     router = express.Router(),
     mongoose = require("mongoose"),
-    imagemin = require("imagemin"),
-    imageminMozjpeg = require("imagemin-mozjpeg"),
-    imageminPngquant = require("imagemin-pngquant");
+    sharp = require("sharp");
+    sharp.cache(false);
 
 const Event = require("../models/event");
 
 const middlewares = require('../middleware/index.js');
+const logger = require("../configs/winston_config");
 
 /* Multer config */
 const fs = require('fs'),
@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 });
 const limits = {
     files: 6,
-    fileSize: 1024 * 1024 * 5, // 5 MB (max file size)
+    fileSize: 1024 * 1024 * 2, // 2 MB (max file size)
 }
 const fileFilter = function (req, file, cb) {
     var allowedMimes = ['image/jpeg', 'image/jpg', 'image/png'];     // supported image file mimetypes
@@ -50,7 +50,7 @@ let uploadEventImages = upload.fields([{ name: "images", maxCount: 5}, { name: "
 router.get("/events", middlewares.isLoggedIn, function (req, res) {
     Event.find({}, "-images", function (err, allEvents) {
             if (err) {
-                console.log(err);
+                logger.error(err);
                 req.flash("errorMessage", "Something went wrong, please try again.")
                 res.redirect("/")
             } else if(allEvents.length > 0){
@@ -78,14 +78,14 @@ router.post("/events/page/:num", middlewares.isLoggedIn, function (req, res) {
         ]
     }, "-images", function (err, allEvents) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
-            res.redirect("/")
+            res.redirect("/events")
         } else {
             if(allEvents.length > 0) {
                 const pass_lastId = allEvents[allEvents.length - 1]._id;
                 const pass_lastDate = new Date(allEvents[allEvents.length - 1].date).getTime();
-                res.render("Events/paged_events", { events: allEvents, countEvents: allEvents.length, lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
+                res.render("Events/events", { events: allEvents, countEvents: allEvents.length, lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
             } else {
                 req.flash("errorMessage", "No more Events.")
                 res.redirect("/events");
@@ -101,7 +101,7 @@ router.post("/events", middlewares.isAdmin, function (req, res) {
             if (err instanceof multer.MulterError) {
 
                 if (err.code == "LIMIT_FILE_SIZE") {
-                    req.flash("errorMessage", "Please choose images with size upto 5MB.");
+                    req.flash("errorMessage", "Please choose images with size upto 2MB.");
                     res.redirect('/admin/events');
                 } else if (err.code == "INVALID_FILETYPE") {
                     req.flash("errorMessage", "Please choose files of type JPG or JPEG or PNG");
@@ -110,7 +110,7 @@ router.post("/events", middlewares.isAdmin, function (req, res) {
                     req.flash("errorMessage", "Please choose 5 or less images.");
                     res.redirect('/admin/events');
                 } else {
-                    console.log(err);
+                    logger.error(err);
                     req.flash("errorMessage", "Something went wrong with file upload.");
                     res.redirect('/admin/events');
                 }
@@ -130,26 +130,21 @@ router.post("/events", middlewares.isAdmin, function (req, res) {
                 images.push( "/images/events/" + req.files["images"][i].filename);
             }
             
-            const temp = [ 'uploads/images/events/' + req.files["thumbnail"][0].filename ];
-            let quality;
-            if(req.files["thumbnail"][0].size > 2621440) quality = 15;
-            else if(req.files["thumbnail"][0].size < 419430) quality = 90;
-            else quality = 20;
+            const temp = path.join(__dirname, '..' + '/uploads/images/events/', req.files["thumbnail"][0].filename);
 
-            imagemin( temp, {
-                destination: 'uploads/images/events',
-                plugins: [
-                    imageminMozjpeg({quality: quality}),
-                    imageminPngquant({quality: quality})
-                ]
-            }).then(() => {
+            sharp(temp).resize(300, 200, {
+                fit: "cover"
+            })
+            .toBuffer()
+            .then((buffer) => {
+                sharp(buffer).toFile(temp);
                 thumbnail = "/images/events/" + req.files["thumbnail"][0].filename;
 
                 const newEvent = { title: title, date: new Date(date), images: images, description: desc, thumbnail: thumbnail };
 
                 Event.create(newEvent, function (err) {
                     if (err) {
-                        console.log(err);
+                        logger.error(err);
                         req.flash("errorMessage", "Something went wrong, please try again.");
                         res.redirect('/admin/events');
                     } else {
@@ -157,6 +152,11 @@ router.post("/events", middlewares.isAdmin, function (req, res) {
                         res.redirect('/admin/events');
                     }
                 });
+            })
+            .catch((err) => {
+                logger.error(err)
+                req.flash("errorMessage", "Something went wrong, please try again.");
+                res.redirect('/admin/events');
             });
         } else {
             req.flash("errorMessage", "Some fields are missing from form.");
@@ -167,18 +167,25 @@ router.post("/events", middlewares.isAdmin, function (req, res) {
 
 
 router.get("/events/:id", middlewares.isLoggedIn, function (req, res) {
-    //to get item by id
-    Event.findById(mongoose.Types.ObjectId(req.params.id), "-thumbnail", function (err, foundEvent) {
-        if (err) {
-            console.log(err);
-            res.redirect('/events')
-        } else if (foundEvent) {
-            res.render("Events/showEvent", { event: foundEvent });
-        } else {
-            res.redirect('/events');
-        }
-    });
-
+    try {
+        const id = mongoose.Types.ObjectId(req.params.id);
+        Event.findById(id, "-thumbnail", function (err, foundEvent) {
+            if (err) {
+                logger.error(err);
+                req.flash("errorMessage", "Something went wrong, please try again.");
+                res.redirect('/events');
+            } else if (foundEvent) {
+                res.render("Events/showEvent", { event: foundEvent });
+            } else {
+                req.flash("errorMessage", "Event not found.");
+                res.redirect('/events');
+            }
+        });
+    } catch (error) {
+        logger.error("Invalid event ID.");
+        req.flash("errorMessage", "Invalid event ID, please try again.");
+        res.redirect('/events')
+    }
 });
 
 router.delete("/events/:id", middlewares.isAdmin, function (req, res) {
@@ -187,14 +194,14 @@ router.delete("/events/:id", middlewares.isAdmin, function (req, res) {
         data.images.push(data.thumbnail);
         const pathToFile = path.join(__dirname, '..' + '/uploads');
         if(err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, while deleting old images.");
             res.redirect('/admin/events');
         } else {
             data.images.forEach(function (item) {
                 fs.unlink(pathToFile + item, function (err) {
                     if (err) {
-                        console.log(err);
+                        logger.error(err);
                     }
                     return;
                 });
@@ -219,7 +226,7 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
             if (err instanceof multer.MulterError) {
 
                 if (err.code == "LIMIT_FILE_SIZE") {
-                    req.flash("errorMessage", "Please choose images with size upto 5MB.");
+                    req.flash("errorMessage", "Please choose images with size upto 2MB.");
                     res.redirect('/admin/events');
                 } else if (err.code == "INVALID_FILETYPE") {
                     req.flash("errorMessage", "Please choose files of type JPG or JPEG or PNG");
@@ -250,13 +257,13 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
                     Event.findById(mongoose.Types.ObjectId(req.params.id),"images thumbnail", function(err, data) {
                         data.images.push(data.thumbnail);
                         if(err) {
-                            console.log(err);
+                            logger.error(err);
                             req.flash("errorMessage", "Something went wrong, while deleting old images. ");
                         } else {
                             data.images.forEach(function (item) {
                                 fs.unlink(pathToFile + item, function (err) {
                                     if (err) {
-                                        console.log(err);
+                                        logger.error(err);
                                     }
                                     return;
                                 });
@@ -268,27 +275,21 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
                         images.push( "/images/events/" + req.files["images"][i].filename);
                     }
 
-                    const temp = [ 'uploads/images/events/' + req.files["thumbnail"][0].filename ];
-                    let quality;
+                    const temp = path.join(__dirname, '..' + '/uploads/images/events/', req.files["thumbnail"][0].filename);
 
-                    if(req.files["thumbnail"][0].size > 2621440) quality = 15;
-                    else if(req.files["thumbnail"][0].size < 419430) quality = 90;
-                    else quality = 20;
-
-                    imagemin( temp, {
-                        destination: 'uploads/images/events',
-                        plugins: [
-                            imageminMozjpeg({quality: quality}),
-                            imageminPngquant({quality: quality})
-                        ]
-                    }).then((files) => {
+                    sharp(temp).resize(300, 200, {
+                        fit: "cover"
+                    })
+                    .toBuffer()
+                    .then((buffer) => {
+                        sharp(buffer).toFile(temp);
                         thumbnail = "/images/events/" + req.files["thumbnail"][0].filename;
         
                         const eventData = { title: title, date: new Date(date), images: images, description: desc, thumbnail: thumbnail };
         
                         Event.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), eventData, function (err) {
                             if (err) {
-                                console.log(err);
+                                logger.error(err);
                                 req.flash("errorMessage", "Something went wrong, please try again.");
                                 res.redirect("/admin/events");
                             } else {
@@ -297,6 +298,11 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
                             }
                         });
                         
+                    })
+                    .catch((err) => {
+                        logger.error(err)
+                        req.flash("errorMessage", "Something went wrong, please try again.");
+                        res.redirect('/admin/events');
                     });
 
                 } else if ( req.files["images"] && !req.files["thumbnail"] ) {
@@ -304,13 +310,13 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
                     // delete old images
                     Event.findById(mongoose.Types.ObjectId(req.params.id),"images", function(err, data) {
                         if(err) {
-                            console.log(err);
+                            logger.error(err);
                             req.flash("errorMessage", "Something went wrong, while deleting old images. ");
                         } else {
                             data.images.forEach(function (item) {
                                 fs.unlink(pathToFile + item, function (err) {
                                     if (err) {
-                                        console.log(err);
+                                        logger.error(err);
                                     }
                                     return;
                                 });
@@ -326,7 +332,7 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
         
                     Event.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), eventData, function (err) {
                         if (err) {
-                            console.log(err);
+                            logger.error(err);
                             req.flash("errorMessage", "Something went wrong, please try again.");
                             res.redirect("/admin/events");
                         } else {
@@ -340,39 +346,33 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
                     // delete old thumbnail
                     Event.findById(mongoose.Types.ObjectId(req.params.id),"thumbnail", function(err, data) {
                         if(err) {
-                            console.log(err);
+                            logger.error(err);
                             req.flash("errorMessage", "Something went wrong, while deleting old images. ");
                         } else {
                             fs.unlink(pathToFile + data.thumbnail, function (err) {
                                 if (err) {
-                                    console.log(err);
+                                    logger.error(err);
                                 }
                                 return;
                             });
                         }
                     });
 
-                    const temp = [ 'uploads/images/events/' + req.files["thumbnail"][0].filename ];
-                    let quality;
+                    const temp = path.join(__dirname, '..' + '/uploads/images/events/', req.files["thumbnail"][0].filename);
 
-                    if(req.files["thumbnail"][0].size > 2621440) quality = 15;
-                    else if(req.files["thumbnail"][0].size < 419430) quality = 90;
-                    else quality = 20;
-
-                    imagemin( temp, {
-                        destination: 'uploads/images/events',
-                        plugins: [
-                            imageminMozjpeg({quality: quality}),
-                            imageminPngquant({quality: quality})
-                        ]
-                    }).then((files) => {
+                    sharp(temp).resize(300, 200, {
+                        fit: "cover"
+                    })
+                    .toBuffer()
+                    .then((buffer) => {
+                        sharp(buffer).toFile(temp);
                         thumbnail = "/images/events/" + req.files["thumbnail"][0].filename;
         
                         const eventData = { title: title, date: new Date(date), description: desc, thumbnail: thumbnail };
         
                         Event.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), eventData, function (err) {
                             if (err) {
-                                console.log(err);
+                                logger.error(err);
                                 req.flash("errorMessage", "Something went wrong, please try again.");
                                 res.redirect("/admin/events");
                             } else {
@@ -381,6 +381,11 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
                             }
                         });
                         
+                    })
+                    .catch((err) => {
+                        logger.error(err)
+                        req.flash("errorMessage", "Something went wrong, please try again.");
+                        res.redirect('/admin/events');
                     });
                 }
 
@@ -390,7 +395,7 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
 
                 Event.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), eventData, function (err) {
                     if (err) {
-                        console.log(err);
+                        logger.error(err);
                         req.flash("errorMessage", "Something went wrong, please try again.");
                         res.redirect("/admin");
                     } else {
@@ -408,7 +413,7 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
 router.get("/events/:id/edit", middlewares.isAdmin, function (req, res) {
     Event.findById(mongoose.Types.ObjectId(req.params.id), "-thumbnail", function (err, foundEvent) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
             res.redirect('/admin')
         } else {

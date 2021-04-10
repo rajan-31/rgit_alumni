@@ -5,6 +5,7 @@ const mongoose = require("mongoose")
 const User  = require("../models/user");
 
 const allMiddlewares = require("../middleware/index.js");
+const logger = require("../configs/winston_config");
 
 router.get('/chats', allMiddlewares.rejectAdmin, function(req, res) {
     res.render('chats');
@@ -13,13 +14,20 @@ router.get('/chats', allMiddlewares.rejectAdmin, function(req, res) {
 router.get('/chats/:id', allMiddlewares.rejectAdmin, function(req, res) {
     const currentUser = req.user._id;
     const currentUserName = req.user.fullName;
-    const receiver = req.params.id;
+    let receiver;
+    try {
+        receiver = mongoose.Types.ObjectId(req.params.id);
+    } catch (error) {
+        logger.error("Invalid chat ID");
+        req.flash("errorMessage", "Invalid profile ID, please try again.");
+        res.redirect('/communicate');
+    }
 
     /* new chat */
     if (currentUser != receiver && req.user.role != "admin") {
-        User.findById( mongoose.Types.ObjectId(receiver), 'firstName lastName', function(err, receiverData) {
+        User.findById( receiver, 'firstName lastName', function(err, receiverData) {
             if(err) {
-                console.log(err);
+                logger.error(err);
                 res.redirect('/communicate');
             } else {
                 const receiverFullName = receiverData.firstName + " " + receiverData.lastName;
@@ -40,11 +48,11 @@ router.get('/chats/:id', allMiddlewares.rejectAdmin, function(req, res) {
                 },
                 function(err, changes){
                     if (err) {
-                        console.log(err);
+                        logger.error(err);
                         res.redirect('/communicate');
                     }
                     else if (changes != null){
-                        User.findByIdAndUpdate( mongoose.Types.ObjectId(receiver), {
+                        User.findByIdAndUpdate( receiver, {
                             "$push": {
                                 "chats": {
                                         userid: currentUser,
@@ -55,7 +63,7 @@ router.get('/chats/:id', allMiddlewares.rejectAdmin, function(req, res) {
                         },
                         function(err){
                             if (err)
-                                console.log(err);
+                                logger.error(err);
                             else {
                                 res.redirect('/chats');
                             }

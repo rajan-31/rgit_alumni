@@ -215,7 +215,7 @@
               
                         <div class="card-body pad">
                           <div class="mb-3">
-                            <textarea name="desc" class="form-control" rows="3" required="required">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aliquam minus omnis fugiat necessitatibus inventore cum odio alias, nulla totam vitae earum quaerat! Distinctio optio explicabo porro iure sint tempore quibusdam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero minima maxime dolores explicabo a animi beatae officiis enim sint velit earum, molestias ex quasi rem ab nesciunt? Impedit, repellat laboriosam?</textarea>
+                            <textarea name="desc" class="form-control" rows="3" required="required"></textarea>
                           </div>
                         </div>
                       </div>
@@ -236,7 +236,7 @@
                         
                         <small>
                           <i class="fas fa-exclamation-circle"></i>
-                          Max Size: 200kb
+                          Recommended ratio - 3:2 (width:height), for proper look
                         </small>
                       </div>
               
@@ -253,7 +253,7 @@
                         
                         <small>
                           <i class="fas fa-exclamation-circle"></i>
-                          Max Count: 5 | Max Size: 5MB/Image
+                          Max Count: 5 | Max Size: 2MB/Image | Recommended - same width & height for all images
                         </small>
                       </div>
                       <ul id="selectedImages">
@@ -310,11 +310,7 @@
       todayHighlight: true
     });
 
-    /* custom input label */
-    $("#thumbnail-input").on("change", function() {
-        var fileName = $(this).val().split("\\").pop();
-        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-    });
+    
 
   </script>
 </body>

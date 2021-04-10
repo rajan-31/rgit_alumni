@@ -1,0 +1,12 @@
+table.sortable-table th.ascending,
+table.sortable-table th.descending{
+    background-repeat: no-repeat;
+    background-position-x: left;
+    background-position-y: center;
+}
+table.sortable-table th.ascending {
+    background-image: url(./../img/icons/icon-arrow-down.svg);
+}
+table.sortable-table th.descending{
+    background-image: url(./../img/icons/icon-arrow-up.svg);
+}

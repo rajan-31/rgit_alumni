@@ -1,13 +1,13 @@
 const express = require("express"),
 router = express.Router(),
 mongoose = require("mongoose"),
-imagemin = require("imagemin"),
-imageminMozjpeg = require("imagemin-mozjpeg"),
-imageminPngquant = require("imagemin-pngquant");
+sharp = require("sharp");
+sharp.cache(false);
 
 const News = require("../models/news");
 
 const middlewares = require('../middleware/index.js');
+const logger = require("../configs/winston_config");
 
 /* Multer config */
 const fs = require('fs'),
@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 });
 const limits = {
     files: 6,
-    fileSize: 1024 * 1024 * 5, // 5 MB (max file size)
+    fileSize: 1024 * 1024 * 2, // 2 MB (max file size)
 }
 const fileFilter = function (req, file, cb) {
     var allowedMimes = ['image/jpeg', 'image/jpg', 'image/png'];     // supported image file mimetypes
@@ -50,7 +50,7 @@ let uploadNewsImages = upload.fields([{ name: "images", maxCount: 5}, { name: "t
 router.get("/news", middlewares.isLoggedIn, function (req, res) {
     News.find({}, "-images", function (err, allNews) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
             res.redirect("/")
         } else if (allNews.length > 0) {
@@ -78,14 +78,14 @@ router.post("/news/page/:num", middlewares.isLoggedIn, function (req, res) {
         ]
     }, "-images", function (err, allNews) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
-            res.redirect("/")
+            res.redirect("/news")
         } else {
             if(allNews.length > 0) {
                 const pass_lastId = allNews[allNews.length - 1]._id;
                 const pass_lastDate = new Date(allNews[allNews.length - 1].date).getTime();
-                res.render("News/paged_news", { news: allNews, countNews: allNews.length, lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
+                res.render("News/news", { news: allNews, countNews: allNews.length, lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
             } else {
                 req.flash("errorMessage", "No more News.")
                 res.redirect("/news");
@@ -101,7 +101,7 @@ router.post("/news", middlewares.isAdmin, function(req, res){
             if (err instanceof multer.MulterError) {
 
                 if (err.code == "LIMIT_FILE_SIZE") {
-                    req.flash("errorMessage", "Please choose images with size upto 5MB.");
+                    req.flash("errorMessage", "Please choose images with size upto 2MB.");
                     res.redirect('/admin/news');
                 } else if (err.code == "INVALID_FILETYPE") {
                     req.flash("errorMessage", "Please choose files of type JPG or JPEG or PNG");
@@ -110,7 +110,7 @@ router.post("/news", middlewares.isAdmin, function(req, res){
                     req.flash("errorMessage", "Please choose 5 or less images.");
                     res.redirect('/admin/news');
                 } else {
-                    console.log(err);
+                    logger.error(err);
                     req.flash("errorMessage", "Something went wrong with file upload.");
                     res.redirect('/admin/news');
                 }
@@ -130,26 +130,21 @@ router.post("/news", middlewares.isAdmin, function(req, res){
                 images.push( "/images/news/" + req.files["images"][i].filename);
             }
             
-            const temp = [ 'uploads/images/news/' + req.files["thumbnail"][0].filename ];
-            let quality;
-            if(req.files["thumbnail"][0].size > 2621440) quality = 15;
-            else if(req.files["thumbnail"][0].size < 419430) quality = 90;
-            else quality = 20;
+            const temp = path.join(__dirname, '..' + '/uploads/images/news/', req.files["thumbnail"][0].filename);
 
-            imagemin( temp, {
-                destination: 'uploads/images/news',
-                plugins: [
-                    imageminMozjpeg({quality: quality}),
-                    imageminPngquant({quality: quality})
-                ]
-            }).then(() => {
+            sharp(temp).resize(300, 200, {
+                fit: "cover"
+            })
+            .toBuffer()
+            .then((buffer) => {
+                sharp(buffer).toFile(temp);
                 thumbnail = "/images/news/" + req.files["thumbnail"][0].filename;
 
                 const newNews = { title: title, date: new Date(date), images: images, description: desc, thumbnail: thumbnail };
 
                 News.create(newNews, function(err){
                     if(err){
-                        console.log(err);
+                        logger.error(err);
                         req.flash("errorMessage", "Something went wrong, please try again.");
                         res.redirect('/admin/news');
                     } else{
@@ -157,6 +152,11 @@ router.post("/news", middlewares.isAdmin, function(req, res){
                         res.redirect('/admin/news');
                     }
                 });
+            })
+            .catch((err) => {
+                logger.error(err)
+                req.flash("errorMessage", "Something went wrong, please try again.");
+                res.redirect('/admin/news');
             });
         } else {
             req.flash("errorMessage", "Some fields are missing from form.");
@@ -167,18 +167,25 @@ router.post("/news", middlewares.isAdmin, function(req, res){
 
 
 router.get("/news/:id", middlewares.isLoggedIn, function(req, res){
-    //to get item by id
-    News.findById(mongoose.Types.ObjectId(req.params.id),"-thumbnail", function(err, foundNews){
-        if(err){
-            console.log(err);
-            res.redirect('/news')
-        } else if (foundNews) {
-            res.render("News/showNews", {news: foundNews});
-        } else {
-            res.redirect('/news');
-        }
-    });
-
+    try {
+        const id = mongoose.Types.ObjectId(req.params.id);
+        News.findById(id,"-thumbnail", function(err, foundNews){
+            if(err){
+                logger.error(err);
+                req.flash("errorMessage", "Something went wrong, please try again.");
+                res.redirect('/news')
+            } else if (foundNews) {
+                res.render("News/showNews", {news: foundNews});
+            } else {
+                req.flash("errorMessage", "News not found.");
+                res.redirect('/news');
+            }
+        });
+    } catch (error) {
+        logger.error("Invalid news ID.");
+        req.flash("errorMessage", "Invalid news ID, please try again.");
+        res.redirect('/news')
+    }
 });
 
 router.delete("/news/:id", middlewares.isAdmin, function(req, res){
@@ -187,14 +194,14 @@ router.delete("/news/:id", middlewares.isAdmin, function(req, res){
         data.images.push(data.thumbnail);
         const pathToFile = path.join(__dirname, '..' + '/uploads');
         if(err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, while deleting old images.");
             res.redirect('/admin/news');
         } else {
             data.images.forEach(function (item) {
                 fs.unlink(pathToFile + item, function (err) {
                     if (err) {
-                        console.log(err);
+                        logger.error(err);
                     }
                     return;
                 });
@@ -219,7 +226,7 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
             if (err instanceof multer.MulterError) {
 
                 if (err.code == "LIMIT_FILE_SIZE") {
-                    req.flash("errorMessage", "Please choose images with size upto 5MB.");
+                    req.flash("errorMessage", "Please choose images with size upto 2MB.");
                     res.redirect('/admin/news');
                 } else if (err.code == "INVALID_FILETYPE") {
                     req.flash("errorMessage", "Please choose files of type JPG or JPEG or PNG");
@@ -250,13 +257,13 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
                     News.findById(mongoose.Types.ObjectId(req.params.id),"images thumbnail", function(err, data) {
                         data.images.push(data.thumbnail);
                         if(err) {
-                            console.log(err);
+                            logger.error(err);
                             req.flash("errorMessage", "Something went wrong, while deleting old images. ");
                         } else {
                             data.images.forEach(function (item) {
                                 fs.unlink(pathToFile + item, function (err) {
                                     if (err) {
-                                        console.log(err);
+                                        logger.error(err);
                                     }
                                     return;
                                 });
@@ -268,27 +275,21 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
                         images.push( "/images/news/" + req.files["images"][i].filename);
                     }
 
-                    const temp = [ 'uploads/images/news' + req.files["thumbnail"][0].filename ];
-                    let quality;
+                    const temp = path.join(__dirname, '..' + '/uploads/images/news/', req.files["thumbnail"][0].filename);
 
-                    if(req.files["thumbnail"][0].size > 2621440) quality = 15;
-                    else if(req.files["thumbnail"][0].size < 419430) quality = 90;
-                    else quality = 20;
-
-                    imagemin( temp, {
-                        destination: 'uploads/images/news',
-                        plugins: [
-                            imageminMozjpeg({quality: quality}),
-                            imageminPngquant({quality: quality})
-                        ]
-                    }).then((files) => {
+                    sharp(temp).resize(300, 200, {
+                        fit: "cover"
+                    })
+                    .toBuffer()
+                    .then((buffer) => {
+                        sharp(buffer).toFile(temp);
                         thumbnail = "/images/news/" + req.files["thumbnail"][0].filename;
         
                         const newsData = { title: title, date: new Date(date), images: images, description: desc, thumbnail: thumbnail };
         
                         News.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), newsData, function (err) {
                             if (err) {
-                                console.log(err);
+                                logger.error(err);
                                 req.flash("errorMessage", "Something went wrong, please try again.");
                                 res.redirect("/admin/news");
                             } else {
@@ -297,6 +298,11 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
                             }
                         });
                         
+                    })
+                    .catch((err) => {
+                        logger.error(err)
+                        req.flash("errorMessage", "Something went wrong, please try again.");
+                        res.redirect('/admin/news');
                     });
 
                 } else if ( req.files["images"] && !req.files["thumbnail"] ) {
@@ -304,13 +310,13 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
                     // delete old images
                     News.findById(mongoose.Types.ObjectId(req.params.id),"images", function(err, data) {
                         if(err) {
-                            console.log(err);
+                            logger.error(err);
                             req.flash("errorMessage", "Something went wrong, while deleting old images. ");
                         } else {
                             data.images.forEach(function (item) {
                                 fs.unlink(pathToFile + item, function (err) {
                                     if (err) {
-                                        console.log(err);
+                                        logger.error(err);
                                     }
                                     return;
                                 });
@@ -326,7 +332,7 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
         
                     News.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), newsData, function (err) {
                         if (err) {
-                            console.log(err);
+                            logger.error(err);
                             req.flash("errorMessage", "Something went wrong, please try again.");
                             res.redirect("/admin/news");
                         } else {
@@ -340,39 +346,33 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
                     // delete old thumbnail
                     News.findById(mongoose.Types.ObjectId(req.params.id),"thumbnail", function(err, data) {
                         if(err) {
-                            console.log(err);
+                            logger.error(err);
                             req.flash("errorMessage", "Something went wrong, while deleting old images. ");
                         } else {
                             fs.unlink(pathToFile + data.thumbnail, function (err) {
                                 if (err) {
-                                    console.log(err);
+                                    logger.error(err);
                                 }
                                 return;
                             });
                         }
                     });
 
-                    const temp = [ 'uploads/images/news/' + req.files["thumbnail"][0].filename ];
-                    let quality;
+                    const temp = path.join(__dirname, '..' + '/uploads/images/news/', req.files["thumbnail"][0].filename);
 
-                    if(req.files["thumbnail"][0].size > 2621440) quality = 15;
-                    else if(req.files["thumbnail"][0].size < 419430) quality = 90;
-                    else quality = 20;
-
-                    imagemin( temp, {
-                        destination: 'uploads/images/news',
-                        plugins: [
-                            imageminMozjpeg({quality: quality}),
-                            imageminPngquant({quality: quality})
-                        ]
-                    }).then((files) => {
+                    sharp(temp).resize(300, 200, {
+                        fit: "cover"
+                    })
+                    .toBuffer()
+                    .then((buffer) => {
+                        sharp(buffer).toFile(temp);
                         thumbnail = "/images/news/" + req.files["thumbnail"][0].filename;
         
                         const newsData = { title: title, date: new Date(date), description: desc, thumbnail: thumbnail };
         
                         News.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), newsData, function (err) {
                             if (err) {
-                                console.log(err);
+                                logger.error(err);
                                 req.flash("errorMessage", "Something went wrong, please try again.");
                                 res.redirect("/admin/news");
                             } else {
@@ -381,6 +381,11 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
                             }
                         });
                         
+                    })
+                    .catch((err) => {
+                        logger.error(err)
+                        req.flash("errorMessage", "Something went wrong, please try again.");
+                        res.redirect('/admin/news');
                     });
                 }
 
@@ -390,7 +395,7 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
 
                 News.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), newsData, function (err) {
                     if (err) {
-                        console.log(err);
+                        logger.error(err);
                         req.flash("errorMessage", "Something went wrong, please try again.");
                         res.redirect("/admin");
                     } else {
@@ -408,7 +413,7 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
 router.get("/news/:id/edit", middlewares.isAdmin, function (req, res) {
     News.findById(mongoose.Types.ObjectId(req.params.id), "-thumbnail", function (err, foundNews) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
             res.redirect('/admin')
         } else {

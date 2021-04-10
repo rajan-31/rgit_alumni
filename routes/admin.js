@@ -4,22 +4,22 @@ const express = require("express"),
     mongoose = require("mongoose"),
     fs = require("fs"),
     path = require("path"),
-    imagemin = require("imagemin"),
-    imageminMozjpeg = require("imagemin-mozjpeg"),
-    imageminPngquant = require("imagemin-pngquant");
+    sharp = require("sharp");
+    sharp.cache(false);
 
 const Admin = require("../models/admin"),
-        News = require("../models/news"),
-        Event = require("../models/event"),
-        User = require("../models/user"),
-        Testimonial = require("../models/testimonial"),
-        Newsletter = require("../models/newsletter");
+    News = require("../models/news"),
+    Event = require("../models/event"),
+    User = require("../models/user"),
+    Testimonial = require("../models/testimonial"),
+    Newsletter = require("../models/newsletter"),
+    Data = require("../models/data");
 
 const middlewares = require('../middleware/index.js');
+const logger = require("../configs/winston_config");
 
 /* Multer config */
 const multer = require('multer');
-const e = require("express");
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/images/testimonials')
@@ -51,6 +51,25 @@ const upload = multer({
  });
 
 let testimonialImageUpload = upload.single('image')
+
+/////////////
+// for recruiter image
+const recruiterStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname +  '.' + file.originalname.slice((file.originalname.lastIndexOf(".") - 1 >>> 0) + 2));
+    }
+});
+
+const recruiterUpload = multer({
+    storage: recruiterStorage,
+    limits: limits,
+    fileFilter: fileFilter
+});
+
+let recruiterImageUpload = recruiterUpload.any();
 /* end multer config */
 
 
@@ -70,13 +89,9 @@ router.post('/admin/login', passport.authenticate("admin",
 router.post('/admin/signup', middlewares.isAdmin, function (req, res) {
     Admin.register(new Admin({ username: req.body.username, createdBy: req.user.username, active: true }), req.body.password, function (err, user) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
         }
-        // use loacal strategy
-        // passport.authenticate('admin')(req, res, function () {
-        //     res.redirect("/adminlist");      // change this in future
-        // });
         else {
             req.flash("successMessage", "New admin created successfully.");
         }
@@ -84,49 +99,74 @@ router.post('/admin/signup', middlewares.isAdmin, function (req, res) {
     });
 });
 
-
-
 router.post('/admin/externalData', middlewares.isAdmin, function(req, res){
-    const data = JSON.stringify(req.body);
-
-    // global.static_data = data;
-    // res.redirect('/admin');
-    
-    // fs.writeFile(path.join(__dirname, '..' + '/data/data.json'), data, function(err){
-    //     if(err){
-    //         console.log(err);
-    //         req.flash("errorMessage", "Something went wrong, please try again.");
-    //     }
-    //     res.redirect('/admin');
-    // });
-
-    fs.writeFileSync(path.join(__dirname, '..' + '/data/data.json'), data);
-    res.redirect('/admin');
+    const temp = req.body;
+    if(temp) {
+        Data.findOneAndUpdate({ key: "home_page_data" }, { value: temp }, function(err) {
+            if(err) {
+                logger.error("Home page data update failed.");
+                req.flash("errorMessage", "Something went wrong, please try again.");
+            } else {
+                const success = cacheData.set("home_page_data", temp);
+                if(success) {
+                    req.flash("successMessage", "Home data updated successfully.");
+                } else {
+                    logger.error("Home page data updated on Database, but caching failed (in admin operation).")
+                    req.flash("errorMessage", "Something went wrong, please try again.");
+                }
+                res.redirect('/admin');
+            }
+        });
+    } else {
+        req.flash("errorMessage", "Data was missing, please try again.");
+        res.redirect('/admin');
+    }
 });
 
 /* new routes */
 
 // admin index
-router.get("/admin", middlewares.isAdmin, function (req, res) {    
+router.get("/admin", middlewares.isAdmin, function (req, res) { 
     User.countDocuments({ userType: "alumni" }, function(err, alumniCount){
         if(err){
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect('/');
         } else {
             User.countDocuments({ userType: "student" }, function (err, studentCount) {
                 if (err) {
-                    console.log(err);
+                    logger.error(err);
                     req.flash("errorMessage", "Something went wrong, please try again.");
                     res.redirect('/');
                 } else {
-                    // global variable used: global.static_data
-                    // res.render('Admin/index', { alumniCount: alumniCount, studentCount: studentCount, dataFromFile: global.static_data });
-                    /////////////////
-                    const raw_data = fs.readFileSync(path.join(__dirname, "..", "data/data.json"));
-                    const dataFromFile = JSON.parse(raw_data);
-                    res.render('Admin/index', { alumniCount: alumniCount, studentCount: studentCount, dataFromFile: dataFromFile });
-                    ////////////////
+                    /* using cache */
+                    let miscData = cacheData.get("home_page_data");
+                    if(!miscData) {
+                        Data.findOne({key: "home_page_data"}, function(err, _data) {
+                            if(err) logger.error(err);
+                            else if (_data) {
+                                miscData = _data.value;
+
+                                const success = cacheData.set("home_page_data", miscData);
+                                if(success) {
+                                    logger.info("Home page data retrived from Database and cached successfully (in fallback).");
+                                } else {
+                                    logger.error("Home page data retrived from Database and but caching failed (in fallback).");
+                                }
+                            } else {
+                                logger.error("Home page data not available in cache as well as database.")
+                                miscData = {
+                                    youtubeURL:"https://www.youtube.com/watch?v=rF9cCAQXGgU",
+                                    students:"300",
+                                    studentsProgress:"40",
+                                    alumni:"1000",
+                                    alumniProgress:"70"
+                                }
+                            }
+                        });
+                    }
+                    /*  */
+                    res.render('Admin/index', { alumniCount: alumniCount, studentCount: studentCount, miscData: miscData });
                 }
             });
         }
@@ -138,7 +178,7 @@ router.get("/admin", middlewares.isAdmin, function (req, res) {
 router.get('/admin/news', middlewares.isAdmin, function(req, res){
     News.find({}, 'title date', function (err, allNews) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect('/admin');
         } else {
@@ -160,7 +200,7 @@ router.get('/admin/addNews', middlewares.isAdmin, function(req, res){
 router.get('/admin/events', middlewares.isAdmin, function(req, res){
     Event.find({}, 'title date', function (err, allEvents) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect('/admin');
         } else {
@@ -180,7 +220,7 @@ router.get('/admin/addEvent', middlewares.isAdmin, function(req, res){
 router.get("/admin/alumnilist", middlewares.isAdmin, function (req, res) {
     User.find({ userType: "alumni" },'firstName lastName username', function (err, allAlumni) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect('/admin');
         } else {
@@ -193,7 +233,7 @@ router.get("/admin/alumnilist", middlewares.isAdmin, function (req, res) {
 router.get("/admin/studentlist", middlewares.isAdmin, function (req, res) {
     User.find({ userType: "student" },'firstName lastName username', function (err, allStudents) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect('/admin');
         } else {
@@ -206,7 +246,7 @@ router.get("/admin/studentlist", middlewares.isAdmin, function (req, res) {
 router.get("/admin/adminlist", middlewares.isAdmin, function (req, res) {
     Admin.find({},'username createdBy', function (err, allAdmins) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect('/admin');
         } else {
@@ -238,11 +278,82 @@ router.delete("/admin/delete/:id", middlewares.isAdmin, function (req, res) {
     });
 });
 
-/* testimonials */
+/* ------------
+    Recruiters  
+   ------------ */
+router.post("/admin/recruiters", middlewares.isAdmin, function(req, res) {
+    recruiterImageUpload(req, res, function(err) {
+        if (err){
+            if (err instanceof multer.MulterError){
+
+                if (err.code =="LIMIT_FILE_SIZE"){
+                    req.flash("errorMessage","Please choose a image with size upto 1MB.");
+                    res.redirect('/admin');
+                } else if (err.code =="INVALID_FILETYPE"){
+                    req.flash("errorMessage","Please choose a file of type JPG or JPEG or PNG");
+                    res.redirect('/admin');
+                } else {
+                    logger.error(err);
+                    req.flash("errorMessage","Something went wrong with file upload.");
+                    res.redirect('/admin');
+                }
+
+            } else {
+                req.flash("errorMessage", "Something went wrong, please try again.");
+                res.redirect('/admin');
+            }
+        } else if(req.files.length>0){
+            const temp = path.join(__dirname, ".." + "/uploads", req.files[0].filename)
+
+            const image = sharp(temp);
+
+            image
+            .metadata()
+            .then((metadata) => {
+                if(metadata.width <= 80) {
+                    return image.toBuffer();
+                } else if (metadata.height > 80) {
+                    return image
+                    .resize({ width: 80, height: 80 })
+                    .toBuffer();
+                } else {
+                    return image
+                    .resize({ width: 80 })
+                    .toBuffer();
+                }
+            })
+            .then((buffer) => {
+                sharp(buffer).toFile(path.join(__dirname, ".." + "/public/assets/img/clients", req.files[0].filename));
+
+                fs.unlink(temp, function (err) {
+                    if (err) {
+                        logger.error(err);
+                    }
+                    return;
+                });
+
+                req.flash("successMessage", `Update image for ${req.files[0].fieldname}`);
+                res.redirect("/admin")
+            })
+            .catch((err) => {
+                logger.error(err)
+                req.flash("errorMessage", "Something went wrong, please try again.");
+                res.redirect('/admin');
+            });
+        } else {
+            req.flash("errorMessage","Please choose a file.");
+            res.redirect('/admin');
+        }
+    });
+});
+
+/* --------------
+    testimonials 
+   -------------- */
 router.get("/admin/testimonials", middlewares.isAdmin, function(req, res) {
     Testimonial.find({}, "-image", function(err, allTestimonials) {
         if(err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage","Something went wrong, please try again.");
             res.redirect("/admin");
         } else {
@@ -267,7 +378,7 @@ router.post("/admin/testimonials", middlewares.isAdmin, function(req, res) {
                     req.flash("errorMessage","Please choose a file of type JPG or JPEG or PNG");
                     res.redirect('/admin/testimonials');
                 } else {
-                    console.log(err);
+                    logger.error(err);
                     req.flash("errorMessage","Something went wrong with file upload.");
                     res.redirect('/admin/testimonials');
                 }
@@ -277,20 +388,20 @@ router.post("/admin/testimonials", middlewares.isAdmin, function(req, res) {
                 res.redirect('/admin/testimonials');
             }
         } else if(req.file){
-            const temp = ['uploads/images/testimonials/' + req.file.filename];
-            imagemin( temp, {
-                destination: 'uploads/images/testimonials',
-                plugins: [
-                    imageminMozjpeg({quality: 40}),
-                    imageminPngquant({quality: 40})
-                ]
-            }).then(() => {
+            const temp = path.join(__dirname, '..' + '/uploads/images/testimonials/', req.file.filename);
+
+            sharp(temp).resize(200, 200, {
+                fit: "cover"
+            })
+            .toBuffer()
+            .then((buffer) => {
+                sharp(buffer).toFile(temp);
                 const image = '/images/testimonials/' + req.file.filename;
 
                 const newTestinmonial = { name: req.body.name, branch: req.body.branch, content: req.body.content, image: image };
                 Testimonial.create(newTestinmonial, function(err) {
                     if(err) {
-                        console.log(err);
+                        logger.error(err);
                         req.flash("errorMessage","Something went wrong, please try again.");
                         res.redirect("/admin/testimonials");
                     } else {
@@ -298,6 +409,11 @@ router.post("/admin/testimonials", middlewares.isAdmin, function(req, res) {
                         res.redirect('/admin/testimonials');
                     }
                 });
+            })
+            .catch((err) => {
+                logger.error(err)
+                req.flash("errorMessage", "Something went wrong, please try again.");
+                res.redirect('/admin/testimonials');
             });
         } else {
             req.flash("errorMessage","A image is needed.");
@@ -309,7 +425,7 @@ router.post("/admin/testimonials", middlewares.isAdmin, function(req, res) {
 router.get("/admin/testimonials/:id/edit", middlewares.isAdmin, function (req, res) {
     Testimonial.findById(mongoose.Types.ObjectId(req.params.id), function (err, data) {
         if (err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.")
             res.redirect('/admin/testimonials')
         } else {
@@ -330,7 +446,7 @@ router.put("/admin/testimonials/:id", middlewares.isAdmin, function(req, res) {
                     req.flash("errorMessage","Please choose a file of type JPG or JPEG or PNG");
                     res.redirect('/admin/testimonials');
                 } else {
-                    console.log(err);
+                    logger.error(err);
                     req.flash("errorMessage","Something went wrong with file upload.");
                     res.redirect('/admin/testimonials');
                 }
@@ -340,35 +456,43 @@ router.put("/admin/testimonials/:id", middlewares.isAdmin, function(req, res) {
                 res.redirect('/admin/testimonials');
             }
         } else if (req.file){
-            Testimonial.findById(mongoose.Types.ObjectId(req.params.id), "image", function(err, data) {
+            let id;
+            try {
+                id = mongoose.Types.ObjectId(req.params.id)
+            } catch (error) {
+                logger.error("Invalid Testimonial ID");
+                req.flash("errorMessage","Something went wrong, please try again.");
+                res.redirect('/admin/testimonials');
+            }
+            Testimonial.findById(id, "image", function(err, data) {
                 if(err) {
-                    console.log(err);
+                    logger.error(err);
                     req.flash("errorMessage", "Something went wrong, while deleting old image.");
                 } else {
                     const pathToFile = path.join(__dirname, '..' + '/uploads');
                     fs.unlink(pathToFile + data.image, function (err) {
                         if (err) {
-                            console.log(err);
+                            logger.error(err);
                         }
                         return;
                     });
                 }
             });
 
-            const temp = ['uploads/images/testimonials/' + req.file.filename];
-            imagemin( temp, {
-                destination: 'uploads/images/testimonials',
-                plugins: [
-                    imageminMozjpeg({quality: 40}),
-                    imageminPngquant({quality: 40})
-                ]
-            }).then(() => {
+            const temp = path.join(__dirname, '..' + '/uploads/images/testimonials/', req.file.filename);
+
+            sharp(temp).resize(200, 200, {
+                fit: "cover"
+            })
+            .toBuffer()
+            .then((buffer) => {
+                sharp(buffer).toFile(temp);
                 const image = '/images/testimonials/' + req.file.filename;
 
                 const testinmonialData = { name: req.body.name, branch: req.body.branch, content: req.body.content, image: image };
-                Testimonial.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), testinmonialData, function(err) {
+                Testimonial.findByIdAndUpdate(id, testinmonialData, function(err) {
                     if(err) {
-                        console.log(err);
+                        logger.error(err);
                         req.flash("errorMessage","Something went wrong, please try again.");
                         res.redirect("/admin/testimonials");
                     } else {
@@ -376,6 +500,11 @@ router.put("/admin/testimonials/:id", middlewares.isAdmin, function(req, res) {
                         res.redirect('/admin/testimonials');
                     }
                 });
+            })
+            .catch((err) => {
+                logger.error(err)
+                req.flash("errorMessage", "Something went wrong, please try again.");
+                res.redirect('/admin/testimonials');
             });
 
         } else {
@@ -383,7 +512,7 @@ router.put("/admin/testimonials/:id", middlewares.isAdmin, function(req, res) {
 
             Testimonial.findByIdAndUpdate( mongoose.Types.ObjectId(req.params.id), testinmonialData, function(err) {
                 if(err) {
-                    console.log(err);
+                    logger.error(err);
                     req.flash("errorMessage","Something went wrong, please try again.");
                     res.redirect("/admin/testimonials");
                 } else {
@@ -397,21 +526,22 @@ router.put("/admin/testimonials/:id", middlewares.isAdmin, function(req, res) {
 });
 
 router.delete("/admin/testimonials/:id", middlewares.isAdmin, function(req, res){
-    Testimonial.findById(mongoose.Types.ObjectId(req.params.id), "image", function(err, data) {
+    const id = mongoose.Types.ObjectId(req.params.id);
+    Testimonial.findById(id, "image", function(err, data) {
         if(err) {
-            console.log(err);
+            logger.error(err);
             req.flash("errorMessage", "Something went wrong, while deleting old image.");
             res.redirect('/admin/testimonials');
         } else {
             const pathToFile = path.join(__dirname, '..' + '/uploads');
             fs.unlink(pathToFile + data.image, function (err) {
                 if (err) {
-                    console.log(err);
+                    logger.error(err);
                 }
                 return;
             });
 
-            Testimonial.findByIdAndRemove(mongoose.Types.ObjectId(req.params.id), function (err) {
+            Testimonial.findByIdAndRemove(id, function (err) {
                 if (err) {
                     req.flash("errorMessage", "Something went wrong, please try again.");
                     res.redirect('/admin/testimonials');
@@ -434,7 +564,7 @@ router.get("/newsletter", middlewares.isAdmin, function(req, res) {
 router.get("/newsletter/all", middlewares.isAdmin, function(req, res) {
     Newsletter.find({}, function(err, allSubsribers) {
         if(err) {
-            console.log(err);
+            logger.error(err);
             res.send("Failed")
         } else if (allSubsribers.length == 0) {
             res.send("Null")
@@ -452,7 +582,7 @@ router.post("/newsletter", function(req, res) {
                 if(err.code == 11000) {
                     res.send("Exists")
                 } else {
-                    console.log(err);
+                    logger.error(err);
                     res.send("Failed");
                 }
             } else {
@@ -469,7 +599,7 @@ router.delete("/newsletter/:id", function(req, res) {
     if (req.isAuthenticated() && req.user.role == "admin" ) {
         Newsletter.findByIdAndDelete(mongoose.Types.ObjectId(req.params.id), function(err) {
             if(err) {
-                console.log(err);
+                logger.error(err);
                 res.send("Failed");
             } else {
                 res.send("Done")

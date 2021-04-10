@@ -10,27 +10,25 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="../assets/img/favicon.png" rel="icon">
-  <link href="../assets/img/logo.png" rel="apple-touch-icon">
+  <link href="/assets/img/favicon.png" rel="icon">
+  <link href="/assets/img/logo.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="../assets/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
-  <link href="../assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
-  <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="/assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
+  <link href="/assets/vendor/aos/aos.css" rel="stylesheet">
 
   <!-- Template Main CSS File -->
-  <link href="../assets/css/style.css" rel="stylesheet">
+  <link href="/assets/css/style.css" rel="stylesheet">
 
   <!-- Jquery with fallback -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-  <script>
-     window.jQuery || document.write('<script src="../assets/vendor/jquery.min.js"><\/script>');
-  </script>
+  <script>window.jQuery || document.write('<script src="/assets/vendor/jquery.min.js"><\/script>');</script>
 
 </head>
 <body>
@@ -39,9 +37,9 @@
   <header id="header" class="fixed-top header-inner-pages">
     <div class="container d-flex align-items-center">
   
-      <h1 class="align-items-center mr-auto"><a href="#"><img id="main_logo" src="assets/img/logo.png" alt="APSIT" height="100px"></a></h1>
+      <h1 class="align-items-center mr-auto"><a href="#"><img id="main_logo" src="/assets/img/logo.png" alt="APSIT" height="100px"></a></h1>
       <!-- Uncomment below if you prefer to use an image logo -->
-      <!-- <a href="index.html" class="logo mr-auto"><img src="../assets/img/logo.png" alt="" class="img-fluid"></a>-->
+      <!-- <a href="index.html" class="logo mr-auto"><img src="/assets/img/logo.png" alt="" class="img-fluid"></a>-->
   
       <nav class="nav-menu d-none d-lg-block">
         <ul>
@@ -77,11 +75,54 @@
     <section id="breadcrumbs" class="breadcrumbs"><br><br><br>
       <div class="container">
 
-        <ol>
-          <li><a href="/">Home</a></li>
-          <li>News</li>
-        </ol>
-        <h2>News</h2>
+        <div class="row">
+          <div class="col-lg-6 col-md-12">
+              <ol>
+                  <li><a href="/">Home</a></li>
+                  <li>News</li>
+              </ol>
+              <h2>News</h2>
+          </div>
+
+          <!-- start flash message -->
+          <% if(successMessage && successMessage.length>0 ){ %>
+              <div class="col-lg-6 col-md-12">
+                  <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 100px;">
+                      <div class="toast border border-success" data-autohide="false" style="position: absolute; top: 0; right: 0;">
+                          <div class="toast-header">
+                              <i class="far fa-check-circle text-success"></i>
+                              <strong class="mr-auto">&nbsp;Success.</strong>
+                              <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                          <div class="toast-body">
+                                  <%= successMessage %>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+          <% } else if(errorMessage && errorMessage.length>0 ){ %>
+              <div class="col-lg-6 col-md-12">
+                  <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 100px;">
+                      <div class="toast border border-warning" data-autohide="false" style="position: absolute; top: 0; right: 0;">
+                          <div class="toast-header">
+                              <i class="fas fa-exclamation-circle text-warning"></i>
+                              <strong class="mr-auto">&nbsp;Warning         .</strong>
+                              <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                          <div class="toast-body">
+                                  <%= errorMessage %>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+          <% } %>
+          <!-- end flash message -->
 
       </div>
     </section><!-- End Breadcrumbs -->
@@ -106,9 +147,9 @@
                     <div>
                       <center>
                         <% if(i<=5) { %>
-                          <img src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.gif';" />
+                          <img src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
                         <% } else { %>
-                          <img class="lazyload" src="/assets/img/image-placeholder-300x200.gif" data-src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.gif';" />
+                          <img class="lazyload" src="/assets/img/image-placeholder-300x200.gif" data-src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
                         <% } %>
                       </center>
                     </div>

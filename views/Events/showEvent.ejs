@@ -30,8 +30,7 @@
     <!-- Jquery with fallback -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-  <script>
-     window.jQuery || document.write('<script src="../assets/vendor/jquery.min.js"><\/script>');
+  <script>window.jQuery || document.write('<script src="../assets/vendor/jquery.min.js"><\/script>');
   </script>
 
 </head>
@@ -99,7 +98,7 @@
                     <div class="owl-carousel portfolio-details-carousel">
                         <% event.images.forEach(function(item){ %>
 
-                            <img src="/assets/img/image-placeholder-300x200.gif" class="lazyload" data-src="<%= item %>" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.gif';">
+                            <img src="../assets/img/image-placeholder-300x200.gif" class="lazyload" data-src="<%= item %>" onerror="this.onerror=null;this.src='../assets/img/image-placeholder-300x200.png';">
 
                         <% }) 
                             const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],

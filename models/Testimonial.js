@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 
 const testimonialSchema = new mongoose.Schema({
-    name: String,
+    name: {
+        type: String,
+        unique: true
+    },
     branch: String,
     content: String,
     image: String

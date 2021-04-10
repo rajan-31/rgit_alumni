@@ -214,9 +214,9 @@
                       <tr class="sorter-header">
                         <!-- <th>ID</th> -->
                         <!-- <th>Index</th> -->
-                        <th id="simulate_click" class="keep-whitespace">    Username</th>
-                        <th class="keep-whitespace">    First Name</th>
-                        <th class="keep-whitespace">    Last Name</th>
+                        <th id="simulate_click" class="keep-whitespace" style="background-position-x: 10px;">  Username</th>
+                        <th class="keep-whitespace"><center>  First Name</center></th>
+                        <th class="keep-whitespace"><center>  Last Name</center></th>
                         <th class="no-sort"><center>View Profile</center></th>
                       </tr>
                     </thead>
@@ -225,10 +225,10 @@
                         <tr>
                           <!-- <td> <%# i+1 %> </td> -->
                           <td><%= allAlumni[i].username %></td>
-                          <td><%= allAlumni[i].firstName %></td>
-                          <td><%= allAlumni[i].lastName %></td>
+                          <td class="text-center"><%= allAlumni[i].firstName %></td>
+                          <td class="text-center"><%= allAlumni[i].lastName %></td>
                           <td>
-                            <a href="/profile/<%= allAlumni[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size">View Profile</a>
+                            <a href="/profile/<%= allAlumni[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size">View</a>
                           </td>
                         </tr>
                       <% } %>

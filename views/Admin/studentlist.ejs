@@ -215,10 +215,10 @@
                       <tr class="sorter-header">
                         <!-- <th>ID</th> -->
                         <!-- <th>Index</th> -->
-                        <th id="simulate_click" class="keep-whitespace">    Username</th>
-                        <th class="keep-whitespace">    First Name</th>
-                        <th class="keep-whitespace">    Last Name</th>
-                        <th class="no-sort"><center>View Profile</center> </th>
+                        <th id="simulate_click" class="keep-whitespace" style="background-position-x: 10px;">  Username</th>
+                        <th class="keep-whitespace"><center>  First Name</center></th>
+                        <th class="keep-whitespace"><center>  Last Name</center></th>
+                        <th class="no-sort"><center>View Profile</center></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -229,8 +229,7 @@
                           <td> <%= allStudents[i].firstName %> </td>
                           <td> <%= allStudents[i].lastName %> </td>
                           <td>
-                            <a href="/profile/<%= allStudents[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size">View
-                              Profile</a>
+                            <a href="/profile/<%= allStudents[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size">View</a>
                           </td>
                         </tr>
                         <% } %>

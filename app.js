@@ -11,18 +11,22 @@ const express       = require("express"),
       path = require('path'),
       multer = require('multer'),
       methodOverride = require('method-override'), //to use delete, put requests
-      flash = require('connect-flash');
+      flash = require('connect-flash'),
+      
+      helmet = require("helmet"),
+      morgan = require("morgan"),
+      nodeCache = require("node-cache"),
+      compression = require("compression");
 
-      ////////////////////////
       const httpServer = require("http").createServer(app);
       const io = require("socket.io")(httpServer);
-      ///////////////////////
 
 const User  = require("./models/user"),
       News  = require("./models/news"),
       Event = require("./models/event"),
       Admin = require("./models/admin"),
-      Testimonial = require("./models/testimonial");
+      Testimonial = require("./models/testimonial"),
+      Data = require("./models/data")
 
 
 /* Importing all routes */
@@ -32,6 +36,12 @@ const indexRoutes = require("./routes/index"),
       adminRoutes = require("./routes/admin"),
       chatRoutes = require("./routes/chat"),
       profileRoutes = require("./routes/profile");
+
+const logger = require("./configs/winston_config");
+app.use(morgan(
+    ':remote-addr - :remote-user ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms ":referrer" ":user-agent"', 
+    { stream: { write: message => logger.http(message.trim()) }}
+));
 
 require('dotenv').config()  // loading environment variables
 
@@ -47,15 +57,46 @@ mongoose.connect(mongodbURL , {
 });
 
 mongoose.connection.on('connected', function () {
-    console.log('Mongoose default connection open to ' + mongodbURL);
+    logger.info('Mongoose connection open to ' + mongodbURL);
 }).on('error', function (err) {
-    console.log('Mongoose default connection error: ' + err);
+    logger.error('Mongoose connection error: ' + err);
 }).on('disconnected', function () {
-    console.log('Mongoose default connection lost!');
+    logger.error('Mongoose connection lost!');
 });
 
+/* gzip compression */
+app.use(compression());
 
+/* helmet config */
+app.use(
+    helmet.contentSecurityPolicy({
+      directives: {
+        'default-src': [ "'self'" ],
+        'base-uri': [ "'self'" ],
+        'connect-src': [ "'self'" ],
+        'block-all-mixed-content': [],
+        'font-src': [ "'self'", 'https:', 'data:' ],
+        'frame-ancestors': [ "'self'" ],
+        'img-src': [ "'self'", 'data:', 'blob:' ],
+        'object-src': [ "'none'" ],
+        'script-src': [ "'self'", "'unsafe-inline'", "https://ajax.googleapis.com", "https://cdnjs.cloudflare.com" ],
+        'script-src-attr': [ "'none'" ],
+        'style-src': [ "'self'", 'https:', "'unsafe-inline'" ],
+        'frame-src': [ "https://www.google.com" ],
+        'upgrade-insecure-requests': []
+      },
+    })
+);
+app.use(helmet.hidePoweredBy());
+app.use(helmet.hsts());
+app.use(helmet.noSniff());
+app.use(helmet.permittedCrossDomainPolicies());
+app.use(helmet.referrerPolicy());
+app.use(helmet.xssFilter());
 
+/* end helmet config */
+
+/* static content */
 app.use("/assets/css", express.static(path.join(__dirname, "public", "assets", "css"), {
     etag: false,
     // maxAge: 1000 * 60 * 2,
@@ -64,22 +105,31 @@ app.use("/assets/fonts", express.static(path.join(__dirname, "public", "assets",
     etag: false,
     // maxAge: 1000 * 60 * 3,
 }));
-app.use("/assets/img", express.static(path.join(__dirname, "public", "assets", "img"), {
+app.use([ /^\/assets\/img\/clients($|\/)/, "/assets/img" ], express.static(path.join(__dirname, "public", "assets", "img"), {
     etag: false,
-    // maxAge: 1000 * 60 * 3,
+    // maxAge: 1000 * 60 * 1
+}));
+app.use("/assets/img/clients", express.static(path.join(__dirname, "public", "assets", "img", "clients"), {
+    etag: false,
+    maxAge: 1000 * 60 * 2
 }));
 app.use("/assets/js", express.static(path.join(__dirname, "public", "assets", "js"), {
     etag: false,
     // maxAge: 1000 * 60 * 1,
 }));
+
+/* vendor files */
 app.use("/assets/vendor", express.static(path.join(__dirname, "public", "assets", "vendor"), {
     etag: false,
     // maxAge: 1000 * 60 * 2,
 }));
+
+/* uploaded files */
 app.use("/images", express.static(path.join(__dirname, "uploads", "images"), {
     etag: false,
     // maxAge: 1000 * 60 * 1,
 }));
+
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
@@ -97,24 +147,13 @@ const sessionMiddleware = expressSession({
     saveUninitialized: false,
     cookie: { 
         maxAge: 3600000 * 24 * 7,   //7days
-        // sameSite: "lax",
-        // "secure:true",   // set only when using https
+        sameSite: "lax",
+        // secure: true,   // set only when using https
+        httpOnly: true
     }, 
     store: new MongoStore({ mongooseConnection: mongoose.connection }) // may be more configuration in future
 });
 app.use(sessionMiddleware);
-
-/* Multer configuration */
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads')
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now())
-    }
-});
-const upload = multer({ storage: storage });
-
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -150,7 +189,7 @@ function (accessToken, refreshToken, profile, done) {
                 // more details can be taken
             });
             user.save(function (err) {
-                if (err) console.log(err);
+                if (err) logger.error(err);
                     return done(err, user);
             });
         } else {
@@ -161,8 +200,6 @@ function (accessToken, refreshToken, profile, done) {
 ));
 
 
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
 passport.serializeUser(function (user, done) {
     user = { _id: user._id, username :user.username, firstName: user.firstName, fullName: user.firstName + " " + user.lastName, role: user.role, active: user.active };
     done(null, user);
@@ -176,7 +213,6 @@ passport.deserializeUser(function (user, done) {
 /* middleware to pass logged in user to every route */
 app.use(function(req, res, next){
     res.locals.loggedInUser = req.user;
-
     res.locals.successMessage = req.flash("successMessage");
     res.locals.errorMessage = req.flash("errorMessage");
 
@@ -184,21 +220,45 @@ app.use(function(req, res, next){
 });
 
 
-/* using data from data/data.json */
-// const rawdata = fs.readFileSync('./data/data.json');
-// global.static_data = JSON.parse(rawdata);
-/* testimonials */
-// Testimonial.find({}, function(err, data) {
-//     if(err) {
-//         console.log(err);
-//     } else{
-//         global.allTestimonials = data;
-//     }
-// });
-
 /* Socket.io events */
-require("./services/socketio-events.js")(io, User, sessionMiddleware, passport);
+require("./configs/socketio-events.js")(io, User, sessionMiddleware, passport);
 
+/* cache data */
+cacheData = new nodeCache( { checkperiod: 0 } );
+
+Data.findOne({key: "home_page_data"}, function(err, _data) {
+    if(err) logger.error(err);
+    else if(_data) {
+        const temp = _data.value;
+
+        const success = cacheData.set("home_page_data", temp);
+        if(success) {
+            logger.info("Home page data retrived from Database and cached successfully.");
+        } else {
+            logger.error("Home page data retrived from Database and but caching failed.")
+        }
+    } else {
+        const placeholder = {
+            youtubeURL:"https://www.youtube.com/watch?v=rF9cCAQXGgU",
+            students:"300",
+            studentsProgress:"40",
+            alumni:"100",
+            alumniProgress:"70"
+        }
+
+        Data.create({ key: "home_page_data", value: placeholder }, function(err) {
+            if(err) logger.error(err);
+            else {
+                const success = cacheData.set("home_page_data", placeholder);
+                if(success) {
+                    logger.info("Home page data placeholder cached successfully.");
+                } else {
+                    logger.error("Home page data placeholder caching failed.")
+                }
+            }
+        });
+    }
+}).lean();
 
 /* using all routes */
 app.use(indexRoutes);
@@ -210,7 +270,7 @@ app.use(chatRoutes);
 
 
 app.get('/*', function(req, res){
-    res.send(`
+    res.status(404).send(`
     <center>
         <h1>Error 404</h1>
         <h3>Are you lost?!</h3>
@@ -225,9 +285,8 @@ const port = process.env.PORT
 let ip = process.env.PLATFORM == "mobile" ? "0.0.0.0" : process.env.IP
 
 httpServer.listen(port, ip, function(){
-    // console.log("Environment: ",process.env.Node_ENV);
-    console.log("Server is running...");
-    console.log("Go to " + ip + ":" + port);
+    // logger.info("Environment: ",process.env.Node_ENV);
+    logger.info("Server is running at => " + ip + ":" + port);
 });
 
 /* create test admin */
@@ -237,10 +296,10 @@ if(process.env.CREATE_TEST_ADMIN == "true") {
     Admin.register(new Admin({ username: adminUsername, createdBy: "1st Admin", active: true }), adminPassword, function (err, user) {
         if (err) {
             if(err.name == "UserExistsError")
-                console.log("Test Admin with that USERNAME is already present!");
+                logger.error("Test Admin with that USERNAME is already present!");
             else
-                console.log(err);
+                logger.error(err);
         } else
-            console.log(`1st ADMIN created with- USERNAME: ${adminUsername} and PASSWORD: ${adminPassword}`);
+            logger.info(`1st ADMIN created with- USERNAME: ${adminUsername} and PASSWORD: ${adminPassword}`);
     });
 }

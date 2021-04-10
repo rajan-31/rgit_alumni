@@ -261,8 +261,8 @@
                       <tr class="sorter-header">
                         <!-- <th>ID</th> -->
                         <!-- <th>Index</th> -->
-                        <th id="simulate_click" class="keep-whitespace">    Username</th>
-                        <th class="keep-whitespace">    Account Created By</th>
+                        <th id="simulate_click" class="keep-whitespace" style="background-position-x: 10px;">  Username</th>
+                        <th class="keep-whitespace"><center>  Created By</center></th>
                         <th class="no-sort"><center>Delete Admin</center></th>
                       </tr>
                     </thead>
@@ -271,7 +271,7 @@
                         <tr>
                           <!-- <td> <%# i+1 %> </td> -->
                           <td><%= allAdmins[i].username %></td>
-                          <td><%= allAdmins[i].createdBy %></td>
+                          <td class="text-center"><%= allAdmins[i].createdBy %></td>
                           <td>
                             <form action="/admin/delete/<%= allAdmins[i]._id %>?_method=DELETE" method="POST">
                               <button type="submit" class="btn btn-block btn-danger btn-sm btn-fix-size btn-action-spinner">Delete</button>
