@@ -856,7 +856,7 @@ section {
 --------------------------------------------------------------*/
 .services .icon-box {
   box-shadow: 0px 0 25px 0 rgba(0, 0, 0, 0.1);
-  padding: 25px 10px;
+  padding: 25px 10px 25px 10px;
   transition: all ease-in-out 0.4s;
   background: #fff;
 }
@@ -1460,7 +1460,7 @@ section {
 }
 
 .testi-main:hover {
-  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
 .testi-img {
@@ -1595,9 +1595,27 @@ transition: color .15s ease-in-out,background-color .15s ease-in-out,border-colo
   color: #fff;
   background-color: #47b2e4;
   border-color: #47b2e4;
+  box-shadow: 0 2px 15px rgb(0 0 0 / 10%);
 }
 
-.btn-primary:hover {
+.btn-primary:hover, .btn-primary:not(:disabled):not(.disabled):active {
   background-color: #209dd8;
   border-color: #209dd8;
+} 
+
+.btn-primary:focus {
+  background-color: #209dd8;
+  border-color: #209dd8;
+  box-shadow: 0 0 0 0.2rem rgb(38 143 255 / 50%);
+}
+
+.btn-transparent:focus {
+  box-shadow: none;
+}
+
+/* summernote */
+
+.note-fontname .note-dropdown-menu {
+  max-height: 200px;
+  overflow: auto;
 }

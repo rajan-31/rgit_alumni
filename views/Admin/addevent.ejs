@@ -155,8 +155,7 @@
 
             <!-- ./col -->
             <div class="col-lg-12">
-              <center>
-                <h1 class="m-0 text-dark">Add Events</h1></center>
+                <h1 class="m-0 text-dark text-center">Add Events</h1>
             </div>
             <!-- ./col -->
 
@@ -169,9 +168,7 @@
             <section class="col-lg-12"><br>
 
               <div>
-                <center>
-                  <h1 class="m-0 text-dark"></h1>
-                </center>
+                  <h1 class="m-0 text-dark text-center"></h1>
               </div>
 
               <div>
@@ -215,7 +212,7 @@
               
                         <div class="card-body pad">
                           <div class="mb-3">
-                            <textarea name="desc" class="form-control" rows="3" required="required"></textarea>
+                            <textarea name="desc" id="summernote"></textarea>
                           </div>
                         </div>
                       </div>
@@ -234,10 +231,9 @@
                             required="required">
                         </div>
                         
-                        <small>
-                          <i class="fas fa-exclamation-circle"></i>
+                        <div class="px-2 small">
                           Recommended ratio - 3:2 (width:height), for proper look
-                        </small>
+                        </div>
                       </div>
               
                     </div> 
@@ -251,10 +247,9 @@
                             multiple="multiple" required="required">
                         </div>
                         
-                        <small>
-                          <i class="fas fa-exclamation-circle"></i>
+                        <div class="px-2 small">
                           Max Count: 5 | Max Size: 2MB/Image | Recommended - same width & height for all images
-                        </small>
+                        </div>
                       </div>
                       <ul id="selectedImages">
             
@@ -283,35 +278,67 @@
     <!-- /.content-wrapper -->
     <%- include ('../partials/adminFooter'); -%>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js"></script>
 
   <!-- to show selected files -->
   <script>
-    $("#selectImages").change(function () {
-      if(this.files.length>5) {
-      $("#addEventButton").prop('disabled', true);
-    } else {
-      $("#addEventButton").prop('disabled', false);
-    }
-      $("#selectedImages").html("");
-      for (let i = 0; i < this.files.length; i++) {
-        let x = "<li>" + this.files[i].name + "</li>";
-        $("#selectedImages").append(x);
+    $(document).ready(function() {
+      $("#selectImages").change(function () {
+        if(this.files.length>5) {
+        $("#addEventButton").prop('disabled', true);
+      } else {
+        $("#addEventButton").prop('disabled', false);
       }
-    });
+        $("#selectedImages").html("");
+        for (let i = 0; i < this.files.length; i++) {
+          let x = "<li>" + this.files[i].name + "</li>";
+          $("#selectedImages").append(x);
+        }
+      });
 
-    /* datepicker */
-    $("#datepicker").datepicker({
-      autoclose: true,
-      disableTouchKeyboard: true,
-      format: "dd MM, yyyy",
-      // startDate: startDate,
-      // endDate: endDate,
-      // todayBtn: true,
-      todayHighlight: true
-    });
+      /* datepicker */
+      $("#datepicker").datepicker({
+        autoclose: true,
+        disableTouchKeyboard: true,
+        format: "dd MM, yyyy",
+        // startDate: startDate,
+        // endDate: endDate,
+        // todayBtn: true,
+        todayHighlight: true
+      });
 
+      /* summernote */
+      $('#summernote').summernote({
+        placeholder: 'write description...',
+        height: 200,                 
+        minHeight: 200,
+        focus: true,
+        disableDragAndDrop: true,
+        tabDisable: true,
+
+        toolbar: [
+        ['style', ['bold', 'italic', 'underline', 'strikethrough']],
+        ['clear', ['clear']],
+
+        ['fontname', ['fontname']],
+        ['fontsize', ['fontsize']],
+
+        ['color', ['forecolor', 'backcolor']],
+
+        ['para', ['ul', 'ol', 'paragraph', 'hr']],
+
+        ['insert', ['link']],
+
+        ['history', ['undo', 'redo']],
+
+        ['view', ['fullscreen', 'help']],
+        ],
+
+        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Jost', 'Poppins', 'Open Sans', 'Helvetica', 'Impact', 'Tahoma', 'Times New Roman', 'Verdana', 'Segoe UI'],
+        fontNamesIgnoreCheck: ['Jost', 'Open Sans', 'Poppins']
+      });
+    });
     
-
   </script>
 </body>
 

@@ -43,7 +43,7 @@ app.use(morgan(
     { stream: { write: message => logger.http(message.trim()) }}
 ));
 
-require('dotenv').config()  // loading environment variables
+require('dotenv').config();  // loading environment variables
 
 /* start mongodb connection */
 //for temp/ development purpose
@@ -80,7 +80,7 @@ app.use(
         'img-src': [ "'self'", 'data:', 'blob:' ],
         'object-src': [ "'none'" ],
         'script-src': [ "'self'", "'unsafe-inline'", "https://ajax.googleapis.com", "https://cdnjs.cloudflare.com" ],
-        'script-src-attr': [ "'none'" ],
+        'script-src-attr': [ "'unsafe-inline'", "https:" ],
         'style-src': [ "'self'", 'https:', "'unsafe-inline'" ],
         'frame-src': [ "https://www.google.com" ],
         'upgrade-insecure-requests': []
@@ -271,11 +271,11 @@ app.use(chatRoutes);
 
 app.get('/*', function(req, res){
     res.status(404).send(`
-    <center>
+    <div style="text-align:center;">
         <h1>Error 404</h1>
         <h3>Are you lost?!</h3>
         <a href="/">Go Home</a>
-    </center>
+    </div>
     `)
 });
 

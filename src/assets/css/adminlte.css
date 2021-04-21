@@ -2915,7 +2915,10 @@ label:not(.form-check-label):not(.custom-file-label) {
 
 
 
-/* custom */
+/* -----------------------------------------------------------
+  custom 
+--------------------------------------------------------------
+*/
 
 .table td, .table th {
   border-top: none;
@@ -2985,4 +2988,11 @@ table th, table td{
 
 .datepicker {
     transform: translate(0, 3.9em);
+}
+
+/* summernote */
+
+.note-fontname .note-dropdown-menu {
+  max-height: 200px;
+  overflow: auto;
 }

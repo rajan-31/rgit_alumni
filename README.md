@@ -52,10 +52,10 @@ db.admins.insert({
 - ~~change titles and links of views~~
 - ~~user specific middlewares.isLoggedIn middleware~~
 - ~~mongoose operatins without geting updated data~~
-- //sanitize / validate form data
+- ~~sanitize / validate form data~~
 - //ajax calls for forms
 - ~~email, first name, last name validation~~
-<!-- - "Sort operation used more than the maximum 33554432 bytes of RAM. Add an index, or specify a smaller limit." (create indexes for collection is a option) -->
+- ~~"Sort operation used more than the maximum 33554432 bytes of RAM. Add an index, or specify a smaller limit." (create indexes for collection is a option)~~
 - compatibility on all browsers
 
 
@@ -95,7 +95,7 @@ db.admins.insert({
 - ~~testimonials - admin panel, home page~~
 - ~~reset password~~
 
-- ~~thubnail - for event~~
+- ~~thumbnail - for event~~
 - ~~loader~~
 
 - ~~limit failed logins~~
@@ -142,10 +142,24 @@ db.admins.insert({
 - ~~logging~~
 - ~~caching~~
         
+- ~~remove all <center></center> elements~~
+- ~~change password~~
+- //restrict msg who opt out
+- ~~when form reset clicked show old content~~
+- ~~for new search clear old result html~~
+- ~~show not found & failed~~
 
+- ~~styling for description~~
+- //ckeeditor how to render view only
+- ~~summernote~~
+- chat user photos
+
+- ~~sanitize~~
+- //newletter duplicate
 ------------
 
 - ~~git filename case sensitivity err~~
     change name -> stage commit -> change name -> stage commit -> commit
 
 - use shimmer instead of loading spinner
+

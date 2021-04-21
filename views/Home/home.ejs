@@ -327,50 +327,42 @@
     <div class="container" data-aos="fade-up">
     
         <div class="section-title">
-          <a href="/events"><h2>Latest News</h2></a>
+          <a href="/news"><h2>Latest News</h2></a>
         </div>
         
         <div class="row">
           <% let tempDate; 
           const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
               days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-              news.forEach(function(item){ 
-                tempDate = item.date %>
+              for(let i=0; i<countNews; i++){ 
+                tempDate = news[i].date %>
           
-          <div class="col-xl-4 col-md-6 mx-auto col-12 d-flex align-items-stretch my-2 " data-aos="zoom-in" data-aos-delay="100">
-            <div class="icon-box keep-width">
-          
-              <div>
-                <center><img class="lazyload" src="/assets/img/image-placeholder-300x200.gif"  data-src="<%= item.thumbnail %>%>" width="300" height="200" alt="Not Found" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" /></center>
-              </div>
-              <hr>
-              <center>
-                <h4><a href="/news"><%= item.title %></a></h4>
-              </center>
-          
-              <center>
-                <i class="far fa-calendar-alt"></i>
-                <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %>
-              </center>
-              <br>
-          
-              <% if(item.description && item.description.length>213){%>
-                <p><%= item.description.slice(0,210)+"..." %></p>
-              <% }else{ %>
-                <p><%= item.description %>
-                  <span class="show-whitespaces"><%="  ".repeat(200-item.description.length) %></span>
-                </p>
-              <% } %>
-          
-              <hr><br>
-          
-              <center>
-                <h4><a href="/news"><i class="fas fa-info-circle"></i> View More</a></h4>
-              </center>
-          
-            </div>
+          <div class="col-xl-4 col-md-6 mx-auto d-flex align-items-stretch my-2 " data-aos="zoom-in" data-aos-delay="100">
+            <div class="icon-box keep-width d-flex flex-column">
+                
+                <img class="lazyload mx-auto" src="/assets/img/image-placeholder-300x200.gif" data-src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
+          <div class="text-center">
+            <hr>
+            <h4><a href="/news/<%= news[i]._id %>"><%= news[i].title %></a></h4>
           </div>
-          <% }); %>
+      
+          <div class="text-center">
+            <i class="far fa-calendar-alt"></i> 
+            <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %> 
+          </div>
+          <br>
+          
+          <div class="flex-grow-1">
+            
+          </div>
+        <div>
+            <hr><br>
+            <h4 class="text-center"><a  href="/news/<%= news[i]._id %> "><i class="fas fa-info-circle"></i> More Info</a></h4>
+        </div>
+      
+        </div>
+          </div>
+          <% }; %>
         </div>
 
     </div>
@@ -386,43 +378,35 @@
         </div>
         
         <div class="row">
-          <% events.forEach(function(item){ 
-            tempDate = item.date %>
+          <% for(let i=0; i<countEvents; i++) { 
+            tempDate = events[i].date %>
           
           <div class="col-xl-4 col-md-6 mx-auto d-flex align-items-stretch my-2" data-aos="zoom-in" data-aos-delay="100">
-            <div class="icon-box keep-width">
-          
-              <div>
-                <center><img class="lazyload" src="/assets/img/image-placeholder-300x200.gif" data-src="<%= item.thumbnail %>" width="300" height="200" alt="Not Found" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" /></center>
-              </div>
-              <hr>
-              <center>
-                <h4><a href="/events "><%= item.title %></a></h4>
-              </center>
-          
-              <center>
-                <i class="far fa-calendar-alt"></i>
-                <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %>
-              </center>
-              <br>
-          
-              <% if(item.description && item.description.length>213){%>
-                <p><%= item.description.slice(0,210)+"..." %></p>
-              <% }else{ %>
-                <p><%= item.description %>
-                  <span class="show-whitespaces"><%="  ".repeat(200-item.description.length) %></span>
-                </p>
-              <% } %>
-          
-              <hr><br>
-          
-              <center>
-                <h4><a href="/events"><i class="fas fa-info-circle"></i> View More</a></h4>
-              </center>
-          
-            </div>
+            <div class="icon-box keep-width d-flex flex-column">
+                
+                <img class="lazyload mx-auto" src="/assets/img/image-placeholder-300x200.gif" data-src="<%= events[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
+          <div class="text-center">
+            <hr>
+            <h4><a href="/news/<%= events[i]._id %>"><%= events[i].title %></a></h4>
           </div>
-          <% }); %>
+      
+          <div class="text-center">
+            <i class="far fa-calendar-alt"></i> 
+            <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %> 
+          </div>
+          <br>
+          
+          <div class="flex-grow-1">
+            
+          </div>
+        <div>
+            <hr><br>
+            <h4 class="text-center"><a  href="/news/<%= events[i]._id %> "><i class="fas fa-info-circle"></i> More Info</a></h4>
+        </div>
+      
+        </div>
+          </div>
+          <% }; %>
         </div>
 
     </div>
@@ -476,9 +460,9 @@
               <input type="email" name="email" id="newsletter-email" placeholder="Enter your email..." required="required">
               <button id="newsletter-submit-btn" type="submit">Subscribe</button>
             </form>
-            <div class="small text-center text-warning mt-2 newsletter-invalid-email" style="display: none;"><i class="fas fa-exclamation-circle"></i> Invalid Email Address!</div>
-            <div class="small text-center text-danger mt-2 newsletter-request-failed" style="display: none;"><i class="fas fa-exclamation-circle"></i> Request Failed!</div>
-            <div class="small text-center text-warning mt-2 newsletter-email-exists" style="display: none;"><i class="fas fa-exclamation-circle"></i> Already Subscribed!</div>
+            <div class="small text-center  mt-2 newsletter-invalid-email" style="display: none;"></i> Invalid Email Address!</div>
+            <div class="small text-center text-danger mt-2 newsletter-request-failed" style="display: none;"></i> Request Failed!</div>
+            <div class="small text-center  mt-2 newsletter-email-exists" style="display: none;"></i> Already Subscribed!</div>
           </div>
         </div>
       </div>

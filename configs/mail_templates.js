@@ -128,25 +128,27 @@ allTemplates.activation_mail = function(activation_link, name) {
           .name {
             color: #ffbe00;
           }
+          
+          .container {
+            text-align:center;
+          }
         </style>
     </head>
     <body>
-        <center>
         <div class="container">
-        <h1>
-            Welcome to,<br>
-            <span>APSIT Alumni Family</span>
-        </h1>
-        <h4>Hello, <span class="name">${name}</span></h4>
-        <p>Thank you for joining us!</p>
-    
-        <a href="${activation_link}" class="act-btn act-primary" style="color: white; ">Click to Activate Your Account</a><br><br><br>
-    
-        <p>If button doesn't work, use link given below.</p>
-        <a href="${activation_link}" target="_blank">${activation_link}</a>
-        <p>(If you didn't signup, you can ignore this mail.)</p>
+          <h1>
+              Welcome to,<br>
+              <span>APSIT Alumni Family</span>
+          </h1>
+          <h4>Hello, <span class="name">${name}</span></h4>
+          <p>Thank you for joining us!</p>
+      
+          <a href="${activation_link}" class="act-btn act-primary" style="color: white; ">Click to Activate Your Account</a><br><br><br>
+      
+          <p>If button doesn't work, use link given below.</p>
+          <a href="${activation_link}" target="_blank">${activation_link}</a>
+          <p>(If you didn't signup, you can ignore this mail.)</p>
         </div>
-    </center>
     </body>
     </html>
     `;
@@ -198,21 +200,23 @@ allTemplates.password_reset_mail = function (reset_link, name) {
           .name {
             color: #ffbe00;
           }
+
+          .container {
+            text-align:center;
+          }
         </style>
     </head>
     <body>
-        <center>
         <div class="container">
-        <h1>APSIT Alumni Portal</h1>
-        <h4>Hello, <span class="name">${name}</span></h4>
-        <p>We have received a request to reset your password.</p>
-        <a href="${reset_link}" class="act-btn act-primary" style="color: white; ">Click to Reset Your Password</a><br><br><br>
-    
-        <p>If button doesn't work, use link given below.</p>
-        <a href="${reset_link}" target="_blank">${reset_link}</a>
-        <p>(If you didn't request to reset password, you can ignore this mail.)</p>
+            <h1>APSIT Alumni Portal</h1>
+            <h4>Hello, <span class="name">${name}</span></h4>
+            <p>We have received a request to reset your password.</p>
+            <a href="${reset_link}" class="act-btn act-primary" style="color: white; ">Click to Reset Your Password</a><br><br><br>
+        
+            <p>If button doesn't work, use link given below.</p>
+            <a href="${reset_link}" target="_blank">${reset_link}</a>
+            <p>(If you didn't request to reset password, you can ignore this mail.)</p>
         </div>
-    </center>
     </body>
     </html>
     `

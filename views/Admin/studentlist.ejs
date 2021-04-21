@@ -201,9 +201,8 @@
             <section class="col-lg-12"><br>
 
               <div>
-                <center>
-                  <h1 class="m-0 text-dark">Students List</h1>
-                </center><br>
+                  <h1 class="m-0 text-dark text-center">Students List</h1>
+                <br>
               </div>
 
               <div class="card">
@@ -216,9 +215,9 @@
                         <!-- <th>ID</th> -->
                         <!-- <th>Index</th> -->
                         <th id="simulate_click" class="keep-whitespace" style="background-position-x: 10px;">  Username</th>
-                        <th class="keep-whitespace"><center>  First Name</center></th>
-                        <th class="keep-whitespace"><center>  Last Name</center></th>
-                        <th class="no-sort"><center>View Profile</center></th>
+                        <th class="keep-whitespace text-center">  First Name</th>
+                        <th class="keep-whitespace text-center">  Last Name</th>
+                        <th class="no-sort text-center">View Profile</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -226,8 +225,8 @@
                         <tr>
                           <!-- <td><%# i+1 %></td> -->
                           <td> <%= allStudents[i].username %> </td>
-                          <td> <%= allStudents[i].firstName %> </td>
-                          <td> <%= allStudents[i].lastName %> </td>
+                          <td class="text-center"> <%= allStudents[i].firstName %> </td>
+                          <td class="text-center"> <%= allStudents[i].lastName %> </td>
                           <td>
                             <a href="/profile/<%= allStudents[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size">View</a>
                           </td>

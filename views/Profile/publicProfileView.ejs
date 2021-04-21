@@ -29,15 +29,15 @@
             height:200px; */
             border-radius: 50%;
             /* box-shadow: 1px 1px 10px #000; */
-            margin-bottom: 10px;
+            margin: 0 25px;
         }
 
         #profile-img-container {
-            width: 300px;
+            width: 280px;
             margin: 0 auto;
             padding: 15px;
             background-color: rgba(255, 255, 255);
-            border-radius: 2px;
+            border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
             transition: all 0.3s cubic-bezier(.25,.8,.25,1);
         }
@@ -51,6 +51,7 @@
             font-weight: 600;
             color: rgb(105, 105, 105);
             text-align: center;
+            margin-top: 30px;
         }
 
         input[type=checkbox] {
@@ -103,7 +104,7 @@
             white-space: nowrap;
         }
     </style>
-px
+
     <!-- Jquery with fallback -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -175,14 +176,15 @@ px
                 </div>
                     
                     <div id="profile-img-container">
-                        <center>
                             <% if( profileImage ) { %>
                                 <img src="<%=profileImage%>" id="profile-img" height="200" width="200">
                             <% } else { %>
-                                <i class="fas fa-user" style="font-size: 200px;"></i>
+                                <div class="text-center">
+                                    <i class="fas fa-user" style="font-size: 200px;"></i>
+                                </div>
                             <% } %>
-                        </center>
-                        <div class="profile-name"><%= firstName  %> <%= lastName  %></div>
+                        <div class="profile-name mb-1"><%= firstName  %> <%= lastName  %></div>
+                        <div><a href="/chats/<%= _id %> " class="btn btn-block btn-primary"><i class="fas fa-paper-plane pr-1"></i>Message</a></div>
                     </div>
                 
                 
@@ -395,30 +397,31 @@ px
     <%- include ('../partials/footer'); -%>
     
     <script>
-        // $(".toast").toast('show');
-
-        // show dob in format
-        const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        var temp_dob = new Date($("#dob").text());
-        $("#dob").text(`${("0" + temp_dob.getDate()).slice(-2)}, ${months[temp_dob.getMonth()]} ${temp_dob.getFullYear()}`);
-
-        // remove social link
-        $(".visit_url").each(function() {
-            var $this = $( this );
-            if($this.attr("href") == "") {
-                $this.replaceWith("<div>Not Available</div>")
+        $(document).ready(function() {
+            // $(".toast").toast('show');
+    
+            // show dob in format
+            const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var temp_dob = new Date($("#dob").text());
+            $("#dob").text(`${("0" + temp_dob.getDate()).slice(-2)}, ${months[temp_dob.getMonth()]} ${temp_dob.getFullYear()}`);
+    
+            // remove social link
+            $(".visit_url").each(function() {
+                var $this = $( this );
+                if($this.attr("href") == "") {
+                    $this.replaceWith("<div>Not Available</div>")
+                }
+            });
+    
+            // render skills
+            var temp_skills;
+            if($("#data-skills-public").text() != "") {
+                temp_skills = $("#data-skills-public").text().split("|");
+                for(var i = temp_skills.length-1; i>=0; i--) {
+                    $("#skills-public").append("<span class='skill-item'>"+temp_skills[i]+"</span>");
+                }
             }
         });
-
-        // render skills
-        var temp_skills;
-        if($("#data-skills-public").text() != "") {
-            temp_skills = $("#data-skills-public").text().split("|");
-            for(var i = temp_skills.length-1; i>=0; i--) {
-                $("#skills-public").append("<span class='skill-item'>"+temp_skills[i]+"</span>");
-            }
-        }
-
     </script>
 </body>
 </html>

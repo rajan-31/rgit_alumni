@@ -79,7 +79,6 @@
     function checkPasswordMatch(){
         const password = $("#password").val();
         const confirmPassword = $("#confirmPassword").val();
-        $("#passwordLengthInfo").html("");
         if (password != confirmPassword)
             $("#passwordInfo").html("<i class='fas fa-exclamation-circle text-danger' aria-hidden='true'></i> <small class='text-danger' >Passwords do not match!</small>");
         else

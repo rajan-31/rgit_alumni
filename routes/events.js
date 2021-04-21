@@ -1,7 +1,8 @@
 const express = require("express"),
     router = express.Router(),
     mongoose = require("mongoose"),
-    sharp = require("sharp");
+    sharp = require("sharp"),
+    sanitizeHtml = require('sanitize-html');;
     sharp.cache(false);
 
 const Event = require("../models/event");
@@ -122,7 +123,15 @@ router.post("/events", middlewares.isAdmin, function (req, res) {
         } else if (req.files && req.files["images"] && req.files["thumbnail"]) {
             const title = req.body.title;
             const date = req.body.date;
-            const desc = req.body.desc;
+            /* sanitize */
+            const desc = sanitizeHtml(req.body.desc, {
+                allowedTags: ["p","span","b","i","u","ol","ul","li","a","strike","font","br","hr","address","article","aside","footer","header","h1","h2","h3","h4","h5","h6","hgroup","main","nav","section","blockquote","dd","div","dl","dt","figcaption","figure","pre","abbr","bdi","bdo","cite","code","data","dfn","em","kbd","mark","q","rb","rp","rt","rtc","ruby","s","samp","small","strong","sub","sup","time","var","wbr","caption","col","colgroup","table","tbody","td","tfoot","th","thead","tr"],
+                allowedAttributes: {
+                    'a': ['href', 'target'],
+                    '*': ['style', 'color'],
+                },
+            });
+            
             let images = [];
             let thumbnail;
 
@@ -144,9 +153,15 @@ router.post("/events", middlewares.isAdmin, function (req, res) {
 
                 Event.create(newEvent, function (err) {
                     if (err) {
-                        logger.error(err);
-                        req.flash("errorMessage", "Something went wrong, please try again.");
-                        res.redirect('/admin/events');
+                        if (err.name === 'MongoError' && err.code === 11000) {
+                            logger.error(err);
+                            req.flash("errorMessage", "Duplicate title not allowed.");
+                            res.redirect('/admin/events');
+                        } else {
+                            logger.error(err);
+                            req.flash("errorMessage", "Something went wrong, please try again.");
+                            res.redirect('/admin/events');
+                        }
                     } else {
                         req.flash("successMessage", "Added new event successfully.");
                         res.redirect('/admin/events');
@@ -243,7 +258,14 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
         } else {
             const title = req.body.title;
             const date = req.body.date;
-            const desc = req.body.desc;
+            /* sanitize */
+            const desc = sanitizeHtml(req.body.desc, {
+                allowedTags: ["p","span","b","i","u","ol","ul","li","a","strike","font","br","hr","address","article","aside","footer","header","h1","h2","h3","h4","h5","h6","hgroup","main","nav","section","blockquote","dd","div","dl","dt","figcaption","figure","pre","abbr","bdi","bdo","cite","code","data","dfn","em","kbd","mark","q","rb","rp","rt","rtc","ruby","s","samp","small","strong","sub","sup","time","var","wbr","caption","col","colgroup","table","tbody","td","tfoot","th","thead","tr"],
+                allowedAttributes: {
+                    'a': ['href', 'target'],
+                    '*': ['style', 'color'],
+                },
+            });
 
             if (req.files && Object.keys(req.files).length > 0) {
                 let images = [];

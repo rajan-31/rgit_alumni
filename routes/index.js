@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
+const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const fs = require("fs");
@@ -52,11 +53,11 @@ router.get("/",function(req, res){
                     logger.error(err);
                 } else if(req.isAuthenticated()) {
                     Testimonial.find({}, function(err, allTestimonials) {
-                        res.render("Home/home", { news: allNews, events: allEvents, miscData: miscData, allTestimonials: allTestimonials, countTestimonials: allTestimonials.length });
+                        res.render("Home/home", { news: allNews, countNews: allNews.length, events: allEvents, countEvents: allEvents.length, miscData: miscData, allTestimonials: allTestimonials, countTestimonials: allTestimonials.length });
                     });
                 } else {
                     Testimonial.find({}, function(err, allTestimonials) {
-                        res.render("Home/guest", { news: allNews, events: allEvents, miscData: miscData, allTestimonials: allTestimonials, countTestimonials: allTestimonials.length });
+                        res.render("Home/guest", { news: allNews, countNews: allNews.length, events: allEvents, countEvents: allEvents.length, miscData: miscData, allTestimonials: allTestimonials, countTestimonials: allTestimonials.length });
                     });
                 }
             }).sort({ date: -1 }).limit(3).lean();
@@ -81,14 +82,14 @@ router.post('/signup', function(req, res){
     const receivedData = req.body;
 
     const validEmail = receivedData.username && allMiddlewares.isValidEmail(receivedData.username);
-    const correctPasswordLength = receivedData.password && receivedData.password.length>=6;
+    const correctPasswordLength = receivedData.password && receivedData.password.length>=6 && receivedData.password.length<=20;
     const matchedPasswords = receivedData.password==receivedData.confirmPassword;
     const validUserType = ["alumni", "student"].includes(receivedData.userType);
     const validFirstName = receivedData.firstName && receivedData.firstName.length>0;
     const validLastName = receivedData.lastName && receivedData.lastName.length>0;
 
     if ( validEmail && correctPasswordLength && matchedPasswords && validUserType && validFirstName && validLastName ) {
-        User.register(new User({ firstName:receivedData.firstName, lastName: receivedData.lastName, username: receivedData.username, userType :receivedData.userType}), receivedData.password, function(err, user){
+        User.register(new User({ firstName:receivedData.firstName, lastName: receivedData.lastName, username: receivedData.username.toLowerCase(), userType :receivedData.userType}), receivedData.password, function(err, user){
             if(err){
                 if (err.name == "UserExistsError") {
                     req.flash("errorMessage", "Email already taken, please try different Email.");
@@ -160,7 +161,7 @@ router.post('/signup', function(req, res){
         req.flash("errorMessage", "Invalid email address format!");
         res.redirect("/signup")
     } else if (!correctPasswordLength){
-        req.flash("errorMessage", "Password must be 6 characters long!");
+        req.flash("errorMessage", "Password length must be atleast 6 and atmost 20 characters!");
         res.redirect("/signup")
     } else if (!matchedPasswords){
         req.flash("errorMessage", "Password Mismatch");
@@ -296,7 +297,7 @@ router.get('/account/activate/:code', function(req, res) {
 });
 
 router.post('/account/activate/resend', function(req, res) {
-    const resend_to = req.body.username;
+    const resend_to = req.body.username.toLowerCase();
     User.findOne({ username: resend_to}, 'active activation_code activation_expires firstName lastName', async function(err, data) {
         if (err) {
             logger.error(err);
@@ -367,7 +368,7 @@ router.get("/account/password/reset", function(req, res) {
 });
 
 router.post("/account/password/reset", function(req, res) {
-    const _username = req.body.username;
+    const _username = req.body.username.toLowerCase();
     User.findOne({ username: _username}, "username firstName lastName googleId password_reset_expires password_reset_last", function(err, user) {
         if(err) {
             logger.error(err);
@@ -453,8 +454,8 @@ router.post("/account/password/reset/:code", function (req, res) {
         } else if (!user) {
             req.flash("errorMessage", "Invalid Password Reset Request!");
             res.redirect("/login");
-        } else if (password.length < 6) {
-            req.flash("errorMessage", "Password length must atleast 6.");
+        } else if (password.length < 6 || password.length > 20) {
+            req.flash("errorMessage", "Password length must atleast 6 and atmost 20 characters.");
             res.redirect(redirect_back);
         } else if (user.active == true) {
             req.flash("errorMessage", "Activate your account first!");
@@ -471,12 +472,69 @@ router.post("/account/password/reset/:code", function (req, res) {
                     } else {
                         req.flash("successMessage", "Password changed, login to continue.");
                         res.redirect('/login');
-                    } //99755800
+                    } 
                 });
             });
         }
     });
 });
+
+/* change password */
+router.post("/account/password/change", allMiddlewares.isLoggedIn, function(req, res) {
+    if(req.body) {
+        const oldPassword = req.body.oldpassword;
+        const newPassword = req.body.password;
+        User.findById(mongoose.Types.ObjectId(req.user._id), function(err, user) {
+            if(err){
+                logger.error(err);
+                req.flash("errorMessage", "Something went wrong, please try again later.");
+                res.redirect('/profile'); 
+            } else if(oldPassword && newPassword && newPassword.length >= 6 && newPassword.length <= 20){
+                user.changePassword(oldPassword, newPassword, function(err) {
+                    if(err) {
+                        if(err.name == "IncorrectPasswordError") {
+                            req.flash("errorMessage", "Old password is not correct.");
+                            res.redirect('/profile');
+                        } else {
+                            logger.error(err);
+                            req.flash("errorMessage", "Something went wrong, please try again later.");
+                            res.redirect('/profile');
+                        }
+                    } else {
+                        req.flash("successMessage", "Password changed successfully.");
+                        res.redirect('/profile');
+                    }
+                });
+            } else if(newPassword.length<6) {
+                req.flash("errorMessage", "Password is too short!");
+                res.redirect("/profile");
+            } else if(newPassword.length>=20) {
+                req.flash("errorMessage", "Password is longer than 20 characers!");
+                res.redirect("/profile");
+            } else {
+                req.flash("errorMessage", "Something went wrong, please try again later.");
+                res.redirect('/profile');
+            }
+        });
+    } else {
+        req.flash("errorMessage", "Something went wrong, please try again later.");
+        res.redirect("/profile");
+    }
+});
+
+/* delete account */
+router.get("/account/delete", allMiddlewares.rejectAdmin, function(req, res) {
+    User.findByIdAndDelete(mongoose.Types.ObjectId(req.user._id), function(err) {
+        if(err){
+            logger.error(err);
+            req.flash("errorMessage", "Something went wrong, please try again later.");
+            res.redirect('/profile');
+        } else {
+            res.redirect("/logout");
+        }
+    });
+});
+
 //////////////////////////////
 
 // email routes

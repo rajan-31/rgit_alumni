@@ -5,14 +5,14 @@
   "main": "app.js",
   "scripts": {
     "start": "set NODE_ENV=production& node app.js",
+    "dev": "wt -w 0 -p \"Windows Powershell\" -d . powershell -noExit \"npm run startMongo\"; -p \"Windows Powershell\" -d . powershell -noExit \"npm run local\"",
+    "dev-gulp": "wt -w 0 -p \"Windows Powershell\" -d . powershell -noExit \"npm run startMongo\"; sp -H -p \"Windows Powershell\" -d . powershell -noExit \"npm run gulp-watch\"; nt -p \"Windows Powershell\" -d . powershell -noExit \"npm run local\"",
     "local": "set MONGODB_SERVER=local& nodemon app.js",
-    "localWithLog": "set MONGODB_SERVER=local& nodemon app.js >> app.log",
     "mobile": "set PLATFORM=mobile& set MONGODB_SERVER=local& start http://192.168.0.101:8080& nodemon app.js",
-    "atlas": "nodemon app.js",
-    "createTestAdmin": "set CREATE_TEST_ADMIN=true& nodemon app.js",
-    "startMongo": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ../startMongo.ps1",
-    "para": "start npm run local && start npm run startMongo",
-    "para-mobile": "start npm run mobile && start npm run startMongo"
+    "startMongo": "mongod --dbpath=C:\\MongoData --bind_ip 127.0.0.1",
+    "gulp-compile": "gulp onetime",
+    "gulp-watch": "gulp continuous",
+    "createTestAdmin": "set CREATE_TEST_ADMIN=true& nodemon app.js"
   },
   "author": "Unknown",
   "license": "ISC",
@@ -35,6 +35,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^6.0.1",
+    "sanitize-html": "^2.3.3",
     "sharp": "^0.28.0",
     "socket.io": "^3.1.2",
     "winston": "^3.3.3",

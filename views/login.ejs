@@ -12,8 +12,6 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" />
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
-	<link rel="stylesheet" type="text/css" href="assets/css/util.css">
-	
 	<link rel="stylesheet" type="text/css" href="assets/css/mainAuth.css">
 	<link href="assets/css/style.css" rel="stylesheet">
 
@@ -131,23 +129,22 @@
 						<span class="focus-input100"></span>
 					</div>
 				</form>
+				<form action="/oauth/google" id="googleSignUpForm"></form>
 				<div class="row">
 					
-					<div class="container-login100-form-btn col-6">
-						<button class="login100-form-btn" form="loginForm">
+					<div class="container-login100-form-btn col-12 mb-2">
+						<button class="login100-form-btn width-100" form="loginForm">
 							<i class="fas fa-sign-in-alt p-r-5"></i>
 							Login
 						</button>
 					</div>
-					<div class="container-login100-form-btn col-6">
-						<form action="/oauth/google">
-							<button class="login100-form-btn google">
-								<div>
-									<i class="fab fa-google p-r-5"></i>
-								</div> 
-								Google Login
-							</button>
-						</form>
+					<div class="container-login100-form-btn col-12">
+						<button class="login100-form-btn google width-100" form="googleSignUpForm">
+							<div>
+								<i class="fab fa-google p-r-5"></i>
+							</div> 
+							Login With Google
+						</button>
 					</div>
 				</div>
 
@@ -172,7 +169,10 @@
 					</div>
 				</div>
 
-				<div class="flex-col-c p-t-30">
+				<div class="flex-col-c p-t-20">
+					<span class="txt2 p-b-10">
+						Activate account?
+					</span>
 					<a href="/account/activate/resend" class="txt3 bo1 hov1">
 						Resend Account Activation Link
 					</a>

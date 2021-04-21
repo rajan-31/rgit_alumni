@@ -142,40 +142,31 @@
                     tempDate = news[i].date %>
     
                 <div  class="col-xl-4 col-md-6 d-flex align-items-stretch mb-3" data-aos="zoom-in" data-aos-delay="100">
-                  <div class="icon-box keep-width">
+                  <div class="icon-box keep-width d-flex flex-column">
                 
-                    <div>
-                      <center>
                         <% if(i<=5) { %>
-                          <img src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
+                          <img class="mx-auto" src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
                         <% } else { %>
-                          <img class="lazyload" src="/assets/img/image-placeholder-300x200.gif" data-src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
+                          <img class="lazyload mx-auto" src="/assets/img/image-placeholder-300x200.gif" data-src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
                         <% } %>
-                      </center>
-                    </div>
-                    <hr>
-                    <center>
+                    <div class="text-center">
+                      <hr>
                       <h4><a href="/news/<%= news[i]._id %>"><%= news[i].title %></a></h4>
-                    </center>
+                    </div>
                 
-                    <center>
+                    <div class="text-center">
                       <i class="far fa-calendar-alt"></i> 
                       <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %> 
-                    </center>
+                    </div>
                     <br>
-                
-                  <% if(news[i].description && news[i].description.length>213){%>
-                    <p><%= news[i].description.slice(0,210)+"..." %></p>
-                  <% }else{ %>
-                    <p><%= news[i].description %>
-                      <span class="show-whitespaces"><%="  ".repeat(200-news[i].description.length) %></span>
-                    </p>
-                  <% } %>
-    
-                    <hr><br>
-                    <center >
-                      <h4 ><a  href="/news/<%= news[i]._id %> "><i class="fas fa-info-circle"></i> More Info</a></h4>
-                    </center>
+                    
+                    <div class="flex-grow-1">
+                      
+                    </div>
+                  <div>
+                      <hr><br>
+                      <h4 class="text-center"><a  href="/news/<%= news[i]._id %> "><i class="fas fa-info-circle"></i> More Info</a></h4>
+                  </div>
                 
                   </div>
                 </div>

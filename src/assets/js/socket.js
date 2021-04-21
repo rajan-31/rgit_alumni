@@ -28,7 +28,7 @@ $( document ).ready( function() {
     socket.connect();
 
     // retrive chats
-    socket.on("my chats", (myChats, unread) => {
+    socket.on("my chats", (myChats, unread, profileImage) => {
 
         // if statement because on server restart chats user will be added again
         if($("#user-pane").children().length == 0) {
@@ -38,7 +38,7 @@ $( document ).ready( function() {
                 if(unread && unread.includes(user.userid)) {
                     $("#user-pane").append(`
                     <div data-userid=${user.userid} class="select-box d-flex">
-                        <div class="fas fa-user my-auto user-pane-img"></div>
+                        <div class="fas fa-user my-auto user-pane-img"></img></div>
                         <div class="select-box-username my-auto">&nbsp;${user.username}</div>
                         <div class="fas fa-envelope notify text-success ml-auto my-auto"></div>
                     </div>
@@ -46,7 +46,7 @@ $( document ).ready( function() {
                 } else {
                     $("#user-pane").append(`
                     <div data-userid=${user.userid} class="select-box d-flex">
-                        <div class="fas fa-user my-auto user-pane-img"></div>
+                    <div class="fas fa-user my-auto user-pane-img"></img></div>
                         <div class="select-box-username my-auto">&nbsp;${user.username}</div>
                         <div class="notify text-success ml-auto"></div>
                     </div>

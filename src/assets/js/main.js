@@ -337,6 +337,97 @@
       });
   
     });
+
+    /* user search form */
+    $("#search-form").on("submit", function(e) {
+      e.preventDefault();
+      
+      const q = $("#search-query").val();
+
+      if(q && q.length>0) {
+        $.ajax({
+          url: "/communicate/search",
+          method: "GET",
+          data: { q:  q },
+          
+        }).done(function(res) {
+          $("#hide-users").hide();
+
+          if(res == "Failed") {
+            $("#search-users-result").html('<div class="text-center font-weight-bold text-dark mx-auto">Search Failed</div>');
+          } else if(res == "Invalid") {
+            $("#search-users-result").html('<div class="text-center font-weight-bold text-dark mx-auto">Invalid search</div>');
+          } else if(res == "None") {
+            $("#search-users-result").html('<div class="text-center font-weight-bold text-dark mx-auto">No Users Found</div>');
+          } else {
+            $("#search-users-result").html("");
+
+            function give_user_template(data) {
+              const top = '<div class="col-xl-4 col-md-6 d-flex align-items-stretch mb-3" data-aos="zoom-in" data-aos-delay="100"> <div class="icon-box keep-width d-flex flex-column">';
+
+              const bottom = '</div> </div>';
+
+              let image;
+              if(data.profileImage) {
+                image = `
+                <img src="/assets/img/user-placeholder-200x200.gif" class="lazyload mx-auto" data-src="${data.profileImage}" alt="Image Not Found" width="200" height="200" onerror="this.onerror=null;this.src='/assets/img/user-placeholder-200x200.gif';">
+                `
+              } else [
+                image = '<div class="text-center"> <i class="fas fa-user" style="font-size: 200px;"></i> </div>'
+              ]
+
+              let name = `
+              <div class="text-center">
+                  <hr>
+                  <h4><a href="/profile/${data._id} ">${data.firstName} ${data.lastName}</a></h4>
+              </div>
+              <br>
+              `
+              
+              let bio;
+              if(data.profile && data.profile.bio.length>213) {
+                bio =  `<div class="flex-grow-1"><p>${data.profile.bio.slice(0,210)+"..."}</p></div><div><hr></div><br>`
+              } else {
+                bio = `<div class="flex-grow-1"><p>${data.profile.bio}</p></div><div><hr></div><br>`
+              }
+
+              const info = `
+              <div class="row text-center">
+                  <div class="col-6"><h4><a href="/profile/${ data._id }"><i class="fas fa-id-card pr-1"></i>Profile</a></h4></div>
+                  <div class="col-6"><h4><a href="/chats/${ data._id }"><i class="fas fa-paper-plane pr-1"></i>Chat</a></h4></div>
+              </div>
+              `
+              const user_template = top + image + name + bio + info + bottom;
+
+              return user_template;
+            }
+
+            let result = "";
+
+            const n = res.length;
+            for(let i=0; i<n; i++) {
+              $("#search-users-result").append(give_user_template(res[i]));
+            }
+
+          }
+        });
+      }
+
+    });
+
+    $("#search-reset-btn").on("click", function() {
+      $("#hide-users").show();
+      $("#search-users-result").html("");
+    });
+
+    $("#search-query").on("keyup", function() {
+      const $this = $(this);
+      const $value = $this.val();
+      if($value.length == 0) {
+        $("#hide-users").show();
+      }
+    });
+
   });
 
 })(jQuery);

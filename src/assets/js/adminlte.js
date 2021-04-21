@@ -956,6 +956,4 @@ $("document").ready(function() {
     $( this ).html('<span id="spinner" class="spinner-border spinner-border-sm" style="vertical-align: middle;" role="status" aria-hidden="true"></span>')
   });
 
-  
-
 });

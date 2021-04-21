@@ -6,7 +6,7 @@ sharp.cache = false;
 
 const User = require("../models/user");
 
-const middlewares = require('../middleware/index.js');
+const allMiddlewares = require('../middleware/index.js');
 const logger = require("../configs/winston_config");
 
 /* Multer config */
@@ -47,7 +47,7 @@ let profileImageUpload = upload.single('profileImage')
 /* end multer config */
 
 /* profile route */
-router.get('/profile', middlewares.rejectAdmin, function(req, res){
+router.get('/profile', allMiddlewares.rejectAdmin, function(req, res){
     try {
         const id = mongoose.Types.ObjectId(req.user._id);
         User.findById( id, '-username', function(err, userData){
@@ -66,11 +66,11 @@ router.get('/profile', middlewares.rejectAdmin, function(req, res){
     }
 });
 
-router.post('/profile', middlewares.isLoggedIn, function(req, res){
+router.post('/profile', allMiddlewares.isLoggedIn, function(req, res){
     const receivedData = req.body;
     
-    if(receivedData && receivedData.profile)
-    receivedData.profile.dob = new Date(receivedData.profile.dob);
+    if(receivedData && receivedData.profile && receivedData.profile.dob)
+        receivedData.profile.dob = new Date(receivedData.profile.dob);
 
     User.findByIdAndUpdate(mongoose.Types.ObjectId(req.user._id), { profile: receivedData.profile }, function(err, data){
         if(err){
@@ -84,7 +84,7 @@ router.post('/profile', middlewares.isLoggedIn, function(req, res){
     });
 });
 
-router.post('/profile/accountData', middlewares.isLoggedIn, function (req, res) {
+router.post('/profile/accountData', allMiddlewares.isLoggedIn, function (req, res) {
     const receivedData = req.body;
 
     if (!receivedData.receiveMsg) receivedData.receiveMsg="false";
@@ -117,7 +117,7 @@ router.post('/profile/accountData', middlewares.isLoggedIn, function (req, res) 
     }
 });
 
-router.post('/profile/image', middlewares.isLoggedIn, function(req, res){
+router.post('/profile/image', allMiddlewares.isLoggedIn, function(req, res){
     profileImageUpload(req, res, function(err){
         if (err){
             if (err instanceof multer.MulterError){
@@ -189,7 +189,7 @@ router.post('/profile/image', middlewares.isLoggedIn, function(req, res){
     });
 });
 
-router.delete('/profile/image', middlewares.isLoggedIn, function(req, res){
+router.delete('/profile/image', allMiddlewares.isLoggedIn, function(req, res){
     const pathToFile = path.join(__dirname, '..' + '/uploads');
     const id = mongoose.Types.ObjectId(req.user._id);
 
@@ -245,7 +245,7 @@ router.get('/profile/:id', function(req, res){
 
 /* communicate routes */
 
-router.get('/communicate', middlewares.isLoggedIn, function(req, res){
+router.get('/communicate', allMiddlewares.isLoggedIn, function(req, res){
     User.find({ userType: "alumni", receiveMsg: true }, "firstName lastName profileImage profile.bio", function(err, users) {
         if (err) {
             logger.error(err);
@@ -261,7 +261,7 @@ router.get('/communicate', middlewares.isLoggedIn, function(req, res){
     }).sort({ _id: 1 }).limit(12).lean();
 });
 
-router.post("/communicate/page/:num", middlewares.isLoggedIn, function (req, res) {
+router.post("/communicate/page/:num", allMiddlewares.isLoggedIn, function (req, res) {
     const lastId = req.body.lastid;
     const lastPage = req.params.num;
     User.find({ _id: { $gt: mongoose.Types.ObjectId(lastId) } }, "firstName lastName profileImage profile.bio", function (err, users) {
@@ -278,6 +278,67 @@ router.post("/communicate/page/:num", middlewares.isLoggedIn, function (req, res
             res.redirect("/communicate");
         }
     }).sort({ _id: 1 }).limit(12).lean();
+});
+
+router.get("/communicate/search", allMiddlewares.isLoggedIn, function(req, res) {
+    const query = req.query.q;
+
+    if(query && query.length>0) {
+        const _split = query.trim().split(" ");
+        let formatInput;
+
+        if(_split.length>1) {
+            formatInput = { $or: [
+                {
+                    userType: "alumni", 
+                    receiveMsg: true,
+                    firstName: { $regex: _split[0], $options: "i" }
+                },
+                {
+                    userType: "alumni", 
+                    receiveMsg: true,
+                    firstName: { $regex: _split[1], $options: "i" }
+                },
+                {
+                    userType: "alumni", 
+                    receiveMsg: true,
+                    lastName: { $regex: _split[0], $options: "i" }
+                },
+                {
+                    userType: "alumni", 
+                    receiveMsg: true,
+                    lastName: { $regex: _split[1], $options: "i" }
+                }
+            ] };
+
+        } else {
+            formatInput = { $or: [
+                { 
+                    userType: "alumni", 
+                    receiveMsg: true,
+                    firstName: { $regex: _split[0], $options: 'i' }
+                },
+                { 
+                    userType: "alumni", 
+                    receiveMsg: true,
+                    lastName: { $regex: _split[0], $options: 'i' }
+                }
+            ] };
+        }
+
+        User.find( formatInput, "firstName lastName profileImage profile.bio", function(err, users) {
+            if (err) {
+                logger.error(err);
+                res.send("Failed");
+            } else if (users.length > 0) {
+                res.json(users);
+            } else {
+                res.send("None");
+            }
+        }).lean();
+    } else {
+        res.send("Invalid");
+    }
 });
 
 /* end communicate routes */

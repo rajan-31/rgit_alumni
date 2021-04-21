@@ -401,7 +401,7 @@ router.post("/admin/testimonials", middlewares.isAdmin, function(req, res) {
                 const newTestinmonial = { name: req.body.name, branch: req.body.branch, content: req.body.content, image: image };
                 Testimonial.create(newTestinmonial, function(err) {
                     if(err) {
-                        logger.error(err);
+                        logger.error(err.code);
                         req.flash("errorMessage","Something went wrong, please try again.");
                         res.redirect("/admin/testimonials");
                     } else {

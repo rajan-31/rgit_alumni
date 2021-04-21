@@ -147,44 +147,33 @@
 
                     <div  class="col-xl-4 col-md-6 d-flex align-items-stretch mb-3" data-aos="zoom-in"
                         data-aos-delay="100">
-                        <div class="icon-box keep-width">
-
-                            <div>
-                                <center>
-                                    <% if(i<=5) { %>
-                                        <img src="<%= events[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
-                                    <% } else { %>
-                                        <img class="lazyload" src="/assets/img/image-placeholder-300x200.gif" data-src="<%= events[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
-                                    <% } %>
-                                </center>
-                                    
-
-                            </div>
-                            <hr>
-                            <center>
-                                <h4><a href="/events/<%= events[i]._id %> "><%= events[i].title %></a></h4>
-                            </center>
-
-                            <center>
-                                <i class="far fa-calendar-alt"></i>
-                                <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %>
-                            </center>
-                            <br>
-
-                            <% if(events[i].description && events[i].description.length>213){%>
-                                <p><%= events[i].description.slice(0,210)+"..." %></p>
-                            <% }else{ %>
-                                <p><%= events[i].description %>
-                                  <span class="show-whitespaces"><%="  ".repeat(200-events[i].description.length) %></span>
-                                </p>
+                        <div class="icon-box keep-width d-flex flex-column">
+                
+                            <% if(i<=5) { %>
+                              <img class="mx-auto" src="<%= events[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
+                            <% } else { %>
+                              <img class="lazyload mx-auto" src="/assets/img/image-placeholder-300x200.gif" data-src="<%= events[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
                             <% } %>
-
-                            <hr><br>
-                            <center>
-                                <h4><a href="/events/<%= events[i]._id %> "><i class="fas fa-info-circle"></i> More Info</a></h4>
-                            </center>
-
+                        <div class="text-center">
+                          <hr>
+                          <h4><a href="/events/<%= events[i]._id %>"><%= events[i].title %></a></h4>
                         </div>
+                    
+                        <div class="text-center">
+                          <i class="far fa-calendar-alt"></i> 
+                          <%= `${days[tempDate.getDay()]}, ${("0" + tempDate.getDate()).slice(-2)} ${months[tempDate.getMonth()]} ${tempDate.getFullYear()}` %> 
+                        </div>
+                        <br>
+                        
+                        <div class="flex-grow-1">
+                          
+                        </div>
+                      <div>
+                          <hr><br>
+                          <h4 class="text-center"><a  href="/events/<%= events[i]._id %> "><i class="fas fa-info-circle"></i> More Info</a></h4>
+                      </div>
+                    
+                      </div>
                     </div>
                     <% }; %>
 

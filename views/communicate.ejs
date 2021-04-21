@@ -137,65 +137,76 @@
         
                 <div class="section-title">
                     <h2>Alumni</h2>
-        
-                </div>
-        
-                <div class="row">
-                    <% for(let i=0; i<countAlumni; i++) { %>
-                    
-                        <div class="col-xl-4 col-md-6 d-flex align-items-stretch mb-3" data-aos="zoom-in" data-aos-delay="100">
-                            <div class="icon-box keep-width">
-                        
-                                <div>
-                                    <center>
-                                        <% if( alumni[i].profileImage ) { %>
-                                            <% if(i<6) { %>
-                                                <img src="<%=alumni[i].profileImage%>" width="200" height="200">
-                                            <% } else { %>
-                                                <img src="/assets/img/user-placeholder-200x200.gif" class="lazyload" data-src="<%=alumni[i].profileImage%>" alt="Image Not Found" width="200" height="200" onerror="this.onerror=null;this.src='/assets/img/user-placeholder-200x200.gif';">
-                                            <% } %>
-                                            
-                                        <% } else { %>
-                                            <i class="fas fa-user" style="font-size: 200px;"></i>
-                                        <% } %>
-                                    </center>
-                                </div>
-                                <hr>
-                                <center>
-                                    <h4><a href="/profile/<%= alumni[i]._id %> "><%= alumni[i].firstName %> <%= alumni[i].lastName %></a></h4>
-                                </center>
-                        
-                                <br>
-                        
-                                <% if(alumni[i].profile && alumni[i].profile.bio.length>213){%>
-                                <p><%= alumni[i].profile.bio.slice(0,210)+"..." %></p>
-                                <% }else{ %>
-                                <p><%= alumni[i].profile.bio %>
-                                    <span class="show-whitespaces"><%="  ".repeat(200-alumni[i].profile.bio.length) %></span>
-                                </p>
-                                <% } %>
-                        
-                                <hr><br>
-                        
-                                <center>
-                                    <div class="row">
-                                        <div class="col-md-6"><h4><a href="/profile/<%= alumni[i]._id %> "><i class="fas fa-id-card pr-1"></i>Profile</a></h4></div>
-                                        <div class="col-md-6"><h4><a href="/chats/<%= alumni[i]._id %> "><i class="fas fa-paper-plane pr-1"></i>Chat</a></h4></div>
-                                    </div>
-                                </center>
-                        
-                            </div>
+
+                    <form id="search-form">
+                        <div class="d-flex justify-content-center">
+                            <input type="text" class="form-control mb-2" id="search-query" name="search-query" placeholder="Search..." required="required" autocomplete="off">
+                            <button type="reset" id="search-reset-btn" class="btn btn-transparent mb-2 mr-2" style="margin-left: -37px;"><i class="fas fa-times"></i></button>
+                            <button type="submit" class="btn btn-primary mb-2">Search</button>
                         </div>
-                    <% }; %>
-                </div>
-
-                <div class="d-flex justify-content-end">
-
-                    <form action="/communicate/page/<%= Number(lastPage)+1 %>" method="post">
-                        <input type="text" name="lastid" value="<%= lastId %>" hidden="hidden">
-                        <button type="submit" class="btn next-btn">More <i class="fas fa-angle-double-right"></i></button>
                     </form>
                 </div>
+                
+                <div id="hide-users">
+                    <div class="row">
+                        <% for(let i=0; i<countAlumni; i++) { %>
+                        
+                            <div class="col-xl-4 col-md-6 d-flex align-items-stretch mb-3" data-aos="zoom-in" data-aos-delay="100">
+                                <div class="icon-box keep-width d-flex flex-column">
+                                    
+                                    <% if( alumni[i].profileImage ) { %>
+                                        <% if(i<6) { %>
+                                            <img class="mx-auto" src="<%=alumni[i].profileImage%>" width="200" height="200">
+                                        <% } else { %>
+                                            <img src="/assets/img/user-placeholder-200x200.gif" class="lazyload mx-auto" data-src="<%=alumni[i].profileImage%>" alt="Image Not Found" width="200" height="200" onerror="this.onerror=null;this.src='/assets/img/user-placeholder-200x200.gif';">
+                                        <% } %>
+                                        
+                                    <% } else { %>
+                                        <div class="text-center">
+                                            <i class="fas fa-user" style="font-size: 200px;"></i>
+                                        </div>
+                                    <% } %>
+                                    <div class="text-center">
+                                        <hr>
+                                        <h4><a href="/profile/<%= alumni[i]._id %> "><%= alumni[i].firstName %> <%= alumni[i].lastName %></a></h4>
+                                    </div>
+                                    <br>
+                                    
+                                    <div class="flex-grow-1">
+                                        <% if(alumni[i].profile && alumni[i].profile.bio.length>213){%>
+                                        <p><%= alumni[i].profile.bio.slice(0,210)+"..." %></p>
+                                        <% }else{ %>
+                                        <p><%= alumni[i].profile.bio %></p>
+                                        <% } %>
+                                    </div>
+                                    <div><hr></div>
+                                    
+                                    <br>
+                                    
+                                    <div class="row text-center">
+                                        <div class="col-6"><h4><a href="/profile/<%= alumni[i]._id %> "><i class="fas fa-id-card pr-1"></i>Profile</a></h4></div>
+                                        <div class="col-6"><h4><a href="/chats/<%= alumni[i]._id %> "><i class="fas fa-paper-plane pr-1"></i>Chat</a></h4></div>
+                                    </div>
+                            
+                                </div>
+                            </div>
+                        <% }; %>
+                    </div>
+                        
+                    
+                    <div class="d-flex justify-content-end">
+                        
+                        <form action="/communicate/page/<%= Number(lastPage)+1 %>" method="post">
+                            <input type="text" name="lastid" value="<%= lastId %>" hidden="hidden">
+                            <button type="submit" class="btn next-btn">More <i class="fas fa-angle-double-right"></i></button>
+                        </form>
+                    </div>
+                </div>
+
+                
+                <div class="row" id="search-users-result"></div>
+            </div>
+
             </div>
         </section>
 
