@@ -164,9 +164,9 @@
                             <div id="passwordInfo" class="form-text text-muted text-center m-b-20"></div>
         
                             <div class="row">
-                                <div class="col-12 px-0 wrap-input100 m-b-20">
+                                <div class="col-12 px-0 wrap-input100 m-b-20" style="z-index: unset;">
                                         <!-- <label for="userType">Who are you?</label> -->
-                                        <select name="userType" class="input100" required="required" style="border: none;">
+                                        <select name="userType" class="input100 select2-simple" required="required" style="border: none;">
                                             <option class="wrap-input100" value="" aria-placeholder="aaaaaaa">Select User Type</option>
                                             <option class="wrap-input100" value="alumni">Alumni</option>
                                             <option class="wrap-input100" value="student">Student</option>
@@ -290,13 +290,19 @@
   <script src="assets/vendor/owl.carousel/owl.carousel.min.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/vendor/venobox.min.js"></script>
+  <script src="assets/vendor/bootstrap.bundle.min.js"></script>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js" crossorigin="anonymous"></script>
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/mainAuth.js"></script>
 
-	<script src="assets/vendor/bootstrap.bundle.min.js"></script>
-	<script src="assets/js/mainAuth.js"></script>
-
+  <script>
+	  //select2 simple
+	  $(".select2-simple").select2({
+                minimumResultsForSearch: Infinity,
+            });
+  </script>
 </body>
 </html>

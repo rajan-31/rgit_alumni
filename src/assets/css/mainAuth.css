@@ -3492,3 +3492,52 @@ iframe {
 .toast .toast-body {
   font-size: 1rem;
 }
+
+/* select2 */
+
+.select2-selection {
+	font-family: Oswald-Medium;
+    font-size: 16px;
+    color: #43383e;
+    line-height: 1.2;
+    position: relative;
+    display: block !important;
+    width: 100%;
+    height: 62px !important;
+    background: #fff;
+    border-radius: 31px !important;
+	border: 1px solid #aaa0 !important;
+    padding: 17px 35px;
+	z-index: 2;
+}
+
+.select2-selection__arrow {
+	margin-top: 17px;
+    margin-right: 10px;
+}
+
+.select2-dropdown {
+	z-index: 1;
+}
+
+.select2-dropdown--below {
+	border: 1px solid #aaa0;
+	padding-top: 25px;
+	margin-top: -25px;
+
+}
+.select2-dropdown--above {
+	border: 1px solid #aaa0;
+	padding-bottom: 25px;
+	margin-top: 25px;
+}
+
+.section-bg {
+	background-color: #dee0e6 !important;
+}
+
+.breadcrumbs {
+	background-color: #dee0e6 !important;
+	margin-top: 0 !important;
+	padding-top: 75px !important;
+}
