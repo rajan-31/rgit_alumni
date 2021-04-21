@@ -12,6 +12,7 @@
     "startMongo": "mongod --dbpath=C:\\MongoData --bind_ip 127.0.0.1",
     "gulp-compile": "gulp onetime",
     "gulp-watch": "gulp continuous",
+    "heroku-dep": "powershell ../heroku_copy.ps1",
     "createTestAdmin": "set CREATE_TEST_ADMIN=true& nodemon app.js"
   },
   "author": "Unknown",
