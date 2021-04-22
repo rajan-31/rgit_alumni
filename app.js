@@ -282,11 +282,11 @@ app.get('/*', function(req, res){
 const port = process.env.PORT
 
 // for dev purposes
-let ip = process.env.PLATFORM == "mobile" ? "0.0.0.0" : process.env.IP
+// let ip = process.env.PLATFORM == "mobile" ? "0.0.0.0" : process.env.IP
 
-httpServer.listen(port, ip, function(){
+httpServer.listen(port, function(){
     // logger.info("Environment: ",process.env.Node_ENV);
-    logger.info("Server is running at => " + ip + ":" + port);
+    logger.info("Server is running on port => " + port);
 });
 
 /* create test admin */
