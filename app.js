@@ -99,35 +99,35 @@ app.use(helmet.xssFilter());
 /* static content */
 app.use("/assets/css", express.static(path.join(__dirname, "public", "assets", "css"), {
     etag: false,
-    // maxAge: 1000 * 60 * 2,
+    // maxAge: 1000 * 60 * 60   // 1 hr
 }));
 app.use("/assets/fonts", express.static(path.join(__dirname, "public", "assets", "fonts"), {
     etag: false,
-    // maxAge: 1000 * 60 * 3,
+    // maxAge: 1000 * 60 * 60 * 24 * 30 * 12  // 360 days
 }));
 app.use([ /^\/assets\/img\/clients($|\/)/, "/assets/img" ], express.static(path.join(__dirname, "public", "assets", "img"), {
     etag: false,
-    // maxAge: 1000 * 60 * 1
+    // maxAge: 1000 * 60 * 60 * 24 * 7   // 7 days
 }));
 app.use("/assets/img/clients", express.static(path.join(__dirname, "public", "assets", "img", "clients"), {
-    etag: false,
-    maxAge: 1000 * 60 * 2
+    etag: true,
+    // maxAge: 1000 * 60 * 60   // 1 hr
 }));
 app.use("/assets/js", express.static(path.join(__dirname, "public", "assets", "js"), {
     etag: false,
-    // maxAge: 1000 * 60 * 1,
+    // maxAge: 1000 * 60 * 60   // 1 hr
 }));
 
 /* vendor files */
 app.use("/assets/vendor", express.static(path.join(__dirname, "public", "assets", "vendor"), {
     etag: false,
-    // maxAge: 1000 * 60 * 2,
+    // maxAge: 1000 * 60 * 60 * 24 * 30 * 12  // 360 days
 }));
 
 /* uploaded files */
 app.use("/images", express.static(path.join(__dirname, "uploads", "images"), {
     etag: false,
-    // maxAge: 1000 * 60 * 1,
+    // maxAge: 1000 * 60 * 60 * 24 * 7   // 7 days
 }));
 
 

@@ -156,6 +156,8 @@ db.admins.insert({
 
 - ~~sanitize~~
 - //newletter duplicate
+
+- show news/events remove lazy load for first
 ------------
 
 - ~~git filename case sensitivity err~~
