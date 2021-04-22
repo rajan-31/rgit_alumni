@@ -145,9 +145,9 @@
                   <div class="icon-box keep-width d-flex flex-column">
                 
                         <% if(i<=5) { %>
-                          <img class="mx-auto" src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
+                          <img class="mx-auto" src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/ui/image-placeholder-300x200.png';" />
                         <% } else { %>
-                          <img class="lazyload mx-auto" src="/assets/img/image-placeholder-300x200.gif" data-src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';" />
+                          <img class="lazyload mx-auto" src="/assets/img/ui/image-placeholder-300x200.gif" data-src="<%= news[i].thumbnail %>" width="300" height="200" onerror="this.onerror=null;this.src='/assets/img/ui/image-placeholder-300x200.png';" />
                         <% } %>
                     <div class="text-center">
                       <hr>

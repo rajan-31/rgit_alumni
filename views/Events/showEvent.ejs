@@ -98,9 +98,9 @@
                     <div class="owl-carousel portfolio-details-carousel">
                         <% for(let i = 0; i< countImages; i++) { %>
                             <% if(i==0) { %>
-                                <img src="<%= event.images[i] %>" onerror="this.onerror=null;this.src='../assets/img/image-placeholder-300x200.png';">
+                                <img src="<%= event.images[i] %>" onerror="this.onerror=null;this.src='../assets/img/ui/image-placeholder-300x200.png';">
                             <% } else { %>
-                                <img src="../assets/img/image-placeholder-300x200.gif" class="lazyload" data-src="<%= event.images[i] %>" onerror="this.onerror=null;this.src='../assets/img/image-placeholder-300x200.png';">
+                                <img src="../assets/img/ui/image-placeholder-300x200.gif" class="lazyload" data-src="<%= event.images[i] %>" onerror="this.onerror=null;this.src='../assets/img/ui/image-placeholder-300x200.png';">
                             <% } %>
 
                         <% } 

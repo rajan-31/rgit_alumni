@@ -105,13 +105,17 @@ app.use("/assets/fonts", express.static(path.join(__dirname, "public", "assets",
     etag: false,
     // maxAge: 1000 * 60 * 60 * 24 * 30 * 12  // 360 days
 }));
-app.use([ /^\/assets\/img\/clients($|\/)/, "/assets/img" ], express.static(path.join(__dirname, "public", "assets", "img"), {
+app.use([/^\/assets\/img\/clients($|\/)/, /^\/assets\/img\/ui($|\/)/, "/assets/img" ], express.static(path.join(__dirname, "public", "assets", "img"), {
     etag: false,
     // maxAge: 1000 * 60 * 60 * 24 * 7   // 7 days
 }));
 app.use("/assets/img/clients", express.static(path.join(__dirname, "public", "assets", "img", "clients"), {
     etag: true,
     // maxAge: 1000 * 60 * 60   // 1 hr
+}));
+app.use("/assets/img/ui", express.static(path.join(__dirname, "public", "assets", "img", "ui"), {
+    etag: true,
+    // maxAge: 1000 * 60 * 60 * 24 * 7   // 7 days
 }));
 app.use("/assets/js", express.static(path.join(__dirname, "public", "assets", "js"), {
     etag: false,
