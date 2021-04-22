@@ -1,7 +1,8 @@
 const express = require("express"),
 router = express.Router(),
 mongoose = require("mongoose"),
-sharp = require("sharp");
+sharp = require("sharp"),
+sanitizeHtml = require('sanitize-html');
 sharp.cache(false);
 
 const News = require("../models/news");

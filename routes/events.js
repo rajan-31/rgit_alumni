@@ -2,7 +2,7 @@ const express = require("express"),
     router = express.Router(),
     mongoose = require("mongoose"),
     sharp = require("sharp"),
-    sanitizeHtml = require('sanitize-html');;
+    sanitizeHtml = require('sanitize-html');
     sharp.cache(false);
 
 const Event = require("../models/event");
