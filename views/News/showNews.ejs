@@ -93,11 +93,15 @@
         <div class="portfolio-details-container">
 
           <div class="owl-carousel portfolio-details-carousel">
-            <% news.images.forEach(function(item){ %>
+            <% for(let i = 0; i< countImages; i++) { %>
 
-              <img src="/assets/img/image-placeholder-300x200.gif" class="lazyload" data-src="<%= item %>" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';">
+              <% if(i==0) { %>
+                <img src="<%= news.images[i] %>" onerror="this.onerror=null;this.src='../assets/img/image-placeholder-300x200.png';">
+              <% } else { %>
+                <img src="/assets/img/image-placeholder-300x200.gif" class="lazyload" data-src="<%= news.images[i] %>" onerror="this.onerror=null;this.src='/assets/img/image-placeholder-300x200.png';">
+              <% } %>
               
-              <% }) 
+              <% }
                 const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
                 tempDate = news.date;

@@ -190,7 +190,7 @@ router.get("/news/:id", middlewares.isLoggedIn, function(req, res){
                 req.flash("errorMessage", "Something went wrong, please try again.");
                 res.redirect('/news')
             } else if (foundNews) {
-                res.render("News/showNews", {news: foundNews});
+                res.render("News/showNews", { news: foundNews, countImages: foundNews.images.length});
             } else {
                 req.flash("errorMessage", "News not found.");
                 res.redirect('/news');

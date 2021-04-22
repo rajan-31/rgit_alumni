@@ -190,7 +190,7 @@ router.get("/events/:id", middlewares.isLoggedIn, function (req, res) {
                 req.flash("errorMessage", "Something went wrong, please try again.");
                 res.redirect('/events');
             } else if (foundEvent) {
-                res.render("Events/showEvent", { event: foundEvent });
+                res.render("Events/showEvent", { event: foundEvent, countImages: foundEvent.images.length });
             } else {
                 req.flash("errorMessage", "Event not found.");
                 res.redirect('/events');
