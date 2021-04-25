@@ -85,7 +85,7 @@
       $('body').prepend('<button type="button" class="mobile-nav-toggle d-lg-none"><i class="fas fa-bars"></i></button>');
       $('body').append('<div class="mobile-nav-overly"></div>');
 
-      $(document).on('click', '.mobile-nav-toggle', function(e) {
+      $(document).on('click', '.mobile-nav-toggle', function() {
         $('body').toggleClass('mobile-nav-active');
         $('.mobile-nav-toggle i').toggleClass('fas fa-bars fas fa-times');
         $('.mobile-nav-overly').toggle();
@@ -280,7 +280,6 @@
       dots: true,
       loop: true,
       margin:10,
-      loop:true,
       infinite: false,
       smartSpeed: 700,
       // autoWidth:true,
@@ -339,6 +338,47 @@
     });
 
     /* user search form */
+    function give_user_template(data) {
+      const top = '<div class="col-xl-4 col-md-6 d-flex align-items-stretch mb-3" data-aos="zoom-in" data-aos-delay="100"> <div class="icon-box keep-width d-flex flex-column">';
+
+      const bottom = '</div> </div>';
+
+      let image;
+      if (data.profileImage) {
+        image = `
+                <img src="/assets/img/user-placeholder-200x200.gif" class="lazyload mx-auto" data-src="${data.profileImage}" alt="Image Not Found" width="200" height="200" onerror="this.onerror=null;this.src='/assets/img/user-placeholder-200x200.gif';">
+                `
+      } else[
+        image = '<div class="text-center"> <i class="fas fa-user" style="font-size: 200px;"></i> </div>'
+      ]
+
+      let name = `
+              <div class="text-center">
+                  <hr>
+                  <h4><a href="/profile/${data._id} ">${data.firstName} ${data.lastName}</a></h4>
+              </div>
+              <br>
+              `
+
+      let bio;
+      if (data.profile && data.profile.bio.length > 213) {
+        bio = `<div class="flex-grow-1"><p>${data.profile.bio.slice(0, 210) + "..."}</p></div><div><hr></div><br>`
+      } else {
+        bio = `<div class="flex-grow-1"><p>${data.profile.bio}</p></div><div><hr></div><br>`
+      }
+
+      const info = `
+              <div class="row text-center">
+                  <div class="col-6"><h4><a href="/profile/${data._id}"><i class="fas fa-id-card pr-1"></i>Profile</a></h4></div>
+                  <div class="col-6"><h4><a href="/chats/${data._id}"><i class="fas fa-paper-plane pr-1"></i>Chat</a></h4></div>
+              </div>
+              `
+      const user_template = top + image + name + bio + info + bottom;
+
+      return user_template;
+    }
+
+    /* communicate page search */
     $("#search-form").on("submit", function(e) {
       e.preventDefault();
       
@@ -362,48 +402,6 @@
           } else {
             $("#search-users-result").html("");
 
-            function give_user_template(data) {
-              const top = '<div class="col-xl-4 col-md-6 d-flex align-items-stretch mb-3" data-aos="zoom-in" data-aos-delay="100"> <div class="icon-box keep-width d-flex flex-column">';
-
-              const bottom = '</div> </div>';
-
-              let image;
-              if(data.profileImage) {
-                image = `
-                <img src="/assets/img/user-placeholder-200x200.gif" class="lazyload mx-auto" data-src="${data.profileImage}" alt="Image Not Found" width="200" height="200" onerror="this.onerror=null;this.src='/assets/img/user-placeholder-200x200.gif';">
-                `
-              } else [
-                image = '<div class="text-center"> <i class="fas fa-user" style="font-size: 200px;"></i> </div>'
-              ]
-
-              let name = `
-              <div class="text-center">
-                  <hr>
-                  <h4><a href="/profile/${data._id} ">${data.firstName} ${data.lastName}</a></h4>
-              </div>
-              <br>
-              `
-              
-              let bio;
-              if(data.profile && data.profile.bio.length>213) {
-                bio =  `<div class="flex-grow-1"><p>${data.profile.bio.slice(0,210)+"..."}</p></div><div><hr></div><br>`
-              } else {
-                bio = `<div class="flex-grow-1"><p>${data.profile.bio}</p></div><div><hr></div><br>`
-              }
-
-              const info = `
-              <div class="row text-center">
-                  <div class="col-6"><h4><a href="/profile/${ data._id }"><i class="fas fa-id-card pr-1"></i>Profile</a></h4></div>
-                  <div class="col-6"><h4><a href="/chats/${ data._id }"><i class="fas fa-paper-plane pr-1"></i>Chat</a></h4></div>
-              </div>
-              `
-              const user_template = top + image + name + bio + info + bottom;
-
-              return user_template;
-            }
-
-            let result = "";
-
             const n = res.length;
             for(let i=0; i<n; i++) {
               $("#search-users-result").append(give_user_template(res[i]));
@@ -414,7 +412,7 @@
       }
 
     });
-
+    
     $("#search-reset-btn").on("click", function() {
       $("#hide-users").show();
       $("#search-users-result").html("");
@@ -428,6 +426,16 @@
       }
     });
 
+    /* communicate page chat link */
+    $(".chat-link").on("click", function() {
+      const $this = $(this);
+      $("#chat-with").text($this.attr("data-name"));
+      $("#chat-link").attr("href", $this.attr("data-href"));
+
+      $("#chat-modal").modal('show');
+    });
+    
+    // write above this
   });
 
 })(jQuery);

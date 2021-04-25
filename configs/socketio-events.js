@@ -15,12 +15,12 @@ module.exports = function (io, User, sessionMiddleware, passport) {
 
     io.on('connection', (socket) => {
         /* send chats */
-        User.findById( socket.request.user._id, 'chats unread', function(err, userData){
+        User.findById( socket.request.user._id, 'chats unread order', function(err, userData){
             if(err){
                 logger.error(err);
             } else {
                 socket.username = socket.request.user.fullName;
-                socket.emit("my chats", userData.chats, userData.unread);
+                socket.emit("my chats", userData.chats, userData.unread, userData.order);
                 // console.log(JSON.stringify(userData.chats, null, 2));
             }
         }).lean();
@@ -33,6 +33,9 @@ module.exports = function (io, User, sessionMiddleware, passport) {
             const sender = socket.request.user._id;
             
             User.findByIdAndUpdate( sender, {
+                "$pull": {
+                    "order": to
+                },
                 "$push": {
                     "chats.$[a].messages": {
                         who: 0,
@@ -47,52 +50,88 @@ module.exports = function (io, User, sessionMiddleware, passport) {
             },
             function(err){
                 if (err)
-                    logger.error(err)
+                    logger.error(err);
                 else {
-                    User.findByIdAndUpdate( to, {
+                    // put at position 1
+                    User.findByIdAndUpdate(sender, {
                         "$push": {
-                            "chats.$[a].messages": {
-                                who: 1,
-                                msg: content
+                            "order": {
+                                $each: [to],
+                                $position: 0
                             }
                         }
-                    },
-                    {
-                        arrayFilters: [
-                            {"a.userid": sender}
-                        ]
-                    },
-                    function(err){
+                    }, function(err) {
                         if (err)
-                            logger.error(err)
+                            logger.error(err);
                         else {
-                            // send to receiver
-                            socket.to(to).emit("private message", {
-                                content,
-                                from: {
-                                userid: sender,
-                                username: socket.username
+                            User.findByIdAndUpdate( to, {
+                                "$pull": {
+                                    "order": sender
+                                },
+                                "$push": {
+                                    "chats.$[a].messages": {
+                                        who: 1,
+                                        msg: content
+                                    }
                                 }
+                            },
+                            {
+                                arrayFilters: [
+                                    {"a.userid": sender}
+                                ]
+                            },
+                            function(err){
+                                if (err)
+                                    logger.error(err);
+                                else {
+                                        // change order
+                                        User.findByIdAndUpdate(to, {
+                                            "$push": {
+                                                "order": {
+                                                    $each: [sender],
+                                                    $position: 0
+                                                }
+                                            }
+                                        }, function (err) {
+                                            if (err)
+                                                logger.error(err);
+                                            else {
+                                                // send to receiver
+                                                socket.to(to).emit("private message", {
+                                                    content,
+                                                    from: {
+                                                    userid: sender,
+                                                    username: socket.username
+                                                    }
+                                                });
+                                                
+                                                // add to unread
+                                                (async function() {
+                                                    const matchingSockets = await io.in(to).allSockets();
+                                                    const isDisconnected = matchingSockets.size === 0;
+                                                    if(isDisconnected) {
+                                                        User.findByIdAndUpdate(to, 
+                                                        {
+                                                            "$push": {
+                                                                "unread": sender
+                                                            }
+                                                        },
+                                                        function(err) {
+                                                            if(err) {
+                                                                logger.error(err)
+                                                            }
+                                                        });
+                                                    }
+                                                })();
+                                            }
+                                        });
+
+        
+                                    }
                             });
-                            (async function() {
-                                const matchingSockets = await io.in(to).allSockets();
-                                const isDisconnected = matchingSockets.size === 0;
-                                if(isDisconnected) {
-                                    User.findByIdAndUpdate(to, 
-                                    {
-                                        "$push": {
-                                            "unread": sender
-                                        }
-                                    },
-                                    function(err) {
-                                        if(err) {
-                                            logger.error(err)
-                                        }
-                                    });
-                                }
-                            })();
                         }
                     });
+
                 }
             });
 
@@ -112,5 +151,18 @@ module.exports = function (io, User, sessionMiddleware, passport) {
                 });
         });
 
+        socket.on("addUnread", (userToAdd) => {
+            User.findByIdAndUpdate(socket.userid,
+                {
+                    "$push": {
+                        "unread": userToAdd
+                    }
+                },
+                function (err, data) {
+                    if (err) {
+                        logger.error(err)
+                    }
+                });
+        });
     });
 }

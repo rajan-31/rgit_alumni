@@ -28,17 +28,36 @@ $( document ).ready( function() {
     socket.connect();
 
     // retrive chats
-    socket.on("my chats", (myChats, unread, profileImage) => {
+    socket.on("my chats", (myChats, unread, order) => {
 
         // if statement because on server restart chats user will be added again
-        if($("#user-pane").children().length == 0) {
+        if($("#user-pane").children().length == 0 && order.length>0) {
             chats = myChats;
+
+            // map chats by userid
+            let orderMap = new Map();
             for(let i=0; i<myChats.length; i++) {
-                const user = myChats[i];
-                if(unread && unread.includes(user.userid)) {
+                orderMap[myChats[i].userid]=myChats[i];
+            }
+
+            // count unread msg
+            // let msgCount = {};
+            // unread.forEach(function (x) { msgCount[x] = (msgCount[x] || 0) + 1; });
+
+            // console.log(msgCount);
+
+            // remove duplicates from array
+            unread = [...new Set(unread)];
+
+
+            for (let i = 0; i < order.length; i++) {
+                const user = orderMap[order[i]];
+                // console.log(msgCount[user.userid]);
+
+                if (unread && unread.includes(user.userid)) {
                     $("#user-pane").append(`
                     <div data-userid=${user.userid} class="select-box d-flex">
-                        <div class="fas fa-user my-auto user-pane-img"></img></div>
+                        <div class="fas fa-user my-auto user-pane-img"></div>
                         <div class="select-box-username my-auto">&nbsp;${user.username}</div>
                         <div class="fas fa-envelope notify text-success ml-auto my-auto"></div>
                     </div>
@@ -46,7 +65,7 @@ $( document ).ready( function() {
                 } else {
                     $("#user-pane").append(`
                     <div data-userid=${user.userid} class="select-box d-flex">
-                    <div class="fas fa-user my-auto user-pane-img"></img></div>
+                    <div class="fas fa-user my-auto user-pane-img"></div>
                         <div class="select-box-username my-auto">&nbsp;${user.username}</div>
                         <div class="notify text-success ml-auto"></div>
                     </div>
@@ -87,9 +106,19 @@ $( document ).ready( function() {
                             <span class="message">${content}</span>
                         </djv>
                     `);
+
+                    let $this = $("div .select-box[data-userid=" + user.userid + "]");
+                    $this.parent().prepend($this);
                 } else {
                     // add icon to user with msg if it's not current user we are chatting
-                    $("div .select-box[data-userid=" + user.userid +"]").children(".notify").addClass("fas fa-envelope my-auto");
+                    let $this = $("div .select-box[data-userid=" + user.userid + "]");
+
+                    $this.children(".notify").addClass("fas fa-envelope my-auto");
+
+                    // add to unread list
+                    socket.emit("addUnread", user.userid);
+
+                    $this.parent().prepend($this);
                 }
 
                 break;
@@ -127,17 +156,21 @@ $( document ).ready( function() {
             $("#send-message").val("");
 
             // append new message in ui & array of msgs
-            for(i = 0; i< chats.length; i++) {
+            for(let i = 0; i< chats.length; i++) {
                 const user = chats[i];
                 if (user.userid == send_to) {
                     // push msg to appropriate user
                     chats[i].messages.push({who: 0, msg:send_msg});
 
+                    // push chat to top
+                    let $this = $("div .select-box[data-userid=" + user.userid + "]");
+                    $this.parent().prepend($this);
+
                     break;
                 }
             }
 
-            $messages=$("#message-pane");
+            let $messages=$("#message-pane");
             $messages.append(`
                 <div class="message-sent d-flex flex-row-reverse">
                     <span class="right-triangle"></span>
@@ -159,6 +192,8 @@ $( document ).ready( function() {
             const $this = $( this );
             $this.addClass( "selected-box" );
             selectedUser = $this.attr("data-userid");
+
+            // remove from unread
             socket.emit("removeUnread", selectedUser);
     
             // remove notify icon

@@ -40,10 +40,19 @@ router.get('/chats/:id', allMiddlewares.rejectAdmin, function(req, res) {
                 {
                     "$push": {
                         "chats": {
-                                userid: receiver,
-                                username: receiverFullName,
-                                messages: []
-                            }
+                            $each: [
+                                {
+                                    userid: receiver,
+                                    username: receiverFullName,
+                                    messages: []
+                                }
+                            ],
+                            $position: 0
+                        },
+                        "order": {
+                            $each: [receiver],
+                            $position: 0
+                        }
                     }
                 },
                 function(err, changes){
@@ -55,10 +64,19 @@ router.get('/chats/:id', allMiddlewares.rejectAdmin, function(req, res) {
                         User.findByIdAndUpdate( receiver, {
                             "$push": {
                                 "chats": {
-                                        userid: currentUser,
-                                        username: currentUserName,
-                                        messages: []
-                                    }
+                                    $each: [
+                                        {
+                                            userid: currentUser,
+                                            username: currentUserName,
+                                            messages: []
+                                        }
+                                    ],
+                                    $position: 0
+                                },
+                                "order": {
+                                    $each: [currentUser],
+                                    $position: 0
+                                }
                             }
                         },
                         function(err){

@@ -94,6 +94,7 @@ const userSchema = new mongoose.Schema({
             ]
         }
     ],
+    order: [mongoose.Schema.Types.ObjectId],
     unread: [mongoose.Schema.Types.ObjectId],
     // account verified or not
     active: {

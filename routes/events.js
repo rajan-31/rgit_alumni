@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
     }
 });
 const limits = {
-    files: 6,
+    // files: 6,
     fileSize: 1024 * 1024 * 2, // 2 MB (max file size)
 }
 const fileFilter = function (req, file, cb) {
@@ -246,7 +246,11 @@ router.put("/events/:id", middlewares.isAdmin, function (req, res) {
                 } else if (err.code == "INVALID_FILETYPE") {
                     req.flash("errorMessage", "Please choose files of type JPG or JPEG or PNG");
                     res.redirect('/admin/events');
+                } else if (err.code == "LIMIT_FILE_COUNT") {
+                    req.flash("errorMessage", "Please choose 5 or less images.");
+                    res.redirect('/admin/events');
                 } else {
+                    logger.error(err);
                     req.flash("errorMessage", "Something went wrong with file upload.");
                     res.redirect('/admin/events');
                 }

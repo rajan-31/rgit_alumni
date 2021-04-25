@@ -157,11 +157,21 @@ db.admins.insert({
 - ~~sanitize~~
 - //newletter duplicate
 
-- show news/events remove lazy load for first
+- ~~show news/events remove lazy load for first~~
+
+- ~~add modal for new chat~~
+- ~~change div order for sender in ui~~
+- ~~change div order for rec~~
+- //append to order at begin on new chat for both
+- ~~change order for both on new message~~
+- ~~send order on connect~~
+- ~~remove from unread list only if seen... currently it's gone if refresh (not saved for online users)~~
+
+- //chat profile image - fix image name (problem with extension)
+- ok on cookie consent
 ------------
 
 - ~~git filename case sensitivity err~~
     change name -> stage commit -> change name -> stage commit -> commit
 
 - use shimmer instead of loading spinner
-

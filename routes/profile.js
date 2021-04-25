@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/images/users')
     },
     filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname.slice((file.originalname.lastIndexOf(".") - 1 >>> 0) + 2))
+        cb(null, file.fieldname + '-' + req.user._id + '.' + file.originalname.slice((file.originalname.lastIndexOf(".") - 1 >>> 0) + 2))
     }
 });
 const limits = {
@@ -64,6 +64,7 @@ router.get('/profile', allMiddlewares.rejectAdmin, function(req, res){
         req.flash("errorMessage","Can't find your profile, please try again.");
         res.redirect('/');
     }
+
 });
 
 router.post('/profile', allMiddlewares.isLoggedIn, function(req, res){
@@ -88,10 +89,10 @@ router.post('/profile/accountData', allMiddlewares.isLoggedIn, function (req, re
     const receivedData = req.body;
 
     if (!receivedData.receiveMsg) receivedData.receiveMsg="false";
-    console.log(receivedData)
 
     if (receivedData.userType && ["student", "alumni"].includes(receivedData.userType) && 
-        receivedData.firstName && receivedData.firstName.length>0) {
+        receivedData.firstName && receivedData.firstName.length > 0 && 
+        receivedData.lastName && receivedData.lastName.length>0) {
         const newData = {
             firstName: receivedData.firstName,
             lastName: receivedData.lastName,
@@ -103,8 +104,14 @@ router.post('/profile/accountData', allMiddlewares.isLoggedIn, function (req, re
                 logger.error(err);
                 req.flash("errorMessage", "Something went wrong, please try again.")
                 res.redirect("/profile");
-            } else if (receivedData.firstName && receivedData.firstName != req.user.firstName) {
-                req.flash("successMessage", "Updated data & logged you out successfully.");
+            } else if (receivedData.firstName != req.user.firstName || receivedData.firstName + " " + receivedData.lastName != req.user.fullName) {
+                // req.flash("successMessage", "Updated data & logged you out successfully.");
+                User.updateMany({ "chats.userid": mongoose.Types.ObjectId("604dab175755e219fca82828") }, { $set: { "chats.$.username": receivedData.firstName + " " + receivedData.lastName } }, { "multi": true }, function (err, data) {
+                    if(err) {
+                        logger.error(err);
+                    }
+                });
+
                 res.redirect("/logout");
             } else {
                 req.flash("successMessage", "Data updated successfully.");
@@ -270,7 +277,6 @@ router.post("/communicate/page/:num", allMiddlewares.isLoggedIn, function (req, 
             req.flash("errorMessage", "Something went wrong, please try again.")
             res.redirect("/communicate");
         } else if (users.length > 0) {
-            console.log("in")
             const lastId = users[users.length - 1]._id;
             res.render('communicate', { alumni: users, countAlumni: users.length, lastId: lastId, lastPage: lastPage });
         } else {

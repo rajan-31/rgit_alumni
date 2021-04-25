@@ -185,7 +185,11 @@
                                     
                                     <div class="row text-center">
                                         <div class="col-6"><h4><a href="/profile/<%= alumni[i]._id %> "><i class="fas fa-id-card pr-1"></i>Profile</a></h4></div>
-                                        <div class="col-6"><h4><a href="/chats/<%= alumni[i]._id %> "><i class="fas fa-paper-plane pr-1"></i>Chat</a></h4></div>
+                                        <div class="col-6"><h4><a href="javascript:void(0)" class="chat-link" 
+                                            data-href="/chats/<%= alumni[i]._id %>" 
+                                            data-name="<%= alumni[i].firstName %> <%= alumni[i].lastName %>"
+                                            ><i class="fas fa-paper-plane pr-1"></i>Chat</a></h4>
+                                        </div>
                                     </div>
                             
                                 </div>
@@ -203,7 +207,6 @@
                     </div>
                 </div>
 
-                
                 <div class="row" id="search-users-result"></div>
             </div>
 
@@ -212,7 +215,25 @@
 
     </main><!-- End #main -->
 
-
+    <div id="chat-modal" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Notice</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Start/Continue chat with <span id="chat-with" class="font-weight-bold"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <a href="" id="chat-link" class="btn btn-primary">OK</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ======= Footer ======= -->
 <footer id="footer">
