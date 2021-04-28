@@ -314,47 +314,101 @@ router.post('/account/activate/resend', function(req, res) {
             res.redirect("/login");
         } else {
             data.activation_expires = Date.now() + 172800000; // 48 hrs
-            const activation_link = 'http://localhost:8080/account/activate/' + data.activation_code;
-            const transporter = nodemailer.createTransport({
-                service: "Gmail",
-                host: process.env.MAIL_HOST,
-                port: process.env.MAIL_PORT,
-                secure: false, // true for 465, false for other ports
-                auth: {
-                    user: process.env.MAIL_USER,
-                    pass: process.env.MAIL_PASS
-                }
-            });
+            
+            // activation code exists
+            if (data.activation_code) {
+                const activation_link = 'http://localhost:8080/account/activate/' + data.activation_code;
 
-            const sender = process.env.MAIL_USER;
-            const senderName = process.env.MAIL_NAME;
-            const receiverName = data.firstName + " " + data.lastName;
-            try {
-                await transporter.sendMail({ 
-                    from: `${senderName} <${sender}>`, // sender address
-                    to: `${receiverName} <${resend_to}>`, // list of receivers
-                    replyTo: `Do not reply to this mail. <noreply@apsitskills.com>`,
-                    subject: "Email Verification - APSIT Alumni Portal", // Subject line
-                    // text: '',
-                    html: allTemplates.activation_mail(activation_link, receiverName)
-                    
+                const transporter = nodemailer.createTransport({
+                    service: "Gmail",
+                    host: process.env.MAIL_HOST,
+                    port: process.env.MAIL_PORT,
+                    secure: false, // true for 465, false for other ports
+                    auth: {
+                        user: process.env.MAIL_USER,
+                        pass: process.env.MAIL_PASS
+                    }
                 });
-                transporter.close();
-                data.save(function(err, data){
-                    if(err) {
-                        logger.error(err);
-                        req.flash("errorMessage", "Something went wrong, please try again");
-                        res.redirect("/login");
-                    } else {
+
+                const sender = process.env.MAIL_USER;
+                const senderName = process.env.MAIL_NAME;
+                const receiverName = data.firstName + " " + data.lastName;
+                try {
+                    await transporter.sendMail({
+                        from: `${senderName} <${sender}>`, // sender address
+                        to: `${receiverName} <${resend_to}>`, // list of receivers
+                        replyTo: `Do not reply to this mail. <noreply@apsitskills.com>`,
+                        subject: "Email Verification - APSIT Alumni Portal", // Subject line
+                        // text: '',
+                        html: allTemplates.activation_mail(activation_link, receiverName)
+
+                    });
+                    transporter.close();
+                    data.save(function (err, data) {
+                        if (err) {
+                            logger.error(err);
+                            req.flash("errorMessage", "Something went wrong, please try again");
+                            res.redirect("/login");
+                        } else {
                             req.flash("successMessage", `The activation email has been sent to ${resend_to}, please click the activation link within 48 hours.`);
                             res.redirect('/login');
                         }
-                });
+                    });
 
-            } catch (err) {
-                logger.error(err);
-                req.flash("errorMessage", "Something went wrong, please check your mails and try again!");
-                res.redirect("/login");
+                } catch (err) {
+                    logger.error(err);
+                    req.flash("errorMessage", "Something went wrong, please check your mails and try again!");
+                    res.redirect("/login");
+                }
+            } else {
+                crypto.randomBytes(5, async function (err, buf) {
+                    const activation_code = user._id + buf.toString('hex');
+                    data.activation_code = activation_code;
+
+                    const activation_link = 'http://localhost:8080/account/activate/' + activation_code;
+
+                    const transporter = nodemailer.createTransport({
+                        service: "Gmail",
+                        host: process.env.MAIL_HOST,
+                        port: process.env.MAIL_PORT,
+                        secure: false, // true for 465, false for other ports
+                        auth: {
+                            user: process.env.MAIL_USER,
+                            pass: process.env.MAIL_PASS
+                        }
+                    });
+
+                    const sender = process.env.MAIL_USER;
+                    const senderName = process.env.MAIL_NAME;
+                    const receiverName = data.firstName + " " + data.lastName;
+                    try {
+                        await transporter.sendMail({
+                            from: `${senderName} <${sender}>`, // sender address
+                            to: `${receiverName} <${resend_to}>`, // list of receivers
+                            replyTo: `Do not reply to this mail. <noreply@apsitskills.com>`,
+                            subject: "Email Verification - APSIT Alumni Portal", // Subject line
+                            // text: '',
+                            html: allTemplates.activation_mail(activation_link, receiverName)
+
+                        });
+                        transporter.close();
+                        data.save(function (err, data) {
+                            if (err) {
+                                logger.error(err);
+                                req.flash("errorMessage", "Something went wrong, please try again");
+                                res.redirect("/login");
+                            } else {
+                                req.flash("successMessage", `The activation email has been sent to ${resend_to}, please click the activation link within 48 hours.`);
+                                res.redirect('/login');
+                            }
+                        });
+
+                    } catch (err) {
+                        logger.error(err);
+                        req.flash("errorMessage", "Something went wrong, please check your mails and try again!");
+                        res.redirect("/login");
+                    }
+                });
             }
         }
     });

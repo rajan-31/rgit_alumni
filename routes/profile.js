@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/images/users')
     },
     filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + req.user._id + '.' + file.originalname.slice((file.originalname.lastIndexOf(".") - 1 >>> 0) + 2))
+        cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname.slice((file.originalname.lastIndexOf(".") - 1 >>> 0) + 2))
     }
 });
 const limits = {
@@ -259,16 +259,24 @@ router.get('/communicate', allMiddlewares.isLoggedIn, function(req, res){
             req.flash("errorMessage", "Something went wrong, please try again.")
             res.redirect("/");
         } else if (users.length > 0) {
-            const lastId = users[users.length - 1]._id;
-            res.render('communicate', {alumni: users, countAlumni: users.length, lastId: lastId, lastPage: 1});
+            const lastId = users[users.length - 1]._id,
+            firstId = users[0]._id;
+
+            res.render('communicate', {
+                alumni: users, 
+                countAlumni: users.length,
+                firstId: firstId,
+                lastId: lastId, 
+                page: 1
+            });
         } else {
-            req.flash("errorMessage", "No users found, please try again later.")
+            req.flash("errorMessage", "No users found.")
             res.redirect("/");
         }
     }).sort({ _id: 1 }).limit(12).lean();
 });
 
-router.post("/communicate/page/:num", allMiddlewares.isLoggedIn, function (req, res) {
+/* router.post("/communicate/page/:num", allMiddlewares.isLoggedIn, function (req, res) {
     const lastId = req.body.lastid;
     const lastPage = req.params.num;
     User.find({ _id: { $gt: mongoose.Types.ObjectId(lastId) } }, "firstName lastName profileImage profile.bio", function (err, users) {
@@ -284,6 +292,84 @@ router.post("/communicate/page/:num", allMiddlewares.isLoggedIn, function (req, 
             res.redirect("/communicate");
         }
     }).sort({ _id: 1 }).limit(12).lean();
+}); */
+
+router.get("/communicate/page", allMiddlewares.isLoggedIn, function(req, res) {
+    const page = req.query.n, operation = req.query.q;
+
+    let id0 = req.query.i0, id1 = req.query.i1;
+
+    try {
+        id0 = mongoose.Types.ObjectId(id0);
+        id1 = mongoose.Types.ObjectId(id1);
+
+        if (page > 0 && operation && id0 && id1) {
+            if(operation == 0) {
+                User.find({ 
+                        _id: { 
+                            $lt: mongoose.Types.ObjectId(id0)
+                        },
+                        userType: "alumni", 
+                        receiveMsg: true
+                    }, "firstName lastName profileImage profile.bio", function (err, users) {
+                    if (err) {
+                        logger.error(err);
+                        req.flash("errorMessage", "Something went wrong, please try again.");
+                        res.redirect("/communicate");
+                    } else if (users.length > 0) {
+                        const firstId = users[users.length - 1]._id,
+                            lastId = users[0]._id;
+
+                        res.render('communicate', {
+                            alumni: users.reverse(),
+                            countAlumni: users.length,
+                            firstId: firstId,
+                            lastId: lastId,
+                            page: page
+                        });
+                    } else {
+                        req.flash("errorMessage", "No more Users.")
+                        res.redirect("/communicate");
+                    }
+                }).sort({ _id: -1 }).limit(12).lean();
+            } else {
+                User.find({
+                    _id: {
+                        $gt: mongoose.Types.ObjectId(id1)
+                    },
+                    userType: "alumni",
+                    receiveMsg: true
+                }, "firstName lastName profileImage profile.bio", function (err, users) {
+                    if (err) {
+                        logger.error(err);
+                        req.flash("errorMessage", "Something went wrong, please try again.");
+                        res.redirect("/communicate");
+                    } else if (users.length > 0) {
+                        const lastId = users[users.length - 1]._id,
+                            firstId = users[0]._id;
+
+                        res.render('communicate', {
+                            alumni: users,
+                            countAlumni: users.length,
+                            firstId: firstId,
+                            lastId: lastId,
+                            page: page
+                        });
+                    } else {
+                        req.flash("errorMessage", "No more Users.")
+                        res.redirect("/communicate");
+                    }
+                }).sort({ _id: 1 }).limit(12).lean();
+            }
+        } else {
+            req.flash("errorMessage", "Query parameters are missing.");
+            res.redirect("/communicate");
+        }
+    } catch (error) {
+        logger.error(error);
+        req.flash("errorMessage", "Something went wrong, please try again.");
+        res.redirect("/communicate");
+    }
 });
 
 router.get("/communicate/search", allMiddlewares.isLoggedIn, function(req, res) {

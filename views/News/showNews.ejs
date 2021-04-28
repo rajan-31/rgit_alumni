@@ -134,6 +134,12 @@
 
   <%- include ('../partials/footer'); -%>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js" crossorigin="anonymous"></script>
+  <script type="text/javascript">
+    $(window).on('load', function () {
+      $(".portfolio-details-carousel").trigger("play.owl.autoplay");
+    });
+    console.log("fk")
+  </script>
 
 </body>
 

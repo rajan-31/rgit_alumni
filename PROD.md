@@ -1,6 +1,8 @@
 # Pre Production config
 
 - static content maxage
+- privacy policy & Terms of service
+- add domains in skill
 
 # ASK
 

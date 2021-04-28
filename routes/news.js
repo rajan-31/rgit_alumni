@@ -46,8 +46,6 @@ const upload = multer({
 let uploadNewsImages = upload.fields([{ name: "images", maxCount: 5}, { name: "thumbnail", maxCount: 1}]);
 /* end multer config */
 
-
-/////////////////////////////////
 router.get("/news", middlewares.isLoggedIn, function (req, res) {
     News.find({}, "-images", function (err, allNews) {
         if (err) {
@@ -57,7 +55,17 @@ router.get("/news", middlewares.isLoggedIn, function (req, res) {
         } else if (allNews.length > 0) {
             const lastId = allNews[allNews.length - 1]._id;
             const lastDate = new Date(allNews[allNews.length - 1].date).getTime();
-            res.render("News/news", { news: allNews, countNews: allNews.length, lastId: lastId, lastDate: lastDate, lastPage: 1});
+            const firstId = allNews[0]._id;
+            const firstDate = new Date(allNews[0].date).getTime();
+            res.render("News/news", {
+                news: allNews,
+                countNews: allNews.length,
+                firstId: firstId,
+                firstDate: firstDate,
+                lastId: lastId,
+                lastDate: lastDate,
+                page: 1
+            });
         } else {
             req.flash("errorMessage", "No news found!")
             res.redirect("/");
@@ -65,36 +73,103 @@ router.get("/news", middlewares.isLoggedIn, function (req, res) {
     }).sort({ date: -1, _id: 1 }).limit(12).lean();
 });
 
-router.post("/news/page/:num", middlewares.isLoggedIn, function (req, res) {
-    const lastId = req.body.lastid;
-    const lastDate = new Date(Number(req.body.lastdate));
-    const lastPage = req.params.num;
-    News.find({
-        $or: [
-            { date: { $lt: lastDate } },
-            {
-                date: lastDate,
-                _id: { $gt: mongoose.Types.ObjectId(lastId) }
-            }
-        ]
-    }, "-images", function (err, allNews) {
-        if (err) {
-            logger.error(err);
-            req.flash("errorMessage", "Something went wrong, please try again.")
-            res.redirect("/news")
-        } else {
-            if(allNews.length > 0) {
-                const pass_lastId = allNews[allNews.length - 1]._id;
-                const pass_lastDate = new Date(allNews[allNews.length - 1].date).getTime();
-                res.render("News/news", { news: allNews, countNews: allNews.length, lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
+router.get("/news/page", middlewares.isLoggedIn, function (req, res) {
+    const page = req.query.n,
+        operation = req.query.q;
+
+    let date0, date1,
+        id0 = req.query.i0,
+        id1 = req.query.i1;
+
+    try {
+        date0 = new Date(Number(req.query.d0));
+        date1 = new Date(Number(req.query.d1));
+
+        id0 = mongoose.Types.ObjectId(id0);
+        id1 = mongoose.Types.ObjectId(id1);
+
+        if (page > 0 && operation && date0 && id0 && date1 && id1) {
+            if (operation == 0) {
+                News.find({
+                    $or: [
+                        { date: { $gt: date0 } },
+                        {
+                            date: date0,
+                            _id: { $lt: id0 }
+                        }
+                    ]
+                }, "-images", function (err, allNews) {
+                    if (err) {
+                        logger.error(err);
+                        req.flash("errorMessage", "Something went wrong, please try again.")
+                        res.redirect("/news")
+                    } else if (allNews.length > 0) {
+                        const lastId = allNews[0]._id;
+                        const lastDate = new Date(allNews[0].date).getTime();
+
+                        const firstId = allNews[allNews.length - 1]._id;
+                        const firstDate = new Date(allNews[allNews.length - 1].date).getTime();
+
+                        res.render("News/news", {
+                            news: allNews.reverse(),
+                            countNews: allNews.length,
+                            firstId: firstId,
+                            firstDate: firstDate,
+                            lastId: lastId,
+                            lastDate: lastDate,
+                            page: page
+                        });
+                    } else {
+                        req.flash("errorMessage", "No more News.")
+                        res.redirect("/news");
+                    }
+                }).sort({ date: 1, _id: -1 }).limit(12).lean();
             } else {
-                req.flash("errorMessage", "No more News.")
-                res.redirect("/news");
+                News.find({
+                    $or: [
+                        { date: { $lt: date1 } },
+                        {
+                            date: date1,
+                            _id: { $gt: id1 }
+                        }
+                    ]
+                }, "-images", function (err, allNews) {
+                    if (err) {
+                        logger.error(err);
+                        req.flash("errorMessage", "Something went wrong, please try again.")
+                        res.redirect("/news")
+                    } else if (allNews.length > 0) {
+                        const firstId = allNews[0]._id;
+                        const firstDate = new Date(allNews[0].date).getTime();
+
+                        const lastId = allNews[allNews.length - 1]._id;
+                        const lastDate = new Date(allNews[allNews.length - 1].date).getTime();
+
+                        res.render("News/news", {
+                            news: allNews,
+                            countNews: allNews.length,
+                            firstId: firstId,
+                            firstDate: firstDate,
+                            lastId: lastId,
+                            lastDate: lastDate,
+                            page: page
+                        });
+                    } else {
+                        req.flash("errorMessage", "No more News.")
+                        res.redirect("/news");
+                    }
+                }).sort({ date: -1, _id: 1 }).limit(12).lean();
             }
+        } else {
+            req.flash("errorMessage", "Query parameters are missing.");
+            res.redirect("/news");
         }
-    }).sort({ date: -1, _id: 1 }).limit(12).lean();
+    } catch (error) {
+        logger.error(error)
+        req.flash("errorMessage", "Something went wrong, please try again.");
+        res.redirect("/news");
+    }
 });
-//////////////////////////////
 
 router.post("/news", middlewares.isAdmin, function(req, res){
     uploadNewsImages(req, res, function(err){
@@ -248,7 +323,7 @@ router.put("/news/:id", middlewares.isAdmin, function (req, res) {
                     res.redirect('/admin/news');
                 } else if (err.code == "LIMIT_FILE_COUNT") {
                     req.flash("errorMessage", "Please choose 5 or less images.");
-                    res.redirect('/admin/events');
+                    res.redirect('/admin/news');
                 } else {
                     logger.error(err);
                     req.flash("errorMessage", "Something went wrong with file upload.");

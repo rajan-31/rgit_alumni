@@ -52,7 +52,7 @@
                     <li><a href="/news">News</a></li>
                     <li><a href="/events">Events</a></li>
                     <li><a href="/contribute">Contribute</a></li>
-                    <li class="active"><a href="#communicate">Communicate</a></li>
+                    <li class="active"><a href="/communicate">Communicate</a></li>
 
                     <% if(loggedInUser.role=="admin"){ %>
                         <li><a href="/admin">Admin Panel</a></li>
@@ -198,12 +198,17 @@
                     </div>
                         
                     
-                    <div class="d-flex justify-content-end">
+                    <div class="d-flex justify-content-btetween">
                         
-                        <form action="/communicate/page/<%= Number(lastPage)+1 %>" method="post">
-                            <input type="text" name="lastid" value="<%= lastId %>" hidden="hidden">
-                            <button type="submit" class="btn next-btn">More <i class="fas fa-angle-double-right"></i></button>
-                        </form>
+                        <% if(page>1 ) { %>
+                            <a class="btn next-btn mr-auto"
+                            href="/communicate/page?n=<%= Number(page)-1 %>&q=0&i0=<%= firstId %>&i1=<%= lastId %>"
+                            ><i class="fas fa-angle-double-left"></i> Prev</a>
+                        <% } %>
+                        
+                            <a class="btn next-btn ml-auto"
+                            href="/communicate/page?n=<%= Number(page)+1 %>&q=1&i0=<%= firstId %>&i1=<%= lastId %>">Next
+                            <i class="fas fa-angle-double-right"></i></a>
                     </div>
                 </div>
 

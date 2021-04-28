@@ -229,7 +229,7 @@
                     <!-- bio -->
                     <div class="form-group">
                         <label><strong>Bio</strong></label>
-                        <div class="form-control" style="min-height: 38px; max-height: 15em; overflow: auto;"><%= profile.bio %></div>
+                        <div class="form-control" style="height: auto; min-height: 38px; max-height: 15em; overflow: auto;"><%= profile.bio %></div>
                     </div>
 
                     <div class="form-group row">
@@ -403,7 +403,9 @@
             // show dob in format
             const months=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             var temp_dob = new Date($("#dob").text());
-            $("#dob").text(`${("0" + temp_dob.getDate()).slice(-2)}, ${months[temp_dob.getMonth()]} ${temp_dob.getFullYear()}`);
+            if(!isNaN(temp_dob)) {
+                $("#dob").text(`${("0" + temp_dob.getDate()).slice(-2)}, ${months[temp_dob.getMonth()]} ${temp_dob.getFullYear()}`);
+            }
     
             // remove social link
             $(".visit_url").each(function() {

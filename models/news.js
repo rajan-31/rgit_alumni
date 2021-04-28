@@ -9,6 +9,6 @@ const newsSchema = new mongoose.Schema({
     description: String,
 });
 
-newsSchema.index( {date: -1} );
+newsSchema.index( {date: -1, _id: 1} );
 
 module.exports = mongoose.model("News", newsSchema);

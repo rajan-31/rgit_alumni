@@ -9,6 +9,7 @@
     "dev-gulp": "wt -w 0 -p \"Windows Powershell\" -d . powershell -noExit \"npm run startMongo\"; sp -H -p \"Windows Powershell\" -d . powershell -noExit \"npm run gulp-watch\"; nt -p \"Windows Powershell\" -d . powershell -noExit \"npm run local\"",
     "local": "set MONGODB_SERVER=local& nodemon app.js",
     "mobile": "set PLATFORM=mobile& set MONGODB_SERVER=local& start http://192.168.0.101:8080& nodemon app.js",
+    "atlas-prod": "set NODE_ENV=production& nodemon app.js",
     "startMongo": "mongod --dbpath=C:\\MongoData --bind_ip 127.0.0.1",
     "gulp-compile": "gulp onetime",
     "gulp-watch": "gulp continuous",

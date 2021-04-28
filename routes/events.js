@@ -47,7 +47,6 @@ let uploadEventImages = upload.fields([{ name: "images", maxCount: 5}, { name: "
 /* end multer config */
 
 
-/////////////////////////////////
 router.get("/events", middlewares.isLoggedIn, function (req, res) {
     Event.find({}, "-images", function (err, allEvents) {
             if (err) {
@@ -57,7 +56,17 @@ router.get("/events", middlewares.isLoggedIn, function (req, res) {
             } else if(allEvents.length > 0){
                 const lastId = allEvents[allEvents.length - 1]._id;
                 const lastDate = new Date(allEvents[allEvents.length - 1].date).getTime();
-                res.render("Events/events", { events: allEvents, countEvents: allEvents.length, lastId: lastId, lastDate: lastDate, lastPage: 1});
+                const firstId = allEvents[0]._id;
+                const firstDate = new Date(allEvents[0].date).getTime();
+                res.render("Events/events", { 
+                    events: allEvents, 
+                    countEvents: allEvents.length,
+                    firstId: firstId,
+                    firstDate: firstDate,
+                    lastId: lastId, 
+                    lastDate: lastDate, 
+                    page: 1
+                });
             } else {
                 req.flash("errorMessage", "No events found!")
                 res.redirect("/");
@@ -65,36 +74,103 @@ router.get("/events", middlewares.isLoggedIn, function (req, res) {
         }).sort({ date: -1, _id: 1 }).limit(12).lean();
     });
 
-router.post("/events/page/:num", middlewares.isLoggedIn, function (req, res) {
-    const lastId = req.body.lastid;
-    const lastDate = new Date(Number(req.body.lastdate));
-    const lastPage = req.params.num;
-    Event.find({
-        $or: [
-            { date: { $lt: lastDate } },
-            {
-                date: lastDate,
-                _id: { $gt: mongoose.Types.ObjectId(lastId) }
-            }
-        ]
-    }, "-images", function (err, allEvents) {
-        if (err) {
-            logger.error(err);
-            req.flash("errorMessage", "Something went wrong, please try again.")
-            res.redirect("/events")
-        } else {
-            if(allEvents.length > 0) {
-                const pass_lastId = allEvents[allEvents.length - 1]._id;
-                const pass_lastDate = new Date(allEvents[allEvents.length - 1].date).getTime();
-                res.render("Events/events", { events: allEvents, countEvents: allEvents.length, lastId: pass_lastId, lastDate: pass_lastDate, lastPage: lastPage});
+router.get("/events/page", middlewares.isLoggedIn, function(req, res) {
+    const page = req.query.n,
+    operation = req.query.q;
+
+    let date0, date1,
+    id0 = req.query.i0,
+    id1 = req.query.i1;
+    
+    try {
+        date0 = new Date(Number(req.query.d0));
+        date1 = new Date(Number(req.query.d1));
+
+        id0 = mongoose.Types.ObjectId(id0);
+        id1 = mongoose.Types.ObjectId(id1);
+
+        if(page>0 && operation && date0 && id0 && date1 && id1) {
+            if(operation == 0) {
+                Event.find({
+                    $or: [
+                        { date: { $gt: date0 } },
+                        {
+                            date: date0,
+                            _id: { $lt: id0 }
+                        }
+                    ]
+                }, "-images", function (err, allEvents) {
+                    if (err) {
+                        logger.error(err);
+                        req.flash("errorMessage", "Something went wrong, please try again.")
+                        res.redirect("/events")
+                    } else if (allEvents.length > 0) {
+                        const lastId = allEvents[0]._id;
+                        const lastDate = new Date(allEvents[0].date).getTime();
+
+                        const firstId = allEvents[allEvents.length - 1]._id;
+                        const firstDate = new Date(allEvents[allEvents.length - 1].date).getTime();
+
+                        res.render("Events/events", {
+                            events: allEvents.reverse(),
+                            countEvents: allEvents.length,
+                            firstId: firstId,
+                            firstDate: firstDate,
+                            lastId: lastId,
+                            lastDate: lastDate,
+                            page: page
+                        });
+                    } else {
+                        req.flash("errorMessage", "No more Events.")
+                        res.redirect("/events");
+                    }
+                }).sort({ date: 1, _id: -1 }).limit(12).lean();
             } else {
-                req.flash("errorMessage", "No more Events.")
-                res.redirect("/events");
+                Event.find({
+                    $or: [
+                        { date: { $lt: date1 } },
+                        {
+                            date: date1,
+                            _id: { $gt: id1 }
+                        }
+                    ]
+                }, "-images", function (err, allEvents) {
+                    if (err) {
+                        logger.error(err);
+                        req.flash("errorMessage", "Something went wrong, please try again.")
+                        res.redirect("/events")
+                    } else if (allEvents.length > 0) {
+                        const firstId = allEvents[0]._id;
+                        const firstDate = new Date(allEvents[0].date).getTime();
+
+                        const lastId = allEvents[allEvents.length - 1]._id;
+                        const lastDate = new Date(allEvents[allEvents.length - 1].date).getTime();
+
+                        res.render("Events/events", {
+                            events: allEvents,
+                            countEvents: allEvents.length,
+                            firstId: firstId,
+                            firstDate: firstDate,
+                            lastId: lastId,
+                            lastDate: lastDate,
+                            page: page
+                        });
+                    } else {
+                        req.flash("errorMessage", "No more Events.")
+                        res.redirect("/events");
+                    }
+                }).sort({ date: -1, _id: 1 }).limit(12).lean();
             }
+        } else {
+            req.flash("errorMessage", "Query parameters are missing.");
+            res.redirect("/events");
         }
-    }).sort({ date: -1, _id: 1 }).limit(12).lean();
+    } catch (error) {
+        logger.error(error)
+        req.flash("errorMessage", "Something went wrong, please try again.");
+        res.redirect("/events");
+    }
 });
-/////////////////////////////////
 
 router.post("/events", middlewares.isAdmin, function (req, res) {
     uploadEventImages(req, res, function (err) {

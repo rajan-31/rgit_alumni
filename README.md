@@ -16,6 +16,10 @@ Password: mongo001
 
 ```https://console.developers.google.com/apis/dashboard```
 
+- unblock gmail login on heroku
+
+```https://accounts.google.com/DisplayUnlockCaptcha```
+
 ---
 
 # add admin user to database
@@ -168,7 +172,9 @@ db.admins.insert({
 - ~~remove from unread list only if seen... currently it's gone if refresh (not saved for online users)~~
 
 - //chat profile image - fix image name (problem with extension)
-- ok on cookie consent
+- //ok on cookie consent
+- ~~previous page & next page~~
+- //whent chat link open populate it using ejs
 ------------
 
 - ~~git filename case sensitivity err~~

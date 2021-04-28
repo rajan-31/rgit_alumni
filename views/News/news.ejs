@@ -174,14 +174,18 @@
     
             </div>
 
-            <div class="d-flex justify-content-end">
+            <div class="d-flex justify-content-between">
 
-              <form action="/news/page/<%= Number(lastPage)+1 %>" method="post">
-                  <input type="text" name="lastdate" value="<%= lastDate %>" hidden="hidden">
-                  <input type="text" name="lastid" value="<%= lastId %>" hidden="hidden">
-                  <button type="submit" class="btn next-btn">More <i class="fas fa-angle-double-right"></i></button>
-              </form>
-          </div>
+              <% if(page>1 ) { %>
+                <a class="btn next-btn mr-auto"
+                  href="/news/page?n=<%= Number(page)-1 %>&q=0&i0=<%= firstId %>&d0=<%= firstDate %>&i1=<%= lastId %>&d1=<%= lastDate %>"><i
+                    class="fas fa-angle-double-left"></i> Prev</a>
+              <% } %>
+              
+              <a class="btn next-btn ml-auto"
+                href="/news/page?n=<%= Number(page)+1 %>&q=1&i0=<%= firstId %>&d0=<%= firstDate %>&i1=<%= lastId %>&d1=<%= lastDate %>">Next
+                <i class="fas fa-angle-double-right"></i></a>
+            </div>
     
           </div>
         </section>
