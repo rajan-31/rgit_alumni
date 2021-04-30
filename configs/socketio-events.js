@@ -11,27 +11,46 @@ module.exports = function (io, User, sessionMiddleware, passport) {
         } else {
             next(new Error('unauthorized'))
         }
-        });
+    });
+    
+    // save online users, key=userid
+    let statusMap = new Map();
 
     io.on('connection', (socket) => {
         /* send chats */
-        User.findById( socket.request.user._id, 'chats unread order', function(err, userData){
+
+        User.findById( socket.userid, 'chats unread order', function(err, userData){
             if(err){
                 logger.error(err);
             } else {
+                // set online status
+                statusMap.set(socket.userid, true);
+                let onlineUsers = [];
+
+                if (userData.order) {
+                    for (let i = 0; i <userData.order.length; i++) {
+                        if (statusMap.get(String(userData.order[i]))) {
+                            onlineUsers.push(userData.order[i])
+                        }
+                    }
+                }
+
                 socket.username = socket.request.user.fullName;
-                socket.emit("my chats", userData.chats, userData.unread, userData.order);
+                socket.emit("my chats", userData.chats, userData.unread, userData.order, onlineUsers);
+                socket.broadcast.emit("userConnected", socket.userid);
                 // console.log(JSON.stringify(userData.chats, null, 2));
             }
         }).lean();
 
         /* join room */
-        socket.join(socket.request.user._id);
+        socket.join(socket.userid);
 
         /* seperate msg */
         socket.on("private message", ({ content, to }) => {
-            const sender = socket.request.user._id;
-            
+            const sender = socket.userid;
+            const temp = new Date().toLocaleString("en-US", { timeZone: 'Asia/Kolkata' });
+            const timestamp = temp.slice(0, -6) + " " + temp.slice(-2);
+
             User.findByIdAndUpdate( sender, {
                 "$pull": {
                     "order": to
@@ -39,7 +58,8 @@ module.exports = function (io, User, sessionMiddleware, passport) {
                 "$push": {
                     "chats.$[a].messages": {
                         who: 0,
-                        msg: content
+                        msg: content,
+                        timestamp: timestamp
                     }
                 }
             },
@@ -71,7 +91,8 @@ module.exports = function (io, User, sessionMiddleware, passport) {
                                 "$push": {
                                     "chats.$[a].messages": {
                                         who: 1,
-                                        msg: content
+                                        msg: content,
+                                        timestamp: timestamp
                                     }
                                 }
                             },
@@ -102,7 +123,8 @@ module.exports = function (io, User, sessionMiddleware, passport) {
                                                     from: {
                                                     userid: sender,
                                                     username: socket.username
-                                                    }
+                                                    },
+                                                    timestamp
                                                 });
                                                 
                                                 // add to unread
@@ -163,6 +185,58 @@ module.exports = function (io, User, sessionMiddleware, passport) {
                         logger.error(err)
                     }
                 });
+        });
+
+        socket.on("deleteChat", (userid) => {
+            User.findByIdAndUpdate(socket.userid, 
+            {
+                $pull: {
+                    chats: { userid: userid },
+                    order: userid
+                }
+            }, 
+            function (err, data) {
+                if (err) {
+                    logger.error(err)
+                } else {
+                    console.log(data)
+                }
+            });
+        });
+
+        socket.on("clearChat", (userid) => {
+            User.findByIdAndUpdate(socket.userid,
+            {
+                "$set": {
+                    "chats.$[a].messages": []
+                }
+            },
+            {
+                arrayFilters: [
+                    { "a.userid": userid }
+                ]
+                }, function (err) {
+                    if (err) {
+                        logger.error(err)
+                    }
+            });
+        });
+
+        // socket.on("askOnlineStatus", (userid) => {
+        //     const temp = statusMap.get(userid);
+        //     socket.to(socket.userid).emit("giveOnlineStatus", { userid, temp });
+        // });
+
+        socket.on("disconnect", async function () {
+            const matchingSockets = await io.in(socket.userid).allSockets();
+            const isDisconnected = matchingSockets.size === 0;
+            if (isDisconnected) {
+                // set offline status
+                statusMap.set(socket.userid, false);
+
+                // broadcast online status
+                socket.broadcast.emit("userDisconnected", socket.userid);
+            }
         });
     });
 }

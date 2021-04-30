@@ -175,9 +175,21 @@ db.admins.insert({
 - //ok on cookie consent
 - ~~previous page & next page~~
 - //whent chat link open populate it using ejs
+
+- ~~delete chat~~
+- ~~clear chat~~
+- ~~show timestamp~~
+
+- ~~ui - set online status initially retrived users~~
+- //ui - ask online status of new chat
+- ~~ui - handle userDisconnected emit~~
+- ~~ui - handle userConnected emit~~
+- test https://socket.io/docs/v4/admin-ui/ on firefox
 ------------
 
 - ~~git filename case sensitivity err~~
     change name -> stage commit -> change name -> stage commit -> commit
+    OR
+    change directly on github
 
 - use shimmer instead of loading spinner

@@ -5,8 +5,8 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
     <title>Chats | APSIT Alumni</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
+    
+    
 
     <!-- Favicons -->
     <link href="../assets/img/favicon.png" rel="icon">
@@ -100,8 +100,19 @@
                         <div id="selcted-user-details">
                           <span id="back-btn" class="fas fa-arrow-left">&nbsp;</span>
                           <span id="chat-user-image" class="fas fa-user"></span>
-                          <a id="chat-username-link" href=""><span id="chat-username"></span></a>
+
+                          <span class="d-flex flex-column">
+                            <span><a id="chat-username-link" href=""><span id="chat-username"></span></a></span>
+                            
+                            <span id="chat-user-status"></span>
+                          </span>
+
+                          <span class="ml-auto" id="menu-btn"><i class="fas fa-ellipsis-v"></i></span>
                           
+                          <div id="menu-container" class="flex flex-column">
+                            <div id="menu-option-clear" class="menu-option">Clear Chat</div>
+                            <div id="menu-option-delete" class="menu-option">Delete Chat</div>
+                          </div>
                         </div>
                         <div id="message-pane" hidden="hidden">
                             
@@ -112,7 +123,6 @@
                         </div>
                     </div>
                 </div>
-        
                 </ul>
             </div>
         </div>
@@ -123,7 +133,7 @@
 
   <%- include ('./partials/footer'); -%>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script src="/assets/js/socket.js"></script>
 </body>
 </html>

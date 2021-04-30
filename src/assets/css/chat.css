@@ -77,8 +77,14 @@
 }
 
 #selcted-user-details #chat-username {
-    font-size: 20px;
+    font-size: 17px;
     padding: 0 5px;
+}
+
+#selcted-user-details #chat-user-status {
+    color: rgb(111, 94, 94);
+    font-size: 13px;
+    padding: 0 5px 0 10px;
 }
 
 #chat-user-image {
@@ -117,7 +123,7 @@
 }
 
 .message-sent .message {
-    background-color: #dcf8c6;
+    background-color: #cce6b8;
     border-bottom-right-radius: 3px;
     border-top-left-radius: 3px;
     border-bottom-left-radius: 3px;
@@ -144,7 +150,7 @@
     height: 0;
     border-style: solid;
     border-width: 10px 10px 0 0;
-    border-color: #dcf8c6 transparent transparent transparent;
+    border-color: #cce6b8 transparent transparent transparent;
 }
 
 #type-pane {
@@ -158,8 +164,64 @@
     height: 38px;
 }
 
+.msg-ts {
+    float: right;
+    padding: 10px 0 0 15px;
+    font-weight: lighter;
+    font-size: 0.7rem;
+}
+
 /* misc */
-/* @media only screen and (max-width: 768px) {
-    For mobile phones:
-    
-} */
+@media only screen and (max-width: 768px) {
+    .message {
+        max-width: 85%;
+    }    
+}
+
+.date-line {
+    text-align: center;
+    margin-top: 2px;
+}
+
+.date-line-date {
+    font-weight: 350;
+    font-size: 0.7rem;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: rgb(225 245 254 / 92%);
+}
+
+#menu-btn {
+    padding: 7px 10px;
+    cursor: pointer;
+}
+
+#menu-container {
+    background-color: #fff;
+    display: none;
+    width: 200px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    padding: 10px 0 10px 0;
+    box-shadow: 4px 4px 7px 1px #BABABA;
+}
+
+.menu-option {
+    padding: 12px 30px 12px 20px;
+}
+
+.menu-option:hover {
+    background-color: #dee2e6;
+    cursor: pointer;
+}
+
+.user-online {
+    font-size: 0.5rem;
+    color: #3aa149;
+}
+
+.user-offline {
+    font-size: 0.5rem;
+    color: #d61313;
+}

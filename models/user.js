@@ -89,7 +89,8 @@ const userSchema = new mongoose.Schema({
                 {
                     _id: false,
                     who: Boolean,
-                    msg: String
+                    msg: String,
+                    timestamp: String
                 }
             ]
         }

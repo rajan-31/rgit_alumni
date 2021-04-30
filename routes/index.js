@@ -192,8 +192,7 @@ router.post('/login', function(req, res, next) {
             logger.error(err);
             req.flash("errorMessage", "Something went wrong, please try again.");
             res.redirect("/login");
-        }
-        if (!user) {
+        } else if (!user) {
             if (info && info.name == "TooManyAttemptsError") {
                 req.flash("errorMessage", "Account locked due to too many failed login attempts, contact admin.");
             } else {
