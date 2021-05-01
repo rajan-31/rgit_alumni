@@ -184,7 +184,7 @@ db.admins.insert({
 - //ui - ask online status of new chat
 - ~~ui - handle userDisconnected emit~~
 - ~~ui - handle userConnected emit~~
-- test https://socket.io/docs/v4/admin-ui/ on firefox
+- ~~test https://socket.io/docs/v4/admin-ui/ on firefox~~
 ------------
 
 - ~~git filename case sensitivity err~~

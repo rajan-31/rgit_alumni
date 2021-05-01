@@ -71,19 +71,19 @@ app.use(compression());
 app.use(
     helmet.contentSecurityPolicy({
       directives: {
-        'default-src': [ "'self'" ],
-        'base-uri': [ "'self'" ],
-        'connect-src': [ "'self'" ],
-        'block-all-mixed-content': [],
-        'font-src': [ "'self'", 'https:', 'data:' ],
-        'frame-ancestors': [ "'self'" ],
-        'img-src': [ "'self'", 'data:', 'blob:' ],
-        'object-src': [ "'none'" ],
-        'script-src': [ "'self'", "'unsafe-inline'", "https://ajax.googleapis.com", "https://cdnjs.cloudflare.com" ],
-        'script-src-attr': [ "'unsafe-inline'", "https:" ],
-        'style-src': [ "'self'", 'https:', "'unsafe-inline'" ],
-        'frame-src': [ "https://www.google.com" ],
-        'upgrade-insecure-requests': []
+        'default-src': [ "'self'" ],//
+        'base-uri': [ "'self'" ],//
+        'connect-src': [ "'self'" ],//
+        // 'block-all-mixed-content': [],
+        'font-src': [ "'self'", 'https:', 'data:' ],//
+        // 'frame-ancestors': [ "'self'" ],//
+        'img-src': [ "'self'", 'data:', 'blob:' ],//
+        'object-src': [ "'none'" ],//
+        'script-src': [ "'self'", "'unsafe-inline'", "https://ajax.googleapis.com", "https://cdnjs.cloudflare.com" ],//
+        // 'script-src-attr': [ "'unsafe-inline'", "https:" ],
+        'style-src': [ "'self'", 'https:', "'unsafe-inline'" ],//
+        'frame-src': [ "https://www.google.com" ],//
+        // 'upgrade-insecure-requests': []//
       },
     })
 );

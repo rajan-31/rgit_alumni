@@ -2,7 +2,8 @@
 
 - static content maxage
 - privacy policy & Terms of service
-- add domains in skill
+- add domains in skill (profile page)
+- profile page branch
 - change timestamp (not format the location) based on hosting location
 
 # ASK
@@ -44,6 +45,7 @@ https://console.developers.google.com/apis/dashboard
 ## Domain name changes
 
 - helmet config (app.js)
+- hlmet (other changes like ws, wss, http, https)
 - activation link (index.js)
 - OAuth redirect URL
 

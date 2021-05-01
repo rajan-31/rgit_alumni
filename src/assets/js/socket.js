@@ -182,9 +182,9 @@ $( document ).ready( function() {
             chats.push({
                 userid: from.userid,
                 username: from.username,
-                messages: [{ who:1, msg: content}]
+                messages: [{ who: 1, msg: content, timestamp: timestamp}]
             });
-            $("#user-pane").append(`
+            $("#user-pane").prepend(`
                 <div data-userid=${from.userid} class="select-box d-flex">
                     <div class="status user-online my-auto px-1"><i class="fas fa-circle"></i></div>
                     <div class="fas fa-user my-auto user-pane-img"></div>
@@ -447,5 +447,6 @@ $( document ).ready( function() {
         $('#back-btn').click();
 
         $menu_container.hide(50);
+        $('#menu-btn').tooltip()
     });
 });
