@@ -588,6 +588,25 @@ router.get("/account/delete", allMiddlewares.rejectAdmin, function(req, res) {
     });
 });
 
+/* admin panel - delete user */
+router.post("/account/delete", allMiddlewares.isAdmin, function(req, res) {
+    try {
+        const userid = mongoose.Types.ObjectId(req.body.userid);
+
+        User.findByIdAndDelete(mongoose.Types.ObjectId(userid), function (err) {
+            if (err) {
+                logger.error(err);
+                res.send("Err");
+            } else {
+                res.send("Done")
+            }
+        });
+    } catch (error) {
+        logger.error(error);
+        res.send("Exc");
+    }
+});
+
 //////////////////////////////
 
 // email routes

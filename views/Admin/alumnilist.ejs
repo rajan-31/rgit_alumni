@@ -178,7 +178,7 @@
               <!-- small box -->
               <div class="small-box bg-warning">
                 <div class="inner">
-                  <h3> <%= countAlumni %> </h3>
+                  <h3 id="fill-count"> <%= countAlumni %> </h3>
 
                   <h3>Alumni Count</h3>
                 </div>
@@ -217,6 +217,7 @@
                         <th class="keep-whitespace text-center">  First Name</th>
                         <th class="keep-whitespace text-center">  Last Name</th>
                         <th class="no-sort text-center">View Profile</th>
+                        <th class="no-sort text-center">Delete Profile</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -229,6 +230,9 @@
                           <td>
                             <a href="/profile/<%= allAlumni[i]._id %>" class="btn btn-block btn-primary btn-sm btn-fix-size">View</a>
                           </td>
+                          <td>
+                            <button data-userid="<%= allAlumni[i]._id %>" data-toggle="modal" data-target="#user-del-modal" class="btn btn-block btn-danger btn-sm btn-fix-size btn-user-delete">Delete</button>
+                          </td>
                         </tr>
                       <% } %>
 
@@ -238,6 +242,67 @@
 
                 <!-- /.card-body -->
 
+              </div>
+
+              <!-- confirmation modal -->
+              <div id="user-del-modal" class="modal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Delete Profile</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>After deleting the profile, there is no way to recover it. Do you still want to continue?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                      <button id="btn-modal-delete" type="button" class="btn btn-danger">Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- notice modal -->
+              <div id="user-notice-modal" class="modal" tabindex="-1">
+                <div class="modal-dialog modal-sm modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Notice</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>No user found.</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary mx-auto" data-dismiss="modal">OK</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- failure modal -->
+              <div id="user-failure-modal" class="modal" tabindex="-1">
+                <div class="modal-dialog modal-sm modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Warning</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>User profile deletion failed!</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary mx-auto" data-dismiss="modal">OK</button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
             </section>
@@ -256,6 +321,51 @@
       $(document).ready(function(){
         $('.sortable-table').tableSorter();
         document.getElementById('simulate_click').click();
+
+        /* trigger modal */
+        $('.btn-user-delete').on("click", function() {
+          const $this = $(this);
+          const userid = $this.data("userid");
+
+          $("#btn-modal-delete").data("userid", userid);
+
+          $this.html("Delete");
+        });
+
+        /* confirm deletion */
+        $('#btn-modal-delete').on("click", function () {
+          const $this = $(this);
+          const userid = $this.data("userid");
+
+          
+          if(userid) {
+            $.ajax({
+              url: "/account/delete",
+              method: "POST",
+              data: { userid: userid },
+
+            }).done(function (response) {
+              if(response == "Done") {
+                $("button[data-userid=" + userid + "]").closest("tr").hide("600");
+
+                /* update count */
+                $("#fill-count").text(Number($("#fill-count").text()) - 1);
+              } else {
+                $('#user-failure-modal').modal('show');
+              }
+
+              $('#user-del-modal').modal("hide");
+            }).fail(function() {
+              $('#user-del-modal').modal("hide");
+              $('#user-failure-modal').modal('show');
+            });
+
+          } else {
+            $('#user-del-modal').modal("hide");
+            $('#user-notice-modal').modal('show');
+          }
+        });
+
       });
     </script>
 </body>
