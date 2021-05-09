@@ -185,6 +185,9 @@ db.admins.insert({
 - ~~ui - handle userDisconnected emit~~
 - ~~ui - handle userConnected emit~~
 - ~~test https://socket.io/docs/v4/admin-ui/ on firefox~~
+
+- //super admin
+- ~~delete alumni/ student~~
 ------------
 
 - ~~git filename case sensitivity err~~

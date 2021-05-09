@@ -434,16 +434,26 @@
               <% for(let i = 0; i < countTestimonials; i++) {%>
                 <div class="testi-main">
                   <div class="testi-container-img d-flex justify-content-center">
-                    <img width="100" height="100" class="lazyload testi-img" src="/assets/img/ui/user-placeholder-100x100.jpg" data-src="<%= allTestimonials[i].image %>" alt="Student" onerror="this.onerror=null;this.src='/assets/img/ui/user-placeholder-100x100.jpg';">
+                    <img width="100" height="100" class="lazyload testi-img" src="/assets/img/ui/user-placeholder-100x100.jpg"
+                      data-src="<%= allTestimonials[i].image %>" alt="Student"
+                      onerror="this.onerror=null;this.src='/assets/img/ui/user-placeholder-100x100.jpg';">
+                  </div>
+                  <div class="d-flex mt-3">
+                    <i class="fas fa-quote-left"></i>
                   </div>
                   <div class="testi-container-content">
-                    <i class="fas fa-quote-left"></i>
                     <%= allTestimonials[i].content %>
+                  </div>
+                  <div class="d-flex justify-content-end">
                     <i class="fas fa-quote-right"></i>
                   </div>
                   <div class="testi-container-info">
-                    <div class="testi-name"><%= allTestimonials[i].name %></div>
-                    <div class="testi-branch"><%= allTestimonials[i].branch %></div>
+                    <div class="testi-name">
+                      <%= allTestimonials[i].name %>
+                    </div>
+                    <div class="testi-branch">
+                      <%= allTestimonials[i].branch %>
+                    </div>
                   </div>
                 </div>
               <% } %>
