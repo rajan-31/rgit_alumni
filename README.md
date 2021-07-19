@@ -2,15 +2,13 @@
 
 - mongo connection URL
 
-```mongodb+srv://admin:mongo001@firstcluster.rxwyk.mongodb.net/alumni_website?retryWrites=true&w=majority```
+```mongodb+srv://<username>:<password>@firstcluster.rxwyk.mongodb.net/alumni_website?retryWrites=true&w=majority```
 
 ---
 
 - command connect from command line
 
-``` mongo "mongodb+srv://firstcluster.rxwyk.mongodb.net/alumni_website" --username admin```
-
-Password: mongo001
+``` mongo "mongodb+srv://firstcluster.rxwyk.mongodb.net/alumni_website" --username <username>```
 
 - google api
 
