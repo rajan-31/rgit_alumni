@@ -1,7 +1,8 @@
 node_modules/*
 data_gen_scripts/*
 .env
-*.log
+logs/*
+!logs/.gitkeep
 
 uploads/*
 !uploads/.gitkeep
