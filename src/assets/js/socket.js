@@ -17,7 +17,7 @@ $( document ).ready( function() {
         }, 500);
     }
 
-    // const URL = "" // "http://localhost:8080";
+    // const URL = "" // process.env.CURRENT_DOMAIN;
 
     const socket = io({ autoConnect: false});
     // connection

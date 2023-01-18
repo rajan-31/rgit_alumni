@@ -66,7 +66,7 @@ db.admins.insert({
 ## PRODUCTION CHANGES
 - process manager
 - change connectsrc to real domain in helmet content security policy (app.js)
-- activation code URL (it's localhost currently)
+- activation code URL
 - mail templates
 - mongo url
 - google oauth strategy redirect url

@@ -104,7 +104,7 @@ router.post('/signup', function(req, res){
                     const activation_code = user._id + buf.toString('hex');
                     user.activation_code = activation_code;
                     user.activation_expires = Date.now() + 172800000;    // 48Hrs
-                    const activation_link = 'http://localhost:8080/account/activate/' + activation_code;
+                    const activation_link = process.env.CURRENT_DOMAIN + '/account/activate/' + activation_code;
 
                     const transporter = nodemailer.createTransport({
                         service: "Gmail",
@@ -114,7 +114,8 @@ router.post('/signup', function(req, res){
                         auth: {
                             user: process.env.MAIL_USER,
                             pass: process.env.MAIL_PASS
-                        }
+                        },
+                        tls : { rejectUnauthorized: false }
                     });
 
                     let sender = process.env.MAIL_USER;
@@ -316,7 +317,7 @@ router.post('/account/activate/resend', function(req, res) {
             
             // activation code exists
             if (data.activation_code) {
-                const activation_link = 'http://localhost:8080/account/activate/' + data.activation_code;
+                const activation_link = process.env.CURRENT_DOMAIN + '/account/activate/' + data.activation_code;
 
                 const transporter = nodemailer.createTransport({
                     service: "Gmail",
@@ -326,7 +327,8 @@ router.post('/account/activate/resend', function(req, res) {
                     auth: {
                         user: process.env.MAIL_USER,
                         pass: process.env.MAIL_PASS
-                    }
+                    },
+                    tls : { rejectUnauthorized: false }
                 });
 
                 const sender = process.env.MAIL_USER;
@@ -356,15 +358,15 @@ router.post('/account/activate/resend', function(req, res) {
 
                 } catch (err) {
                     logger.error(err);
-                    req.flash("errorMessage", "Something went wrong, please check your mails and try again!");
+                    req.flash("errorMessage", "Something went wrong while sending mail, please check your mails and try again!");
                     res.redirect("/login");
                 }
             } else {
                 crypto.randomBytes(5, async function (err, buf) {
-                    const activation_code = user._id + buf.toString('hex');
+                    const activation_code = data._id + buf.toString('hex');
                     data.activation_code = activation_code;
 
-                    const activation_link = 'http://localhost:8080/account/activate/' + activation_code;
+                    const activation_link = process.env.CURRENT_DOMAIN + '/account/activate/' + activation_code;
 
                     const transporter = nodemailer.createTransport({
                         service: "Gmail",
@@ -374,7 +376,8 @@ router.post('/account/activate/resend', function(req, res) {
                         auth: {
                             user: process.env.MAIL_USER,
                             pass: process.env.MAIL_PASS
-                        }
+                        },
+                        tls : { rejectUnauthorized: false }
                     });
 
                     const sender = process.env.MAIL_USER;
@@ -404,7 +407,7 @@ router.post('/account/activate/resend', function(req, res) {
 
                     } catch (err) {
                         logger.error(err);
-                        req.flash("errorMessage", "Something went wrong, please check your mails and try again!");
+                        req.flash("errorMessage", "Something went wrong while sending new activation mail, please check your mails and try again!");
                         res.redirect("/login");
                     }
                 });
@@ -425,7 +428,7 @@ router.post("/account/password/reset", function(req, res) {
     User.findOne({ username: _username}, "username firstName lastName googleId password_reset_expires password_reset_last", function(err, user) {
         if(err) {
             logger.error(err);
-            req.flash("errorMessage", "Something went wrong, please check your mails and try again!");
+            req.flash("errorMessage", "Something went wrong while finding your data, please check your mails and try again!");
             res.redirect("/login");
         } else if (!user) {
             req.flash("errorMessage", "Invalid Email!");
@@ -442,7 +445,7 @@ router.post("/account/password/reset", function(req, res) {
                 const reset_code = user._id + buf.toString('hex');
                 user.password_reset_code = reset_code;
                 user.password_reset_expires = Date.now() + 86400000;    // 24Hrs
-                const reset_link = 'http://localhost:8080/account/password/reset/' + reset_code;
+                const reset_link = process.env.CURRENT_DOMAIN + '/account/password/reset/' + reset_code;
 
                 const transporter = nodemailer.createTransport({
                     service: "Gmail",
@@ -452,7 +455,8 @@ router.post("/account/password/reset", function(req, res) {
                     auth: {
                         user: process.env.MAIL_USER,
                         pass: process.env.MAIL_PASS
-                    }
+                    },
+                    tls : { rejectUnauthorized: false }
                 });
 
                 const sender = process.env.MAIL_USER;
@@ -482,7 +486,7 @@ router.post("/account/password/reset", function(req, res) {
                         });
                 } catch (err) {
                     logger.error(err);
-                    req.flash("errorMessage", 'Something went wrong, please check your mails and try again!');
+                    req.flash("errorMessage", 'Something went wrong while sending the password reset mail, please check your mails and try again!');
                     res.redirect("/login");
                 }
                         
@@ -635,7 +639,8 @@ router.post('/mail',function(req, res, next) {
             auth: {
                 user: process.env.MAIL_USER,
                 pass: process.env.MAIL_PASS
-            }
+            },
+            tls : { rejectUnauthorized: false }
         });
 
         /* for own smtp */

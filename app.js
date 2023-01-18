@@ -46,8 +46,7 @@ app.use(morgan(
 require('dotenv').config();  // loading environment variables
 
 /* start mongodb connection */
-//for temp/ development purpose
-let mongodbURL = process.env.MONGODB_SERVER == "local" ? "mongodb://localhost:27017/alumni_website" : process.env.MONGODB_URL;
+let mongodbURL = process.env.MONGODB_URL;
 
 mongoose.connect(mongodbURL , {
     useNewUrlParser: true,
@@ -170,7 +169,7 @@ passport.use('admin', new LocalStrategy(Admin.authenticate()));     // Local log
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
     clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_OAUTH_CALLBACK
+    callbackURL: process.env.CURRENT_DOMAIN + '/oauth/google/callback'
 },
 function (accessToken, refreshToken, profile, done) {
     const imp_data = profile._json;
