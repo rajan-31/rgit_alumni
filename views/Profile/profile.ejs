@@ -194,7 +194,7 @@
                 </div>
                     <% if( profileImage ) { %>
                         <div id="profile-img-container">
-                            <img src="<%=profileImage%>" id="profile-img" class="mx-auto" width="200" height="200">
+                            <img src="<%=profileImage%>" id="profile-img" class="mx-auto" width="200" height="200" onerror="this.onerror=null;this.src='/assets/img/ui/image-placeholder-200x200.png';">
                         </div>
                         <div class="small my-1 text-center" role="alert">
                             <i class="fas fa-exclamation-circle"></i> Square shaped image recommended.

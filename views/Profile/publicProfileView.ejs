@@ -177,7 +177,7 @@
                     
                     <div id="profile-img-container">
                             <% if( profileImage ) { %>
-                                <img src="<%=profileImage%>" id="profile-img" height="200" width="200">
+                                <img src="<%=profileImage%>" id="profile-img" height="200" width="200" onerror="this.onerror=null;this.src='/assets/img/ui/image-placeholder-200x200.png';">
                             <% } else { %>
                                 <div class="text-center">
                                     <i class="fas fa-user" style="font-size: 200px;"></i>
