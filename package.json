@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "APSIT's alumni website",
   "main": "app.js",
+  "engines": {
+    "node": ">=14.x"
+  },
   "scripts": {
     "start": "set NODE_ENV=production& node app.js",
     "dev": "wt -w 0 -p \"Windows Powershell\" -d . powershell -noExit \"npm run startMongo\"; -p \"Windows Powershell\" -d . powershell -noExit \"npm run local\"",

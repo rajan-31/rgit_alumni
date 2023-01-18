@@ -82,7 +82,7 @@ app.use(
         'script-src': [ "'self'", "'unsafe-inline'", "https://ajax.googleapis.com", "https://cdnjs.cloudflare.com" ],//
         // 'script-src-attr': [ "'unsafe-inline'", "https:" ],
         'style-src': [ "'self'", 'https:', "'unsafe-inline'" ],//
-        'frame-src': [ "https://www.google.com" ],//
+        'frame-src': [ "https://www.google.com","https://www.youtube.com" ],//
         // 'upgrade-insecure-requests': []//
       },
     })
