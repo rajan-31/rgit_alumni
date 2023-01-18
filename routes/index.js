@@ -514,7 +514,7 @@ router.post("/account/password/reset/:code", function (req, res) {
         } else if (password.length < 6 || password.length > 20) {
             req.flash("errorMessage", "Password length must atleast 6 and atmost 20 characters.");
             res.redirect(redirect_back);
-        } else if (user.active == true) {
+        } else if (user.active != true) {
             req.flash("errorMessage", "Activate your account first!");
             res.redirect("/login");
         } else {
