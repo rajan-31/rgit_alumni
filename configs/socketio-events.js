@@ -198,8 +198,6 @@ module.exports = function (io, User, sessionMiddleware, passport) {
             function (err, data) {
                 if (err) {
                     logger.error(err)
-                } else {
-                    console.log(data)
                 }
             });
         });

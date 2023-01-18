@@ -285,17 +285,15 @@ app.get('/*', function(req, res){
 
 const port = process.env.PORT
 
-// for dev purposes
-// let ip = process.env.PLATFORM == "mobile" ? "0.0.0.0" : process.env.IP
-
 httpServer.listen(port, function(){
     // logger.info("Environment: ",process.env.Node_ENV);
     logger.info("Server is running on port => " + port);
 });
 
-/* create test admin */
+/* create test admin - remove this block after use*/
 if(process.env.CREATE_TEST_ADMIN == "true") {
-    const adminUsername = "admin", adminPassword = "admin";
+    const adminUsername = process.env.CREATE_TEST_ADMIN_NAME;
+    const adminPassword = process.env.CREATE_TEST_ADMIN_PASS;
 
     Admin.register(new Admin({ username: adminUsername, createdBy: "1st Admin", active: true }), adminPassword, function (err, user) {
         if (err) {
