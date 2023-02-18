@@ -42,9 +42,9 @@ const logger = createLogger({
     exitOnError: false
 });
 
-if (process.env.NODE_ENV !== 'production') {
-    logger.add(new transports.Console());
-}
+// if (process.env.NODE_ENV !== 'production') {
+//     logger.add(new transports.Console());
+// }
 /* end logger */
 
 module.exports = logger;
