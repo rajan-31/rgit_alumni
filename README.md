@@ -17,6 +17,8 @@ Note: If running first time, then set `CREATE_TEST_ADMIN`=true and also set user
 
 `npm start`
 
+If you don't see logs in terminal, then you can see them in files in `./logs` OR you can set environment variable mentioned in `.env.sample` and restart server
+
 ### What now?
 
 Test if evrything is working
@@ -26,7 +28,7 @@ Test if evrything is working
 - Chat
 - Home Page contact form
 
-> Take a look at `Prod.md` file, for production related changes or guidelines. Even though it was written long time ago it has some important points.
+> Take a look at `PROD.md` file, for production related changes or guidelines. Even though it was written long time ago it has some important points.
 
 ---
 
