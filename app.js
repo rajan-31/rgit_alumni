@@ -150,7 +150,7 @@ const sessionMiddleware = expressSession({
     saveUninitialized: false,
     cookie: { 
         maxAge: 3600000 * 24 * 7,   //7days
-        sameSite: "lax",
+        sameSite: "strict",
         // secure: true,   // set only when using https
         httpOnly: true
     }, 
